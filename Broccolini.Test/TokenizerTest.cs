@@ -1,10 +1,6 @@
-using System;
 using System.Collections.Immutable;
-using System.Linq;
 using Broccolini.Syntax;
 using Broccolini.Tokenization;
-using Funcky;
-using Funcky.Extensions;
 using Xunit;
 using static Broccolini.Test.TestData;
 

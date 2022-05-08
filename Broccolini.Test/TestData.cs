@@ -1,7 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
-using Funcky;
-
 namespace Broccolini.Test;
 
 internal static class TestData

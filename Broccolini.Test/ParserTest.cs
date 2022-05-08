@@ -1,12 +1,7 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
-using Broccolini.Editing;
 using Broccolini.Syntax;
 using FsCheck;
 using FsCheck.Xunit;
-using Funcky.Extensions;
 using Xunit;
 using static Broccolini.IniParser;
 using static Broccolini.Test.TestData;
