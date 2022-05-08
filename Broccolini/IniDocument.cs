@@ -27,9 +27,14 @@ public abstract record IniNode
     }
 }
 
+public abstract record KeyValueOrTriviaNode : IniNode
+{
+    public override string ToString() => base.ToString();
+}
+
 /// <summary>A key-value pair: <c>key = value</c>.</summary>
 [DebuggerDisplay("{Key}{EqualsSign}{Value}")]
-public sealed record KeyValueNode(string Key, string Value) : IniNode
+public sealed record KeyValueNode(string Key, string Value) : KeyValueOrTriviaNode
 {
     /// <summary>Leading whitespace</summary>
     public TriviaList LeadingTrivia { get; init; } = TriviaList.Empty;
@@ -54,7 +59,7 @@ public sealed record KeyValueNode(string Key, string Value) : IniNode
 
 /// <summary>A comment or an unrecognized line.</summary>
 [DebuggerDisplay("{Value}")]
-public sealed record TriviaNode(TriviaList Value) : IniNode
+public sealed record TriviaNode(TriviaList Value) : KeyValueOrTriviaNode
 {
     public override void Accept(IIniNodeVisitor visitor) => visitor.Visit(this);
 
@@ -65,7 +70,7 @@ public sealed record TriviaNode(TriviaList Value) : IniNode
 /// <code>[section]
 /// key = value</code></summary>
 [DebuggerDisplay("{OpeningBracket}{Name}{ClosingBracketDebugView}")]
-public sealed record SectionNode(string Name, IImmutableList<IniNode> Children) : IniNode
+public sealed record SectionNode(string Name, IImmutableList<KeyValueOrTriviaNode> Children) : IniNode
 {
     /// <summary>Leading whitespace</summary>
     public TriviaList LeadingTrivia { get; init; } = TriviaList.Empty;
@@ -77,7 +82,6 @@ public sealed record SectionNode(string Name, IImmutableList<IniNode> Children) 
     public TriviaList TriviaBeforeClosingBracket { get; init; } = TriviaList.Empty;
 
     public Option<Token> ClosingBracket { get; init; } = new Token.ClosingBracket();
-
 
     /// <summary>Trailing whitespace, line breaks and garbage after the closing bracket.</summary>
     public TriviaList TrailingTrivia { get; init; } = TriviaList.Empty;
