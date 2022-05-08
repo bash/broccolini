@@ -8,7 +8,13 @@ internal sealed class ToStringVisitor : IIniNodeVisitor
 
     public override string ToString() => _stringBuilder.ToString();
 
-    public void Visit(IEnumerable<IniNode> nodes) => nodes.ForEach(n => n.Accept(this));
+    public void Visit(IEnumerable<IniNode> nodes)
+    {
+        foreach (var node in nodes)
+        {
+            node.Accept(this);
+        }
+    }
 
     public void Visit(KeyValueNode keyValueNode)
     {
@@ -51,8 +57,11 @@ internal sealed class ToStringVisitor : IIniNodeVisitor
         }
     }
 
-    private void VisitToken(Option<Token> token)
+    private void VisitToken(Token? token)
     {
-        token.AndThen(t => { _stringBuilder.Append(t); });
+        if (token is not null)
+        {
+            _stringBuilder.Append(token);
+        }
     }
 }

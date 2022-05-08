@@ -2,7 +2,7 @@ namespace Broccolini.Tokenization;
 
 internal interface ITokenizerInput
 {
-    Option<char> Peek(int lookAhead = 0);
+    bool Peek(out char character, int lookAhead = 0);
 
     char Read();
 

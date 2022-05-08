@@ -48,11 +48,11 @@ internal static class Parser
         var leadingTrivia = input.ReadOrEmpty(static t => t is Token.WhiteSpace);
         var openingBracketToken = input.Read();
         var triviaAfterOpeningBracket = input.ReadOrEmpty(static t => t is Token.WhiteSpace);
-        var name = input.ReadWhileExcludeTrailingWhitespace(static t => t is not Token.ClosingBracket and not Token.LineBreak).ConcatToString();
+        var name = string.Concat(input.ReadWhileExcludeTrailingWhitespace(static t => t is not Token.ClosingBracket and not Token.LineBreak));
         var triviaBeforeClosingBracket = input.ReadOrEmpty(static t => t is Token.WhiteSpace);
-        var closingBracket = input.ReadOrNone(static t => t is Token.ClosingBracket);
+        var closingBracket = input.ReadOrNull(static t => t is Token.ClosingBracket);
         var trailingTrivia = input.ReadWhile(static t => t is not Token.LineBreak);
-        var lineBreak = input.ReadOrNone(static t => t is Token.LineBreak);
+        var lineBreak = input.ReadOrNull(static t => t is Token.LineBreak);
         var children = ParseSectionChildren(input);
         return new SectionNode(name, children)
         {
@@ -69,13 +69,13 @@ internal static class Parser
     private static KeyValueNode ParseKeyValue(IParserInput input)
     {
         var leadingTrivia = input.ReadOrEmpty(static t => t is Token.WhiteSpace);
-        var key = input.ReadWhileExcludeTrailingWhitespace(static t => t is not Token.EqualsSign).ConcatToString();
+        var key = string.Concat(input.ReadWhileExcludeTrailingWhitespace(static t => t is not Token.EqualsSign));
         var triviaBeforeEqualsSign = input.ReadOrEmpty(static t => t is Token.WhiteSpace);
         var equalsSign = input.Read();
         var triviaAfterEqualsSign = input.ReadOrEmpty(static t => t is Token.WhiteSpace);
         var (openingQuote, value, closingQuote) = ParseQuotedValue(input);
         var trailingTrivia = input.ReadWhile(static t => t is not Token.LineBreak);
-        var lineBreak = input.ReadOrNone(static t => t is Token.LineBreak);
+        var lineBreak = input.ReadOrNull(static t => t is Token.LineBreak);
         return new KeyValueNode(key, value)
         {
             LeadingTrivia = new TriviaList(leadingTrivia),
@@ -92,20 +92,20 @@ internal static class Parser
     private static TriviaNode ParseTrivia(IParserInput input)
         => new(new TriviaList(input.ReadWhile(t => t is not Token.LineBreak)))
         {
-            LineBreak = input.ReadOrNone(static t => t is Token.LineBreak),
+            LineBreak = input.ReadOrNull(static t => t is Token.LineBreak),
         };
 
-    private static (Option<Token>, string, Option<Token>) ParseQuotedValue(IParserInput input)
+    private static (Token?, string, Token?) ParseQuotedValue(IParserInput input)
     {
-        var openingQuote = input.ReadOrNone(static t => t is Token.SingleQuotes or Token.DoubleQuotes);
-        var value = ParseValue(input).ConcatToString();
-        var closingQuote = input.ReadOrNone(static t => t is Token.SingleQuotes or Token.DoubleQuotes);
+        var openingQuote = input.ReadOrNull(static t => t is Token.SingleQuotes or Token.DoubleQuotes);
+        var value = string.Concat(ParseValue(input));
+        var closingQuote = input.ReadOrNull(static t => t is Token.SingleQuotes or Token.DoubleQuotes);
 
-        static string ToString(Option<Token> token) => token.Match(none: string.Empty, some: static t => t.ToString());
+        static string ToString(Token? token) => token?.ToString() ?? string.Empty;
 
         return openingQuote == closingQuote
             ? (openingQuote, value, closingQuote)
-            : (Option<Token>.None(), ToString(openingQuote) + value + ToString(closingQuote), Option<Token>.None());
+            : (null, ToString(openingQuote) + value + ToString(closingQuote), null);
     }
 
     private static IImmutableList<Token> ParseValue(IParserInput input)

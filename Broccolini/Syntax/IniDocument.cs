@@ -15,7 +15,7 @@ public sealed record IniDocument(IImmutableList<IniNode> Children)
 
 public abstract record IniNode
 {
-    public Option<Token> LineBreak { get; init; }
+    public Token? LineBreak { get; init; }
 
     public abstract void Accept(IIniNodeVisitor visitor);
 
@@ -45,9 +45,9 @@ public sealed record KeyValueNode(string Key, string Value) : KeyValueOrTriviaNo
 
     public TriviaList TriviaAfterEqualsSign { get; init; } = TriviaList.Empty;
 
-    public Option<Token> OpeningQuote { get; init; }
+    public Token? OpeningQuote { get; init; }
 
-    public Option<Token> ClosingQuote { get; init; }
+    public Token? ClosingQuote { get; init; }
 
     /// <summary>Trailing whitespace and line breaks.</summary>
     public TriviaList TrailingTrivia { get; init; } = TriviaList.Empty;
@@ -81,12 +81,12 @@ public sealed record SectionNode(string Name, IImmutableList<KeyValueOrTriviaNod
 
     public TriviaList TriviaBeforeClosingBracket { get; init; } = TriviaList.Empty;
 
-    public Option<Token> ClosingBracket { get; init; } = new Token.ClosingBracket();
+    public Token? ClosingBracket { get; init; } = new Token.ClosingBracket();
 
     /// <summary>Trailing whitespace, line breaks and garbage after the closing bracket.</summary>
     public TriviaList TrailingTrivia { get; init; } = TriviaList.Empty;
 
-    private string ClosingBracketDebugView => ClosingBracket.Match(none: string.Empty, some: x => x.ToString());
+    private string ClosingBracketDebugView => ClosingBracket?.ToString() ?? string.Empty;
 
     public override void Accept(IIniNodeVisitor visitor) => visitor.Visit(this);
 
@@ -103,5 +103,5 @@ public sealed record TriviaList(IImmutableList<Token> Tokens)
 
     public override int GetHashCode() => Tokens.Count.GetHashCode();
 
-    private string DebuggerDisplay => Tokens.ConcatToString();
+    private string DebuggerDisplay => string.Concat(Tokens);
 }

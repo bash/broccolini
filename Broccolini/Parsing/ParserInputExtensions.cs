@@ -14,12 +14,22 @@ internal static class ParserInputExtensions
     }
 
     public static IImmutableList<Token> ReadOrEmpty(this IParserInput input, Func<Token, bool> predicate)
-        => input.ReadOrNone(predicate).Match(none: ImmutableArray<Token>.Empty, some: ImmutableArray.Create);
+        => input.ReadOrNull(predicate) is { } token
+            ? ImmutableArray.Create(token)
+            : ImmutableArray<Token>.Empty;
 
-    public static Option<Token> ReadOrNone(this IParserInput input, Func<Token, bool> predicate)
-        => Option.Return(input.Peek())
-            .Where(predicate)
-            .Select(_ => input.Read());
+    public static Token? ReadOrNull(this IParserInput input, Func<Token, bool> predicate)
+    {
+        var token = input.Peek();
+
+        if (predicate(token))
+        {
+            input.Read();
+            return token;
+        }
+
+        return null;
+    }
 
     public static IImmutableList<Token> ReadWhile(this IParserInput input, Func<Token, bool> predicate)
         => input.ReadWhile(static input => input.Peek(), predicate);

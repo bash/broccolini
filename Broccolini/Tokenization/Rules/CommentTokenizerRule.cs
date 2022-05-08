@@ -4,10 +4,10 @@ namespace Broccolini.Tokenization.Rules;
 
 internal sealed class CommentTokenizerRule : ITokenizerRule
 {
-    public Option<Token> Match(ITokenizerInput input, IReadOnlyList<Token> context)
-        => input.Peek() == ';' && IsActive(context)
+    public Token? Match(ITokenizerInput input, IReadOnlyList<Token> context)
+        => input.Peek(out var character) && character == ';' && IsActive(context)
             ? new Token.Comment(input.ReadWhile(static c => !CharPredicates.IsLineBreak(c)))
-            : Option<Token>.None();
+            : null;
 
     private static bool IsActive(IReadOnlyList<Token> context)
         => context.Count switch

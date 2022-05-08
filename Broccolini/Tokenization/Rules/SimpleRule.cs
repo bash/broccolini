@@ -13,14 +13,14 @@ internal sealed record SimpleRule : ITokenizerRule
         _token = token;
     }
 
-    public Option<Token> Match(ITokenizerInput input, IReadOnlyList<Token> context)
+    public Token? Match(ITokenizerInput input, IReadOnlyList<Token> context)
     {
-        if (input.Peek() == _expectedCharacter)
+        if (input.Peek(out var character) && character == _expectedCharacter)
         {
             input.Read();
             return _token;
         }
 
-        return Option<Token>.None();
+        return null;
     }
 }

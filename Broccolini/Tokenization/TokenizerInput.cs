@@ -7,10 +7,17 @@ internal sealed class TokenizerInput : ITokenizerInput
 
     public TokenizerInput(string input) => _input = input;
 
-    public Option<char> Peek(int lookAhead = 0)
-        => _position + lookAhead < _input.Length
-            ? _input[_position + lookAhead]
-            : Option<char>.None();
+    public bool Peek(out char character, int lookAhead = 0)
+    {
+        if (_position + lookAhead < _input.Length)
+        {
+            character = _input[_position + lookAhead];
+            return true;
+        }
+
+        character = default;
+        return false;
+    }
 
     public char Read()
         => _position < _input.Length

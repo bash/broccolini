@@ -11,8 +11,7 @@
         <None Include="*.ini" CopyToOutputDirectory="Always" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Funcky" Version="2.7.0" />
-        <PackageReference Include="Funcky.Analyzers" Version="1.1.0" PrivateAssets="all" />
+        <PackageReference Include="System.Collections.Immutable" Version="5.0.0" Condition="'$(TargetFramework)' == 'netstandard2.0'" />
         <PackageReference Include="IsExternalInit" Version="1.0.2" PrivateAssets="all" />
     </ItemGroup>
     <ItemGroup>

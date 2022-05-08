@@ -9,6 +9,7 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="FsCheck.Xunit" Version="2.16.4" />
+        <PackageReference Include="Funcky" Version="2.7.0" />
         <PackageReference Include="Funcky.Analyzers" Version="1.1.0" PrivateAssets="all" />
         <PackageReference Include="Funcky.Xunit" Version="1.0.0" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />

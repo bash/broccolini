@@ -24,12 +24,12 @@ internal sealed class Tokenizer
     {
         var tokens = ImmutableArray.CreateBuilder<Token>();
 
-        while (input.Peek().Match(none: false, some: True))
+        while (input.Peek(out _))
         {
             var token = rules
-                .WhereSelect(rule => rule.Match(input, tokens))
-                .FirstOrNone()
-                .GetOrElse(() => throw new InvalidOperationException("No matching rule found for token"));
+                .Select(rule => rule.Match(input, tokens))
+                .FirstOrDefault(result => result is not null)
+                    ?? throw new InvalidOperationException("No matching rule found for token");
             tokens.Add(token);
         }
 
