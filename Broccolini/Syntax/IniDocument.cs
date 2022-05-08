@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using System.Diagnostics;
 
-namespace Broccolini;
+namespace Broccolini.Syntax;
 
 public sealed record IniDocument(IImmutableList<IniNode> Children)
 {

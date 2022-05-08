@@ -1,3 +1,5 @@
+using Broccolini.Syntax;
+
 namespace Broccolini.Tokenization.Rules;
 
 internal sealed record SimpleRule : ITokenizerRule

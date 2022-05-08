@@ -1,9 +1,10 @@
 using Broccolini.Parsing;
+using Broccolini.Syntax;
 using Broccolini.Tokenization;
 
 namespace Broccolini;
 
-public static class IniDocumentParser
+public static class IniParser
 {
     public static IniDocument Parse(string input)
     {

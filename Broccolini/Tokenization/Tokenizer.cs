@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using Broccolini.Syntax;
 using Broccolini.Tokenization.Rules;
 
 namespace Broccolini.Tokenization;

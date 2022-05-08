@@ -5,7 +5,7 @@ using FsCheck.Xunit;
 using Funcky;
 using Funcky.Extensions;
 using Xunit;
-using static Broccolini.IniDocumentParser;
+using static Broccolini.IniParser;
 using static Broccolini.Test.TestData;
 
 namespace Broccolini.Test;

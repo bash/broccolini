@@ -1,4 +1,4 @@
-namespace Broccolini;
+namespace Broccolini.Syntax;
 
 public interface IIniNodeVisitor
 {

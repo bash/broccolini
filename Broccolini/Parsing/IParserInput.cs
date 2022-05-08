@@ -1,3 +1,5 @@
+using Broccolini.Syntax;
+
 namespace Broccolini.Parsing;
 
 internal interface IParserInput

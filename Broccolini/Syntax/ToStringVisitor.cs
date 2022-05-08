@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Broccolini;
+namespace Broccolini.Syntax;
 
 internal sealed class ToStringVisitor : IIniNodeVisitor
 {
