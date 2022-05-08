@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
+        <LangVersion>10.0</LangVersion>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <FunckyImplicitUsings>enable</FunckyImplicitUsings>
+        <WarningsAsErrors>nullable</WarningsAsErrors>
+    </PropertyGroup>
+    <ItemGroup>
+        <None Include="*.ini" CopyToOutputDirectory="Always" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Funcky" Version="2.7.0" />
+        <PackageReference Include="Funcky.Analyzers" Version="1.1.0" PrivateAssets="all" />
+        <PackageReference Include="IsExternalInit" Version="1.0.2" PrivateAssets="all" />
+    </ItemGroup>
+    <ItemGroup>
+        <InternalsVisibleTo Include="Broccolini.Test" />
+    </ItemGroup>
+</Project>

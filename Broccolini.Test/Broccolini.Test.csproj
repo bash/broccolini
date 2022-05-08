@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <FunckyImplicitUsings>enable</FunckyImplicitUsings>
+        <IsPackable>false</IsPackable>
+        <WarningsAsErrors>nullable</WarningsAsErrors>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="FsCheck.Xunit" Version="2.16.4" />
+        <PackageReference Include="Funcky.Analyzers" Version="1.1.0" PrivateAssets="all" />
+        <PackageReference Include="Funcky.Xunit" Version="1.0.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
+        <PackageReference Include="xunit" Version="2.4.1" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3" PrivateAssets="all" />
+        <PackageReference Include="coverlet.collector" Version="3.1.0" PrivateAssets="all" />
+        <PackageReference Include="Xunit.SkippableFact" Version="1.4.13" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\Broccolini\Broccolini.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="Resources/*" CopyToOutputDirectory="Always" />
+    </ItemGroup>
+</Project>
