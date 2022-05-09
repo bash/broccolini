@@ -27,14 +27,14 @@ public abstract record IniNode
     }
 }
 
-public abstract record KeyValueOrTriviaNode : IniNode
+public abstract record SectionChildNode : IniNode
 {
     public override string ToString() => base.ToString();
 }
 
 /// <summary>A key-value pair: <c>key = value</c>.</summary>
 [DebuggerDisplay("{Key}{EqualsSign}{Value}")]
-public sealed record KeyValueNode(string Key, string Value) : KeyValueOrTriviaNode
+public sealed record KeyValueNode(string Key, string Value) : SectionChildNode
 {
     /// <summary>Leading whitespace</summary>
     public TriviaList LeadingTrivia { get; init; } = TriviaList.Empty;
@@ -59,7 +59,7 @@ public sealed record KeyValueNode(string Key, string Value) : KeyValueOrTriviaNo
 
 /// <summary>A comment or an unrecognized line.</summary>
 [DebuggerDisplay("{Value}")]
-public sealed record TriviaNode(TriviaList Value) : KeyValueOrTriviaNode
+public sealed record TriviaNode(TriviaList Value) : SectionChildNode
 {
     public override void Accept(IIniNodeVisitor visitor) => visitor.Visit(this);
 
@@ -70,7 +70,7 @@ public sealed record TriviaNode(TriviaList Value) : KeyValueOrTriviaNode
 /// <code>[section]
 /// key = value</code></summary>
 [DebuggerDisplay("{OpeningBracket}{Name}{ClosingBracketDebugView}")]
-public sealed record SectionNode(string Name, IImmutableList<KeyValueOrTriviaNode> Children) : IniNode
+public sealed record SectionNode(string Name, IImmutableList<SectionChildNode> Children) : IniNode
 {
     /// <summary>Leading whitespace</summary>
     public TriviaList LeadingTrivia { get; init; } = TriviaList.Empty;

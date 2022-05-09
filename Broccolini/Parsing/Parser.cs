@@ -20,9 +20,9 @@ internal static class Parser
     private static IniNode ParseNode(IParserInput input)
         => IsSection(input)
             ? ParseSection(input)
-            : ParseKeyValueOrTriviaNode(input);
+            : ParseSectionChildNode(input);
 
-    private static KeyValueOrTriviaNode ParseKeyValueOrTriviaNode(IParserInput input)
+    private static SectionChildNode ParseSectionChildNode(IParserInput input)
         => IsKeyValue(input)
             ? ParseKeyValue(input)
             : ParseTrivia(input);
@@ -127,13 +127,13 @@ internal static class Parser
         return tokens.ToImmutable();
     }
 
-    private static IImmutableList<KeyValueOrTriviaNode> ParseSectionChildren(IParserInput input)
+    private static IImmutableList<SectionChildNode> ParseSectionChildren(IParserInput input)
     {
-        var nodes = ImmutableArray.CreateBuilder<KeyValueOrTriviaNode>();
+        var nodes = ImmutableArray.CreateBuilder<SectionChildNode>();
 
         while (input.Peek() is not Token.Epsilon && !IsSection(input))
         {
-            nodes.Add((KeyValueOrTriviaNode)ParseNode(input));
+            nodes.Add((SectionChildNode)ParseNode(input));
         }
 
         return nodes.ToImmutable();
