@@ -1,8 +1,5 @@
 namespace Broccolini.SemanticModel;
 
-public interface IDocument
+public interface IDocument : IReadOnlyDictionary<string, ISection>
 {
-    IReadOnlyDictionary<string, string> TopLevelKeys { get; }
-
-    IReadOnlyDictionary<string, ISection> Sections { get; }
 }
