@@ -32,12 +32,12 @@ public abstract record Token
         public override string ToString() => "=";
     }
 
-    public sealed record SingleQuotes : Token
+    public sealed record SingleQuote : Token
     {
         public override string ToString() => "'";
     }
 
-    public sealed record DoubleQuotes : Token
+    public sealed record DoubleQuote : Token
     {
         public override string ToString() => "\"";
     }

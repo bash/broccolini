@@ -13,8 +13,8 @@ internal sealed class Tokenizer
         new IdentifierRule(),
         new SimpleRule('[', new Token.OpeningBracket()),
         new SimpleRule(']', new Token.ClosingBracket()),
-        new SimpleRule('\'', new Token.SingleQuotes()),
-        new SimpleRule('\"', new Token.DoubleQuotes()),
+        new SimpleRule('\'', new Token.SingleQuote()),
+        new SimpleRule('\"', new Token.DoubleQuote()),
         new SimpleRule('=', new Token.EqualsSign()));
 
     public static IImmutableList<Token> Tokenize(ITokenizerInput input)

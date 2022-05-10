@@ -97,9 +97,9 @@ internal static class Parser
 
     private static (Token?, string, Token?) ParseQuotedValue(IParserInput input)
     {
-        var openingQuote = input.ReadOrNull(static t => t is Token.SingleQuotes or Token.DoubleQuotes);
+        var openingQuote = input.ReadOrNull(static t => t is Token.SingleQuote or Token.DoubleQuote);
         var value = string.Concat(ParseValue(input));
-        var closingQuote = input.ReadOrNull(static t => t is Token.SingleQuotes or Token.DoubleQuotes);
+        var closingQuote = input.ReadOrNull(static t => t is Token.SingleQuote or Token.DoubleQuote);
 
         static string ToString(Token? token) => token?.ToString() ?? string.Empty;
 
@@ -115,7 +115,7 @@ internal static class Parser
         while (true)
         {
             if (input.PeekIgnoreWhitespace() is Token.LineBreak or Token.Epsilon
-                || (input.Peek() is Token.DoubleQuotes or Token.SingleQuotes
+                || (input.Peek() is Token.DoubleQuote or Token.SingleQuote
                     && input.PeekIgnoreWhitespace(1) is Token.LineBreak or Token.Epsilon))
             {
                 break;
