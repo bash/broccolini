@@ -14,7 +14,9 @@ internal static class TestData
         => Sequence.Return(
             "; this is a comment",
             "    ; comment with leading whitespace",
-            "; comment with trailing whitespace      ");
+            "; comment with trailing whitespace      ",
+            "; key = value",
+            "; [section]");
 
     public static IEnumerable<string> LeadingNodes
         => Sequence.Return(

@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Broccolini.Syntax;
 using FsCheck;
 using FsCheck.Xunit;
@@ -16,7 +15,6 @@ public sealed class ParserTest
     {
         var document = Parse(leadingNode + input);
         var node = Assert.IsType<TriviaNode>(GetLastNode(document));
-        Assert.Contains(node.Value.Tokens, token => token is Token.Comment);
         Assert.Equal(input, node.ToString());
     }
 
@@ -24,9 +22,10 @@ public sealed class ParserTest
     public Property ParsesArbitraryComment(string commentValue)
     {
         var input = $"; {commentValue}";
-        var expectedNode = new TriviaNode(new TriviaList(ImmutableArray.Create<Token>(new Token.Comment(input))));
         var document = Parse(input);
-        return (document.Children.Count == 1 && document.Children.First() == expectedNode)
+        return (document.Children.Count == 1
+                && document.Children.First() is TriviaNode triviaNode
+                && triviaNode.ToString() == input)
             .ToProperty()
             .When(!input.Contains('\r') && !input.Contains('\n'));
     }

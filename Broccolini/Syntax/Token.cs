@@ -12,9 +12,9 @@ public abstract record Token
         public override string ToString() => Value;
     }
 
-    public sealed record Comment(string Value) : Token
+    public sealed record Semicolon : Token
     {
-        public override string ToString() => Value;
+        public override string ToString() => ";";
     }
 
     public sealed record OpeningBracket : Token

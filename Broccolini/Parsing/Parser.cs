@@ -23,12 +23,18 @@ internal static class Parser
             : ParseSectionChildNode(input);
 
     private static SectionChildNode ParseSectionChildNode(IParserInput input)
-        => IsKeyValue(input)
-            ? ParseKeyValue(input)
-            : ParseTrivia(input);
+        => input switch
+        {
+            _ when IsComment(input) => ParseTrivia(input),
+            _ when IsKeyValue(input) => ParseKeyValue(input),
+            _ => ParseTrivia(input),
+        };
 
     private static bool IsSection(IParserInput input)
         => input.PeekIgnoreWhitespace() is Token.OpeningBracket;
+
+    private static bool IsComment(IParserInput input)
+        => input.PeekIgnoreWhitespace() is Token.Semicolon;
 
     private static bool IsKeyValue(IParserInput input)
     {
