@@ -9,11 +9,6 @@ namespace Broccolini.Test;
 
 public sealed class SyntaxFactoryTests
 {
-    public SyntaxFactoryTests()
-    {
-        BroccoliniGenerators.Register();
-    }
-
     [Property]
     public Property ParsesCreatedSectionNodeOrThrows(NonNull<string> value)
     {
