@@ -49,7 +49,7 @@ public static class SyntaxFactory
             throw new ArgumentException($"Section name '{name}' contains one ore more invalid characters: line breaks and ] are not allowed", nameof(name));
         }
 
-        if (tokens.FirstOrDefault() is Token.WhiteSpace || tokens.LastOrDefault() is Token.WhiteSpace)
+        if (tokens is [Token.WhiteSpace, ..] or [.., Token.WhiteSpace])
         {
             throw new ArgumentException($"Section name '{name}' contains leading or trailing whitespace, which will not be preserved", nameof(name));
         }
@@ -64,17 +64,17 @@ public static class SyntaxFactory
             throw new ArgumentException($"Key '{key}' contains one ore more invalid characters: line breaks and = are not allowed", nameof(key));
         }
 
-        if (tokens.FirstOrDefault(static t => t is not Token.WhiteSpace) is Token.OpeningBracket)
+        if (tokens is [Token.OpeningBracket, ..] or [Token.WhiteSpace, Token.OpeningBracket, ..])
         {
             throw new ArgumentException($"Key '{key}' may not start with an opening bracket", nameof(key));
         }
 
-        if (tokens.FirstOrDefault(static t => t is not Token.WhiteSpace) is Token.Semicolon)
+        if (tokens is [Token.Semicolon, ..] or [Token.WhiteSpace, Token.Semicolon, ..])
         {
             throw new ArgumentException($"Key '{key}' may not start with a semicolon", nameof(key));
         }
 
-        if (tokens.FirstOrDefault() is Token.WhiteSpace || tokens.LastOrDefault() is Token.WhiteSpace)
+        if (tokens is [Token.WhiteSpace, ..] or [.., Token.WhiteSpace])
         {
             throw new ArgumentException($"Key '{key}' contains leading or trailing whitespace, which will not be preserved", nameof(key));
         }
@@ -91,14 +91,10 @@ public static class SyntaxFactory
     private static bool ShouldAddQuotesAroundValue(IReadOnlyList<Token> tokens)
     {
         bool HasLeadingOrTrailingWhitespace()
-            => (tokens.Count == 1 && tokens[0] is Token.WhiteSpace)
-               || (tokens.Count >= 2 && tokens[0] is Token.WhiteSpace)
-               || (tokens.Count >= 2 && tokens[tokens.Count - 1] is Token.WhiteSpace);
+            => tokens is [Token.WhiteSpace, ..] or [.., Token.WhiteSpace];
 
         bool IsQuoted()
-            => tokens.Count >= 2
-               && ((tokens[0], tokens[tokens.Count - 1]) is (Token.DoubleQuote, Token.DoubleQuote)
-                   || (tokens[0], tokens[tokens.Count - 1]) is (Token.SingleQuote, Token.SingleQuote));
+            => tokens is [Token.DoubleQuote, .., Token.DoubleQuote] or [Token.SingleQuote, .., Token.SingleQuote];
 
         return HasLeadingOrTrailingWhitespace() || IsQuoted();
     }
