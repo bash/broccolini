@@ -1,8 +1,7 @@
-using System.Collections.Immutable;
 using Broccolini.Syntax;
-using Broccolini.Tokenization;
 using Xunit;
 using static Broccolini.Test.TestData;
+using static Broccolini.Tokenization.Tokenizer;
 
 namespace Broccolini.Test;
 
@@ -28,7 +27,4 @@ public sealed class TokenizerTest
         => LineBreaks.SelectMany(_ => LineBreaks, ValueTuple.Create)
             .Except(Sequence.Return(("\r", "\n")))
             .ToTheoryData();
-
-    private static IImmutableList<Token> Tokenize(string input)
-        => Tokenizer.Tokenize(new TokenizerInput(input));
 }

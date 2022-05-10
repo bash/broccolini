@@ -32,7 +32,7 @@ public abstract record SectionChildNode : IniNode
     public override string ToString() => base.ToString();
 }
 
-/// <summary>A key-value pair: <c>key = value</c>.</summary>
+/// <summary>A key-value pair: <c>key = value</c>. Use <see cref="SyntaxFactory.KeyValue"/> to create this node.</summary>
 [DebuggerDisplay("{Key}{EqualsSign}{Value}")]
 public sealed record KeyValueNode(string Key, string Value) : SectionChildNode
 {
@@ -68,7 +68,8 @@ public sealed record TriviaNode(TriviaList Value) : SectionChildNode
 
 /// <summary>A section:
 /// <code>[section]
-/// key = value</code></summary>
+/// key = value</code>
+/// Use <see cref="SyntaxFactory.Section"/> to create this node.</summary>
 [DebuggerDisplay("{OpeningBracket}{Name}{ClosingBracketDebugView}")]
 public sealed record SectionNode(string Name, IImmutableList<SectionChildNode> Children) : IniNode
 {
@@ -90,12 +91,42 @@ public sealed record SectionNode(string Name, IImmutableList<SectionChildNode> C
 
     public override void Accept(IIniNodeVisitor visitor) => visitor.Visit(this);
 
+    public bool Equals(SectionNode? other)
+        => other is not null
+           && Name == other.Name
+           && Children.SequenceEqual(other.Children)
+           && LeadingTrivia == other.LeadingTrivia
+           && OpeningBracket == other.OpeningBracket
+           && TriviaAfterOpeningBracket == other.TriviaAfterOpeningBracket
+           && TriviaBeforeClosingBracket == other.TriviaBeforeClosingBracket
+           && ClosingBracket == other.ClosingBracket
+           && TrailingTrivia == other.TrailingTrivia
+           && LineBreak == other.LineBreak;
+
+    public override int GetHashCode()
+        => HashCode.Combine(
+            Name,
+            Children.Count,
+            LeadingTrivia,
+            OpeningBracket,
+            TriviaAfterOpeningBracket,
+            TriviaBeforeClosingBracket,
+            ClosingBracket,
+            HashCode.Combine(
+                TrailingTrivia,
+                LineBreak));
+
     public override string ToString() => base.ToString();
 }
 
 [DebuggerDisplay("\"{DebuggerDisplay}\"")]
 public sealed record TriviaList(IImmutableList<Token> Tokens)
 {
+    public TriviaList(params Token[] tokens)
+        : this(tokens.ToImmutableArray())
+    {
+    }
+
     public static TriviaList Empty { get; } = new(ImmutableArray<Token>.Empty);
 
     public bool Equals(TriviaList? other)

@@ -17,8 +17,8 @@ internal sealed class Tokenizer
         new SimpleRule('\"', new Token.DoubleQuote()),
         new SimpleRule('=', new Token.EqualsSign()));
 
-    public static IImmutableList<Token> Tokenize(ITokenizerInput input)
-        => Tokenize(input, Rules);
+    public static IImmutableList<Token> Tokenize(string input)
+        => Tokenize(new TokenizerInput(input), Rules);
 
     private static IImmutableList<Token> Tokenize(ITokenizerInput input, IReadOnlyList<ITokenizerRule> rules)
     {

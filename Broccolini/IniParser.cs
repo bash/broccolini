@@ -8,7 +8,7 @@ public static class IniParser
 {
     public static IniDocument Parse(string input)
     {
-        var tokens = Tokenizer.Tokenize(new TokenizerInput(input));
+        var tokens = Tokenizer.Tokenize(input);
         return Parser.Parse(new ParserInput(tokens));
     }
 }

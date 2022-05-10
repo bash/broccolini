@@ -44,6 +44,10 @@ internal static class TestData
 
     public static IEnumerable<KeyValuePairWithKeyAndValue> KeyValuePairsWithKeyAndValue
         => Sequence.Return(
+            new KeyValuePairWithKeyAndValue("=", string.Empty, string.Empty),
+            new KeyValuePairWithKeyAndValue("=\" \"", string.Empty, " "),
+            new KeyValuePairWithKeyAndValue("=\"\u0011\"", string.Empty, "\u0011"),
+            new KeyValuePairWithKeyAndValue(" = value", string.Empty, "value"),
             new KeyValuePairWithKeyAndValue("key =", "key", string.Empty),
             new KeyValuePairWithKeyAndValue("key=value", "key", "value"),
             new KeyValuePairWithKeyAndValue("  key  =  value  ", "key", "value"),
