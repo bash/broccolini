@@ -27,7 +27,7 @@ internal sealed class Tokenizer
         while (input.Peek(out _))
         {
             var token = rules
-                .Select(rule => rule.Match(input, tokens))
+                .Select(rule => rule.Match(input))
                 .FirstOrDefault(result => result is not null)
                     ?? throw new InvalidOperationException("No matching rule found for token");
             tokens.Add(token);

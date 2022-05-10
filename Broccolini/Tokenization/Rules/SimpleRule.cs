@@ -13,7 +13,7 @@ internal sealed record SimpleRule : ITokenizerRule
         _token = token;
     }
 
-    public Token? Match(ITokenizerInput input, IReadOnlyList<Token> context)
+    public Token? Match(ITokenizerInput input)
     {
         if (input.Peek(out var character) && character == _expectedCharacter)
         {

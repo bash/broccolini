@@ -5,7 +5,7 @@ namespace Broccolini.Tokenization.Rules;
 
 internal sealed class LineBreakRule : ITokenizerRule
 {
-    public Token? Match(ITokenizerInput input, IReadOnlyList<Token> context)
+    public Token? Match(ITokenizerInput input)
     {
         if (input.Peek(out var firstCharacter) && firstCharacter == '\r' && input.Peek(out var secondCharacter, 1) && secondCharacter == '\n')
         {
