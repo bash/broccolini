@@ -68,6 +68,7 @@ public sealed class SyntaxFactoryTests
     [InlineData("key", "'value' ")]
     [InlineData("key", " 'value'")]
     [InlineData("key", " 'value' ")]
+    [InlineData("key", "    ")]
     public void ParsesCreatedKeyValueNode(string key, string value)
     {
         var node = KeyValue(key, value);
