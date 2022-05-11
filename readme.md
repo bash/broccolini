@@ -1,9 +1,39 @@
 # Broccolini 🥦
 Broccolini is a non-destructive parser for INI files.
-The main goal is compatibility with the INI parsing present in Windows OS ([`GetPrivateProfileString`] and friends).
+The main goal is compatibility with the INI format used in Windows OS ([`GetPrivateProfileString`] and friends).
+
+## Usage
+
+<details>
+<summary>INI file used in examples</summary>
+
+```ini
+[database]
+server = 192.0.2.62
+port = 1234
+```
+
+</details>
+
+### Reading
+```cs
+var syntax = IniParser.Parse(File.ReadAllText("config.ini"));
+var document = syntax.ToSemanticModel();
+string databaseServer = document["database"]["server"];
+string databasePort = document["database"]["port"];
+```
+
+## Editing
+```cs
+var syntax = IniParser.Parse(File.ReadAllText("config.ini"));
+var updated = syntax
+    .WithSection("owner", section => section.WithKeyValue("name", "John Doe"))
+    .WithSection("database", section => section.RemoveKeyValue("port"));
+File.WriteAllText("config.ini", updated.ToString());
+```
 
 ## Goals
-* Compatibiliy with INI parsing in Windows OS.
+* Compatibiliy with INI format in Windows OS.
 * Roundtrips (`Parse` -> `ToString`) should preserve everything.
 * Editing should preserve as much (whitespace, comments, etc.) as possible.
 * An extensive test suite.
