@@ -30,6 +30,7 @@ internal static class TestData
         => Sequence.Return(
             new SectionWithName("[", string.Empty),
             new SectionWithName("[section", "section"),
+            new SectionWithName("[Brötli", "Brötli"),
             new SectionWithName("[section =", "section ="),
             new SectionWithName("[section with \t\v\f whitespace inside", "section with \t\v\f whitespace inside"),
             new SectionWithName("[[[[[section", "[[[[section"),

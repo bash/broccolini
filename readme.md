@@ -29,7 +29,7 @@ var syntax = IniParser.Parse(File.ReadAllText("config.ini"));
 var updated = syntax
     .WithSection("owner", section => section.WithKeyValue("name", "John Doe"))
     .UpdateSection("database", section => section.RemoveKeyValue("port"));
-File.WriteAllText("config.ini", updated.ToString());
+File.WriteAllText("config.ini", updated.ToString(), Encoding.Unicode);
 ```
 
 ## Goals
