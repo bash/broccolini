@@ -29,7 +29,7 @@ public sealed class RoundtripTest
             CommentNodes,
             GarbageNodes,
             LeadingNodes,
-            LineBreaks,
+            NewLines,
             SectionsWithNames.Select(s => s.Input),
             KeyValuePairsWithKeyAndValue.Select(s => s.Input)).ToTheoryData();
 

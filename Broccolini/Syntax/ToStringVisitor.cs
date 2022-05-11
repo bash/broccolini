@@ -27,13 +27,13 @@ internal sealed class ToStringVisitor : IIniNodeVisitor
         _stringBuilder.Append(keyValueNode.Value);
         VisitToken(keyValueNode.ClosingQuote);
         VisitTrivia(keyValueNode.TrailingTrivia);
-        VisitToken(keyValueNode.LineBreak);
+        VisitToken(keyValueNode.NewLine);
     }
 
     public void Visit(TriviaNode triviaNode)
     {
         VisitTrivia(triviaNode.Value);
-        VisitToken(triviaNode.LineBreak);
+        VisitToken(triviaNode.NewLine);
     }
 
     public void Visit(SectionNode sectionNode)
@@ -45,7 +45,7 @@ internal sealed class ToStringVisitor : IIniNodeVisitor
         VisitTrivia(sectionNode.TriviaBeforeClosingBracket);
         VisitToken(sectionNode.ClosingBracket);
         VisitTrivia(sectionNode.TrailingTrivia);
-        VisitToken(sectionNode.LineBreak);
+        VisitToken(sectionNode.NewLine);
         Visit(sectionNode.Children);
     }
 

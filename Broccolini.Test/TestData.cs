@@ -39,7 +39,7 @@ internal static class TestData
             .SelectMany(VaryTrailingWhitespace)
             .SelectMany(VaryClosingBracket)
             .SelectMany(VaryTrailingWhitespace)
-            .SelectMany(VaryLineBreak)
+            .SelectMany(VaryNewLines)
             .Distinct();
 
     public static IEnumerable<KeyValuePairWithKeyAndValue> KeyValuePairsWithKeyAndValue
@@ -64,7 +64,7 @@ internal static class TestData
             .Concat(KeyValuePairsWithQuotes);
             // TODO: vary leading and trailing whitespace and line break
 
-    public static IEnumerable<string> LineBreaks => Sequence.Return("\r\n", "\r", "\n");
+    public static IEnumerable<string> NewLines => Sequence.Return("\r\n", "\r", "\n");
 
     private static IEnumerable<KeyValuePairWithKeyAndValue> KeyValuePairsWithQuotes
         => Sequence.Return(
@@ -107,7 +107,7 @@ internal static class TestData
             sectionWithName,
             sectionWithName with { Input = sectionWithName.Input + " \t\v\f " });
 
-    private static IEnumerable<SectionWithName> VaryLineBreak(SectionWithName sectionWithName)
+    private static IEnumerable<SectionWithName> VaryNewLines(SectionWithName sectionWithName)
         => Sequence.Return(
             sectionWithName,
             sectionWithName with { Input = sectionWithName.Input + "\r\n" });

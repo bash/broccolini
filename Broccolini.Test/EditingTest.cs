@@ -42,7 +42,7 @@ public sealed class EditingTest
         => Sequence.Return(
             ($"[section]{Environment.NewLine}[new section]", "[section]"),
             ("[section]\n[new section]", "[section]\n"))
-            .Concat(LineBreaks.Select(newLine => ($"; line 1{newLine};line 2{newLine}[new section]", $"; line 1{newLine};line 2")))
+            .Concat(NewLines.Select(newLine => ($"; line 1{newLine};line 2{newLine}[new section]", $"; line 1{newLine};line 2")))
             .ToTheoryData();
 
     [Fact]
@@ -60,7 +60,7 @@ public sealed class EditingTest
         Assert.Equal(expected.ReplaceLineEndings(), updatedDocument.ToString());
     }
 
-    public static TheoryData<string> NewLineData() => LineBreaks.ToTheoryData();
+    public static TheoryData<string> NewLineData() => NewLines.ToTheoryData();
 
     [Theory]
     [MemberData(nameof(AppendsKeyToExistingSectionData))]
@@ -105,7 +105,7 @@ public sealed class EditingTest
              """
             ))
             .AsEnumerable()
-            .SelectMany(_ => LineBreaks, (data, newLine) => (data.Item1.ReplaceLineEndings(newLine), data.Item2.ReplaceLineEndings(newLine)))
+            .SelectMany(_ => NewLines, (data, newLine) => (data.Item1.ReplaceLineEndings(newLine), data.Item2.ReplaceLineEndings(newLine)))
             .ToTheoryData();
 
     [Fact]
@@ -271,14 +271,14 @@ public sealed class EditingTest
         [Fact]
         public void UsesNativeNewLinesForEmptyDocument()
         {
-            Assert.Equal(new Token.LineBreak(Environment.NewLine), IniDocument.Empty.DetectNewLine());
+            Assert.Equal(new Token.NewLine(Environment.NewLine), IniDocument.Empty.DetectNewLine());
         }
 
         [Theory]
         [MemberData(nameof(NewLineData))]
         public void UsesNewLineOfFirstNode(string newLine, string input)
         {
-            Assert.Equal(new Token.LineBreak(newLine), Parse(input).DetectNewLine());
+            Assert.Equal(new Token.NewLine(newLine), Parse(input).DetectNewLine());
         }
 
         public static TheoryData<string, string> NewLineData()
@@ -287,7 +287,7 @@ public sealed class EditingTest
                 "; comment\n",
                 "[section]\n",
                 "[section]\nkey = value")
-                .SelectMany(_ => LineBreaks.AsEnumerable(), (input, newLine) => (newLine, input.ReplaceLineEndings(newLine)))
+                .SelectMany(_ => NewLines.AsEnumerable(), (input, newLine) => (newLine, input.ReplaceLineEndings(newLine)))
                 .ToTheoryData();
     }
 }

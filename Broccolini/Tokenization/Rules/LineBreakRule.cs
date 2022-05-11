@@ -3,7 +3,7 @@ using static Broccolini.Tokenization.Rules.CharPredicates;
 
 namespace Broccolini.Tokenization.Rules;
 
-internal sealed class LineBreakRule : ITokenizerRule
+internal sealed class NewLineRule : ITokenizerRule
 {
     public Token? Match(ITokenizerInput input)
     {
@@ -11,12 +11,12 @@ internal sealed class LineBreakRule : ITokenizerRule
         {
             input.Read();
             input.Read();
-            return new Token.LineBreak("\r\n");
+            return new Token.NewLine("\r\n");
         }
 
-        if (input.Peek(out var character) && IsLineBreak(character))
+        if (input.Peek(out var character) && IsNewLine(character))
         {
-            return new Token.LineBreak(input.Read().ToString());
+            return new Token.NewLine(input.Read().ToString());
         }
 
         return null;

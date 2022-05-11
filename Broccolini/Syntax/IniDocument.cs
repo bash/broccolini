@@ -33,7 +33,7 @@ public abstract record IniNode
 {
     internal IniNode() { }
 
-    public Token? LineBreak { get; init; }
+    public Token? NewLine { get; init; }
 
     public abstract void Accept(IIniNodeVisitor visitor);
 
@@ -119,7 +119,7 @@ public sealed record SectionNode(string Name, IImmutableList<SectionChildNode> C
            && TriviaBeforeClosingBracket == other.TriviaBeforeClosingBracket
            && ClosingBracket == other.ClosingBracket
            && TrailingTrivia == other.TrailingTrivia
-           && LineBreak == other.LineBreak;
+           && NewLine == other.NewLine;
 
     public override int GetHashCode()
         => HashCode.Combine(
@@ -132,7 +132,7 @@ public sealed record SectionNode(string Name, IImmutableList<SectionChildNode> C
             ClosingBracket,
             HashCode.Combine(
                 TrailingTrivia,
-                LineBreak));
+                NewLine));
 
     public override string ToString() => base.ToString();
 }

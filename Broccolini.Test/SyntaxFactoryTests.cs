@@ -32,7 +32,7 @@ public sealed class SyntaxFactoryTests
     [InlineData("\tfoo")]
     [InlineData("\vfoo")]
     [InlineData("\ffoo")]
-    [MemberData(nameof(LineBreaksData))]
+    [MemberData(nameof(NewLinesData))]
     public void ThrowsWhenSectionNameWouldNotBePreserved(string value)
     {
         Assert.Throws<ArgumentException>(() => Section(value));
@@ -100,18 +100,18 @@ public sealed class SyntaxFactoryTests
     [InlineData("key =")]
     [InlineData("; comment")]
     [InlineData(" ; comment")]
-    [MemberData(nameof(LineBreaksData))]
+    [MemberData(nameof(NewLinesData))]
     public void ThrowsWhenKeyIsInvalid(string key)
     {
         Assert.Throws<ArgumentException>(() => KeyValue(key, "value"));
     }
 
     [Theory]
-    [MemberData(nameof(LineBreaksData))]
+    [MemberData(nameof(NewLinesData))]
     public void ThrowsWhenValueIsInvalid(string value)
     {
         Assert.Throws<ArgumentException>(() => KeyValue("key", value));
     }
 
-    private static TheoryData<string> LineBreaksData() => LineBreaks.ToTheoryData();
+    private static TheoryData<string> NewLinesData() => NewLines.ToTheoryData();
 }

@@ -7,7 +7,7 @@ namespace Broccolini.Tokenization;
 internal sealed class Tokenizer
 {
     private static readonly IImmutableList<ITokenizerRule> Rules = ImmutableArray.Create<ITokenizerRule>(
-        new LineBreakRule(),
+        new NewLineRule(),
         new WhiteSpaceRule(),
         new IdentifierRule(),
         new SimpleRule(';', new Token.Semicolon()),

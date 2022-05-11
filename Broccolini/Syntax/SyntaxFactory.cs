@@ -44,7 +44,7 @@ public static class SyntaxFactory
     {
         var tokens = Tokenize(name);
 
-        if (tokens.Any(static t => t is Token.LineBreak or Token.ClosingBracket))
+        if (tokens.Any(static t => t is Token.NewLine or Token.ClosingBracket))
         {
             throw new ArgumentException($"Section name '{name}' contains one ore more invalid characters: line breaks and ] are not allowed", nameof(name));
         }
@@ -59,7 +59,7 @@ public static class SyntaxFactory
     {
         var tokens = Tokenize(key);
 
-        if (tokens.Any(static t => t is Token.LineBreak or Token.EqualsSign))
+        if (tokens.Any(static t => t is Token.NewLine or Token.EqualsSign))
         {
             throw new ArgumentException($"Key '{key}' contains one ore more invalid characters: line breaks and = are not allowed", nameof(key));
         }
@@ -82,7 +82,7 @@ public static class SyntaxFactory
 
     private static void ValidateValue(string value, IReadOnlyList<Token> tokens)
     {
-        if (tokens.Any(static t => t is Token.LineBreak))
+        if (tokens.Any(static t => t is Token.NewLine))
         {
             throw new ArgumentException($"Value '{value}' contains one ore more invalid characters: line breaks are not allowed", nameof(value));
         }

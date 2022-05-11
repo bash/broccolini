@@ -30,20 +30,20 @@ internal static class NewLineExtensions
         };
 
     public static TriviaNode EnsureTrailingNewLine(this TriviaNode node, Token newLine)
-        => node.LineBreak is null
-            ? node with { LineBreak = newLine }
+        => node.NewLine is null
+            ? node with { NewLine = newLine }
             : node;
 
     public static KeyValueNode EnsureTrailingNewLine(this KeyValueNode node, Token newLine)
-        => node.LineBreak is null
-            ? node with { LineBreak = newLine }
+        => node.NewLine is null
+            ? node with { NewLine = newLine }
             : node;
 
     public static SectionNode EnsureTrailingNewLine(this SectionNode node, Token newLine)
         => node switch
         {
             { Children: { Count: >=1 } children } => node with { Children = children.ReplaceLast(n => EnsureTrailingNewLine(n, newLine)) },
-            { Children.Count: 0, LineBreak: null } => node with { LineBreak = newLine },
+            { Children.Count: 0, NewLine: null } => node with { NewLine = newLine },
             _ => node,
         };
 

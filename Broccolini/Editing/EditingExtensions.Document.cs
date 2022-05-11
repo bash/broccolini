@@ -6,7 +6,7 @@ namespace Broccolini.Editing;
 
 public static partial class EditingExtensions
 {
-    private static Token.LineBreak DefaultNewLine = new(Environment.NewLine);
+    private static Token.NewLine DefaultNewLine = new(Environment.NewLine);
 
     /// <summary>Appends or updates a section with the given name.</summary>
     [Pure]
