@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30114.105
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32421.90
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Broccolini", "Broccolini\Broccolini.csproj", "{6871BD28-A5A8-4016-8A86-59E315F7EA1F}"
 EndProject
@@ -28,9 +28,6 @@ Global
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{6871BD28-A5A8-4016-8A86-59E315F7EA1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6871BD28-A5A8-4016-8A86-59E315F7EA1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
@@ -56,5 +53,11 @@ Global
 		{EC4270EB-4702-415F-BBC0-D2F9DD38FE6E}.Release|x64.Build.0 = Release|Any CPU
 		{EC4270EB-4702-415F-BBC0-D2F9DD38FE6E}.Release|x86.ActiveCfg = Release|Any CPU
 		{EC4270EB-4702-415F-BBC0-D2F9DD38FE6E}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0EB226FB-C4FA-44CC-BC62-1F7532C196A0}
 	EndGlobalSection
 EndGlobal
