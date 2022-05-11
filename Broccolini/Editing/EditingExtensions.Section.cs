@@ -28,7 +28,8 @@ public static partial class EditingExtensions
 
     /// <summary>Removes all entries from the section with the given key.</summary>
     [Pure]
-    public static SectionNode RemoveKeyValue(this SectionNode sectionNode, string key) => throw new NotImplementedException();
+    public static SectionNode RemoveKeyValue(this SectionNode sectionNode, string key)
+        => sectionNode with { Children = sectionNode.Children.RemoveAll(node => node is KeyValueNode { Key: var k } && k == key) };
 
     private static SectionNode AppendChild(this SectionNode sectionNode, SectionChildNode node)
     {

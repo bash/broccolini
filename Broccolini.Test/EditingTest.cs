@@ -100,6 +100,47 @@ public sealed class EditingTest
         Assert.Equal(expected.ReplaceLineEndings(), updatedDocument.ToString());
     }
 
+    [Theory]
+    [InlineData(
+        """
+        [section]
+        key2 = value
+
+        """,
+        """
+        [section]
+        key = value
+        key2 = value
+        key=value 2
+        """)]
+    [InlineData(
+        """
+        [section]
+        [section]
+        key = value 2
+        """,
+        """
+        [section]
+        key = value
+        [section]
+        key = value 2
+        """)]
+    [InlineData(
+        """
+        [section]
+
+        """,
+        """
+        [section]
+        key = value
+        """)]
+    public void RemovesKeyFromSection(string expected, string input)
+    {
+        var parsed = Parse(input);
+        var edited = parsed.UpdateSection("section", section => section.RemoveKeyValue("key"));
+        Assert.Equal(expected, edited.ToString());
+    }
+
     public sealed class WithValue
     {
         [Theory]
