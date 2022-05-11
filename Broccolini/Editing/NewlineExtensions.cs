@@ -5,7 +5,7 @@ namespace Broccolini.Editing;
 
 internal static class NewLineExtensions
 {
-    public static IniDocument EnsureTrailingNewLine(this IniDocument document, Token.LineBreak newLine)
+    public static IniDocument EnsureTrailingNewLine(this IniDocument document, Token newLine)
         => document switch
         {
             { Sections: { Count: >=1 } sections } => document with { Sections = document.Sections.ReplaceLast(n => EnsureTrailingNewLine(n, newLine)) },
@@ -13,7 +13,7 @@ internal static class NewLineExtensions
             _ => document,
         };
 
-    public static IniNode EnsureTrailingNewLine(this IniNode node, Token.LineBreak newLine)
+    public static IniNode EnsureTrailingNewLine(this IniNode node, Token newLine)
         => node switch
         {
             SectionNode sectionNode => EnsureTrailingNewLine(sectionNode, newLine),
@@ -21,7 +21,7 @@ internal static class NewLineExtensions
             _ => throw new InvalidOperationException("Unreachable"),
         };
 
-    public static SectionChildNode EnsureTrailingNewLine(this SectionChildNode node, Token.LineBreak newLine)
+    public static SectionChildNode EnsureTrailingNewLine(this SectionChildNode node, Token newLine)
         => node switch
         {
             TriviaNode triviaNode => EnsureTrailingNewLine(triviaNode, newLine),
@@ -29,17 +29,17 @@ internal static class NewLineExtensions
             _ => throw new InvalidOperationException("Unreachable"),
         };
 
-    public static TriviaNode EnsureTrailingNewLine(this TriviaNode node, Token.LineBreak newLine)
+    public static TriviaNode EnsureTrailingNewLine(this TriviaNode node, Token newLine)
         => node.LineBreak is null
             ? node with { LineBreak = newLine }
             : node;
 
-    public static KeyValueNode EnsureTrailingNewLine(this KeyValueNode node, Token.LineBreak newLine)
+    public static KeyValueNode EnsureTrailingNewLine(this KeyValueNode node, Token newLine)
         => node.LineBreak is null
             ? node with { LineBreak = newLine }
             : node;
 
-    public static SectionNode EnsureTrailingNewLine(this SectionNode node, Token.LineBreak newLine)
+    public static SectionNode EnsureTrailingNewLine(this SectionNode node, Token newLine)
         => node switch
         {
             { Children: { Count: >=1 } children } => node with { Children = children.ReplaceLast(n => EnsureTrailingNewLine(n, newLine)) },

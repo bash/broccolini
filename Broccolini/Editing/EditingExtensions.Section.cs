@@ -33,7 +33,7 @@ public static partial class EditingExtensions
 
     private static SectionNode AppendChild(this SectionNode sectionNode, SectionChildNode node)
     {
-        var sectionWithNewLine = sectionNode.EnsureTrailingNewLine(DefaultNewLine);
+        var sectionWithNewLine = sectionNode.EnsureTrailingNewLine(sectionNode.DetectNewLine());
         return sectionWithNewLine with { Children = sectionWithNewLine.Children.Add(node) };
     }
 }

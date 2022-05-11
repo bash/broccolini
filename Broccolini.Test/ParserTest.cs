@@ -75,7 +75,7 @@ public sealed class ParserTest
         => KeyValuePairsWithKeyAndValue.Select(s => (s.Key, s.Value, s.Input)).ToTheoryData();
 
     private static IniNode GetLastNode(IniDocument document)
-        => GetLastNode(((IEnumerable<IniNode>)document.NodesOutsideSection).Concat(document.Sections));
+        => GetLastNode(document.GetNodes());
 
     private static IniNode GetLastNode(IEnumerable<IniNode> nodes)
         => nodes.Last() switch

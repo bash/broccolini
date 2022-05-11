@@ -2,6 +2,7 @@ using Xunit;
 using Broccolini.Editing;
 using Broccolini.Syntax;
 using static Broccolini.IniParser;
+using static Broccolini.Test.TestData;
 
 namespace Broccolini.Test;
 
@@ -29,20 +30,20 @@ public sealed class EditingTest
     }
 
     [Theory]
-    [InlineData("[section]")]
-    [InlineData("[section]\n")]
-    public void AppendsSection(string input)
+    [MemberData(nameof(AppendSectionData))]
+    public void AppendsSection(string expected, string input)
     {
-        const string expected =
-            """
-            [section]
-            [new section]
-            """;
-
         var updatedDocument = Parse(input.ReplaceLineEndings()).WithSection("new section", Identity);
 
         Assert.Equal(expected.ReplaceLineEndings(), updatedDocument.ToString());
     }
+
+    public static TheoryData<string, string> AppendSectionData()
+        => Sequence.Return(
+            ($"[section]{Environment.NewLine}[new section]", "[section]"),
+            ("[section]\n[new section]", "[section]\n"))
+            .Concat(LineBreaks.Select(newLine => ($"; line 1{newLine};line 2{newLine}[new section]", $"; line 1{newLine};line 2")))
+            .ToTheoryData();
 
     [Fact]
     public void AppendsKeyToNewSection()
@@ -59,29 +60,10 @@ public sealed class EditingTest
         Assert.Equal(expected.ReplaceLineEndings(), updatedDocument.ToString());
     }
 
+    public static TheoryData<string> NewLineData() => LineBreaks.ToTheoryData();
+
     [Theory]
-    [InlineData(
-         """
-         [section]
-         key = value
-         new key = value
-         """,
-         """
-         [section]
-         key = value
-         """)]
-    [InlineData(
-         """
-         [section]
-         key = value
-         new key = value
-         [other section]
-         """,
-         """
-         [section]
-         key = value
-         [other section]
-         """)]
+    [MemberData(nameof(AppendsKeyToExistingSectionData))]
     public void AppendsKeyToExistingSection(string expected, string input)
     {
         var updatedDocument = Parse(input.ReplaceLineEndings())
@@ -89,6 +71,42 @@ public sealed class EditingTest
 
         Assert.Equal(expected.ReplaceLineEndings(), updatedDocument.ToString());
     }
+
+    public static TheoryData<string, string> AppendsKeyToExistingSectionData()
+        => Sequence.Return(
+             ("""
+             [section]
+             new key = value
+             """,
+             """
+             [section]
+
+             """),
+            ("""
+             [section]
+             key = value
+             new key = value
+             """,
+             """
+             [section]
+             key = value
+             """),
+            (
+             """
+             [section]
+             key = value
+             new key = value
+             [other section]
+             """,
+             """
+             [section]
+             key = value
+             [other section]
+             """
+            ))
+            .AsEnumerable()
+            .SelectMany(_ => LineBreaks, (data, newLine) => (data.Item1.ReplaceLineEndings(newLine), data.Item2.ReplaceLineEndings(newLine)))
+            .ToTheoryData();
 
     [Fact]
     public void ReplacesValueInExistingSection()
@@ -246,5 +264,30 @@ public sealed class EditingTest
             var parsed = Assert.IsType<KeyValueNode>(Assert.Single(Parse(input).NodesOutsideSection));
             Assert.Equal(expected, parsed.WithValue("new value").ToString());
         }
+    }
+
+    public sealed class DetectNewLine
+    {
+        [Fact]
+        public void UsesNativeNewLinesForEmptyDocument()
+        {
+            Assert.Equal(new Token.LineBreak(Environment.NewLine), IniDocument.Empty.DetectNewLine());
+        }
+
+        [Theory]
+        [MemberData(nameof(NewLineData))]
+        public void UsesNewLineOfFirstNode(string newLine, string input)
+        {
+            Assert.Equal(new Token.LineBreak(newLine), Parse(input).DetectNewLine());
+        }
+
+        public static TheoryData<string, string> NewLineData()
+            => Sequence.Return(
+                "garbage\n",
+                "; comment\n",
+                "[section]\n",
+                "[section]\nkey = value")
+                .SelectMany(_ => LineBreaks.AsEnumerable(), (input, newLine) => (newLine, input.ReplaceLineEndings(newLine)))
+                .ToTheoryData();
     }
 }
