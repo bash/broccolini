@@ -13,7 +13,7 @@ public static partial class EditingExtensions
     public static IniDocument WithSection(this IniDocument document, string sectionName, Func<SectionNode, SectionNode> updateSection)
         => document.Sections.TryUpdateFirst(
             section => section.Name == sectionName,
-            updateSection,
+            EnsureTrailingNewLine(updateSection),
             out var updatedSections)
                 ? document with { Sections = updatedSections }
                 : document.AppendSection(updateSection(Section(sectionName)));
@@ -23,7 +23,7 @@ public static partial class EditingExtensions
     public static IniDocument UpdateSection(this IniDocument document, string sectionName, Func<SectionNode, SectionNode> updateSection)
         => document.Sections.TryUpdateFirst(
             section => section.Name == sectionName,
-            updateSection,
+            EnsureTrailingNewLine(updateSection),
             out var updatedSections)
                 ? document with { Sections = updatedSections }
                 : document;
@@ -55,4 +55,10 @@ public static partial class EditingExtensions
         var documentWithNewLine = document.EnsureTrailingNewLine(DefaultNewLine);
         return documentWithNewLine with { Sections = documentWithNewLine.Sections.Add(node) };
     }
+
+    private static Func<SectionNode, bool, SectionNode> EnsureTrailingNewLine(Func<SectionNode, SectionNode> updateSection)
+        => (section, isLast)
+            => isLast
+                ? updateSection(section)
+                : updateSection(section).EnsureTrailingNewLine(DefaultNewLine);
 }

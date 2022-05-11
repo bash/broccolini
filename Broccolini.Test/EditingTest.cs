@@ -59,21 +59,31 @@ public sealed class EditingTest
         Assert.Equal(expected.ReplaceLineEndings(), updatedDocument.ToString());
     }
 
-    [Fact]
-    public void AppendsKeyToExistingSection()
+    [Theory]
+    [InlineData(
+         """
+         [section]
+         key = value
+         new key = value
+         """,
+         """
+         [section]
+         key = value
+         """)]
+    [InlineData(
+         """
+         [section]
+         key = value
+         new key = value
+         [other section]
+         """,
+         """
+         [section]
+         key = value
+         [other section]
+         """)]
+    public void AppendsKeyToExistingSection(string expected, string input)
     {
-        const string input =
-            """
-            [section]
-            key = value
-            """;
-        const string expected =
-            """
-            [section]
-            key = value
-            new key = value
-            """;
-
         var updatedDocument = Parse(input.ReplaceLineEndings())
             .WithSection("section", section => section.WithKeyValue("new key", "value"));
 
