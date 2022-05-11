@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Runtime.Versioning;
 using Broccolini.SemanticModel;
+using static Broccolini.SemanticModel.KeyComparision;
 using static Broccolini.Test.Kernel32;
 
 namespace Broccolini.Test.SemanticModel;
@@ -26,7 +27,9 @@ public sealed class ReferenceImplementation
     private static IDocument CreateDocumentFromWin32Api(string filePath)
     {
         ISection CreateSection(string sectionName)
-            => new Section(sectionName, GetKeysInSection(filePath, sectionName).ToImmutableDictionary(Identity, GetValueForKey(sectionName)));
+            => new Section(sectionName, GetKeysInSection(filePath, sectionName)
+                .Distinct(KeyComparer)
+                .ToImmutableDictionary(Identity, GetValueForKey(sectionName), keyComparer: KeyComparer));
 
         Func<string, string> GetValueForKey(string sectionName)
             => key
@@ -34,7 +37,7 @@ public sealed class ReferenceImplementation
 
         return new Document(
             GetSectionNames(filePath)
-                .Distinct()
-                .ToImmutableDictionary(Identity, CreateSection));
+                .Distinct(KeyComparer)
+                .ToImmutableDictionary(Identity, CreateSection, keyComparer: KeyComparer));
     }
 }

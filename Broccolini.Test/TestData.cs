@@ -66,6 +66,18 @@ internal static class TestData
 
     public static IEnumerable<string> NewLines => Sequence.Return("\r\n", "\r", "\n");
 
+    public static IEnumerable<CaseSensitivityInput> CaseSensitivityInputs
+        => Sequence.Return(
+            new CaseSensitivityInput("foo", "FOO", ShouldBeEqual: true),
+            new CaseSensitivityInput("Brötchen", "BRÖTCHEN", ShouldBeEqual: true),
+            new CaseSensitivityInput("Brötchen", "BRÖTCHEN", ShouldBeEqual: true),
+            new CaseSensitivityInput("español", "ESPAÑOL", ShouldBeEqual: true),
+            new CaseSensitivityInput("é", "É", ShouldBeEqual: true),
+            new CaseSensitivityInput("ß", "ẞ", ShouldBeEqual: false),
+            new CaseSensitivityInput("İ", "i", ShouldBeEqual: false),
+            new CaseSensitivityInput("ı", "I", ShouldBeEqual: false))
+                .SelectMany(pair => Sequence.Return(pair, new CaseSensitivityInput(pair.Variant2, pair.Variant1, ShouldBeEqual: pair.ShouldBeEqual)));
+
     private static IEnumerable<KeyValuePairWithKeyAndValue> KeyValuePairsWithQuotes
         => Sequence.Return(
             new KeyValuePairWithKeyAndValue("\"quoted key\" = \"quoted value\"", "\"quoted key\"", "quoted value"),
@@ -116,3 +128,5 @@ internal static class TestData
 public sealed record SectionWithName(string Input, string Name);
 
 public sealed record KeyValuePairWithKeyAndValue(string Input, string Key, string Value);
+
+public sealed record CaseSensitivityInput(string Variant1, string Variant2, bool ShouldBeEqual);

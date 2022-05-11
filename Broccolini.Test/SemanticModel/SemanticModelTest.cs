@@ -42,20 +42,24 @@ public sealed class SemanticModelTest
         AssertEquals(reference, document);
     }
 
-    [Fact]
-    public void ReturnsValueOfFirstOccurrenceOfDuplicatedKeys()
+    [Theory]
+    [InlineData("[section]\r\nKEY = value\r\nkey = value2")]
+    [InlineData("[section]\r\nkey = value\r\nkey = value2")]
+    public void ReturnsValueOfFirstOccurrenceOfDuplicatedKeys(string input)
     {
-        var (reference, document) = Parse("[section]\r\nkey = value\r\nkey = value2");
+        var (reference, document) = Parse(input);
 
         Assert.Equal("value", document["section"]["key"]);
 
         AssertEquals(reference, document);
     }
 
-    [Fact]
-    public void IgnoresValuesFromSecondOccurrenceOfSection()
+    [Theory]
+    [InlineData("[section]first = 1\r\n[section]\r\nsecond = 2")]
+    [InlineData("[SECTION]first = 1\r\n[section]\r\nsecond = 2")]
+    public void IgnoresValuesFromSecondOccurrenceOfSection(string input)
     {
-        var (reference, document) = Parse("[section]first = 1\r\n[section]\r\nsecond = 2");
+        var (reference, document) = Parse(input);
 
         Assert.DoesNotContain("second", document["section"]);
 

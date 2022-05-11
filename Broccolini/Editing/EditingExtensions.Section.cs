@@ -1,5 +1,6 @@
 using Broccolini.Syntax;
 using System.Diagnostics.Contracts;
+using static Broccolini.SemanticModel.KeyComparision;
 using static Broccolini.Syntax.SyntaxFactory;
 
 namespace Broccolini.Editing;
@@ -10,7 +11,7 @@ public static partial class EditingExtensions
     [Pure]
     public static SectionNode WithKeyValue(this SectionNode sectionNode, string key, string value)
         => sectionNode.Children.TryUpdateFirst(
-            node => node is KeyValueNode { Key: var k } && k == key,
+            node => node is KeyValueNode { Key: var k } && KeyEquals(k, key),
             node => ((KeyValueNode)node).WithValue(value),
             out var updatedChildren)
                 ? sectionNode with { Children = updatedChildren }
@@ -20,7 +21,7 @@ public static partial class EditingExtensions
     [Pure]
     public static SectionNode UpdateKeyValue(this SectionNode sectionNode, string key, string value)
          => sectionNode.Children.TryUpdateFirst(
-            node => node is KeyValueNode { Key: var k } && k == key,
+            node => node is KeyValueNode { Key: var k } && KeyEquals(k, key),
             node => ((KeyValueNode)node).WithValue(value),
             out var updatedChildren)
                 ? sectionNode with { Children = updatedChildren }
@@ -29,7 +30,7 @@ public static partial class EditingExtensions
     /// <summary>Removes all entries from the section with the given key.</summary>
     [Pure]
     public static SectionNode RemoveKeyValue(this SectionNode sectionNode, string key)
-        => sectionNode with { Children = sectionNode.Children.RemoveAll(node => node is KeyValueNode { Key: var k } && k == key) };
+        => sectionNode with { Children = sectionNode.Children.RemoveAll(node => node is KeyValueNode { Key: var k } && KeyEquals(k, key)) };
 
     private static SectionNode AppendChild(this SectionNode sectionNode, SectionChildNode node)
     {

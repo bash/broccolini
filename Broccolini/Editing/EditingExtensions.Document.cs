@@ -1,18 +1,17 @@
 using System.Diagnostics.Contracts;
 using Broccolini.Syntax;
+using static Broccolini.SemanticModel.KeyComparision;
 using static Broccolini.Syntax.SyntaxFactory;
 
 namespace Broccolini.Editing;
 
 public static partial class EditingExtensions
 {
-    private static Token.NewLine DefaultNewLine = new(Environment.NewLine);
-
     /// <summary>Appends or updates a section with the given name.</summary>
     [Pure]
     public static IniDocument WithSection(this IniDocument document, string sectionName, Func<SectionNode, SectionNode> updateSection)
         => document.Sections.TryUpdateFirst(
-            section => section.Name == sectionName,
+            section => KeyEquals(section.Name, sectionName),
             EnsureTrailingNewLine(updateSection, document),
             out var updatedSections)
                 ? document with { Sections = updatedSections }
@@ -22,7 +21,7 @@ public static partial class EditingExtensions
     [Pure]
     public static IniDocument UpdateSection(this IniDocument document, string sectionName, Func<SectionNode, SectionNode> updateSection)
         => document.Sections.TryUpdateFirst(
-            section => section.Name == sectionName,
+            section => KeyEquals(section.Name, sectionName),
             EnsureTrailingNewLine(updateSection, document),
             out var updatedSections)
                 ? document with { Sections = updatedSections }
@@ -32,7 +31,7 @@ public static partial class EditingExtensions
     [Pure]
     public static IniDocument RemoveSection(this IniDocument document, string sectionName)
     {
-        while (document.Sections.TryFindIndex(node => node.Name == sectionName, out var index))
+        while (document.Sections.TryFindIndex(section => KeyEquals(section.Name, sectionName), out var index))
         {
             var trailingTrivia = GetTrailingTrivia(document.Sections[index]);
             document = document with { Sections = document.Sections.RemoveAt(index) };

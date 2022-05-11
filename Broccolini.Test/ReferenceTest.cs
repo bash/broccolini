@@ -1,3 +1,6 @@
+using Broccolini.SemanticModel;
+using System.ComponentModel;
+using System.Globalization;
 using System.Runtime.Versioning;
 using System.Text;
 using Xunit;
@@ -41,6 +44,62 @@ public sealed class ReferenceTest
 
         Assert.Equal(value, GetPrivateProfileString(temporaryFile.Path, arbitrarySection, key, "DEFAULT VALUE"));
     }
+
+    [Theory]
+    [MemberData(nameof(KeysData))]
+    [SupportedOSPlatform("windows")]
+    public void IgnoresCaseForKey(string keyInFile, string keyUsedForLookup, bool shouldBeEqual)
+    {
+        Skip.IfNot(OperatingSystem.IsWindows());
+
+        const string arbitrarySection = "section";
+        const string arbitraryValue = "value";
+
+        using var temporaryFile = new TemporaryFile();
+        File.WriteAllText(temporaryFile.Path, $"[{arbitrarySection}]\r\n{keyInFile} = {arbitraryValue}", Encoding.Unicode);
+
+        if (shouldBeEqual)
+        {
+            Assert.Equal(arbitraryValue, GetPrivateProfileString(temporaryFile.Path, arbitrarySection, keyUsedForLookup, "DEFAULT VALUE"));
+        }
+        else
+        {
+            Assert.Throws<Win32Exception>(() => GetPrivateProfileString(temporaryFile.Path, arbitrarySection, keyUsedForLookup, "DEFAULT VALUE"));
+        }
+    }
+
+    [Theory]
+    [MemberData(nameof(KeysData))]
+    [SupportedOSPlatform("windows")]
+    public void IgnoresCaseForSectionName(string sectionInFile, string sectionUsedForLookup, bool shouldBeEqual)
+    {
+        Skip.IfNot(OperatingSystem.IsWindows());
+
+        const string arbitraryKey = "key";
+        const string arbitraryValue = "value";
+
+        using var temporaryFile = new TemporaryFile();
+        File.WriteAllText(temporaryFile.Path, $"[{sectionInFile}]\r\n{arbitraryKey} = {arbitraryValue}", Encoding.Unicode);
+
+        if (shouldBeEqual)
+        {
+            Assert.Equal(arbitraryValue, GetPrivateProfileString(temporaryFile.Path, sectionUsedForLookup, arbitraryKey, "DEFAULT VALUE"));
+        }
+        else
+        {
+            Assert.Throws<Win32Exception>(() => GetPrivateProfileString(temporaryFile.Path, sectionUsedForLookup, arbitraryKey, "DEFAULT VALUE"));
+        }
+    }
+
+    [Theory]
+    [MemberData(nameof(KeysData))]
+    public void SemanticModelIgnoresCaseOfKey(string lhs, string rhs, bool shouldBeEqual)
+    {
+        Assert.Equal(shouldBeEqual, KeyComparision.KeyEquals(lhs, rhs));
+    }
+
+    public static TheoryData<string, string, bool> KeysData()
+        => CaseSensitivityInputs.Select(input => (input.Variant1, input.Variant2, input.ShouldBeEqual)).ToTheoryData();
 
     public static TheoryData<string, string, string> GetKeyValuePairData()
         => KeyValuePairsWithKeyAndValue.Select(s => (s.Key, s.Value, s.Input)).ToTheoryData();
