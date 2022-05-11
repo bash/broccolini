@@ -16,8 +16,8 @@ public sealed class SyntaxFactoryTests
         {
             var node = Section(value.Get);
             var parsedNode = IniParser.Parse(node.ToString());
-            return (parsedNode.Children.Count == 1
-                    && parsedNode.Children.Single() is SectionNode sectionNode
+            return (parsedNode.Sections.Count == 1
+                    && parsedNode.Sections.Single() is SectionNode sectionNode
                     && sectionNode.Name == value.Get).ToProperty();
         }
         catch (ArgumentException)
@@ -45,8 +45,8 @@ public sealed class SyntaxFactoryTests
         {
             var node = KeyValue(key.Get, value.Get);
             var parsedNode = IniParser.Parse(node.ToString());
-            return (parsedNode.Children.Count == 1
-                && parsedNode.Children.First() is KeyValueNode keyValueNode
+            return (parsedNode.NodesOutsideSection.Count == 1
+                && parsedNode.NodesOutsideSection.First() is KeyValueNode keyValueNode
                 && keyValueNode.Key == key.Get
                 && keyValueNode.Value == value.Get).ToProperty();
         }
@@ -72,7 +72,7 @@ public sealed class SyntaxFactoryTests
     public void ParsesCreatedKeyValueNode(string key, string value)
     {
         var node = KeyValue(key, value);
-        var parsedNode = Assert.IsType<KeyValueNode>(Assert.Single(IniParser.Parse(node.ToString()).Children));
+        var parsedNode = Assert.IsType<KeyValueNode>(Assert.Single(IniParser.Parse(node.ToString()).NodesOutsideSection));
         Assert.Equal(key, parsedNode.Key);
         Assert.Equal(value, parsedNode.Value);
     }
@@ -84,7 +84,7 @@ public sealed class SyntaxFactoryTests
         {
             var node = KeyValue(string.Empty, value.Get);
             var parsedNode = IniParser.Parse(node.ToString());
-            return (parsedNode.Children.Count == 1 && parsedNode.Children.Single() is KeyValueNode keyValueNode
+            return (parsedNode.NodesOutsideSection.Count == 1 && parsedNode.NodesOutsideSection.Single() is KeyValueNode keyValueNode
                 && keyValueNode.Key == string.Empty
                 && keyValueNode.Value == value.Get).ToProperty();
         }

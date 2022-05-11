@@ -9,8 +9,7 @@ public static class DocumentExtensions
     /// <remarks>This representation is intended for reading only and discards formatting and trivia.</remarks>
     public static IDocument GetSemanticModel(this IniDocument document)
         => new Document(
-            document.Children
-                .OfType<SectionNode>()
+            document.Sections
                 .DistinctBy(section => section.Name)
                 .ToImmutableDictionary(
                     section => section.Name,

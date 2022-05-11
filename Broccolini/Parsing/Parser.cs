@@ -7,14 +7,25 @@ internal static class Parser
 {
     public static IniDocument Parse(IParserInput input)
     {
-        var nodes = ImmutableArray.CreateBuilder<IniNode>();
+        var nodes = ImmutableArray.CreateBuilder<SectionChildNode>();
+        var sections = ImmutableArray.CreateBuilder<SectionNode>();
 
         while (input.Peek() is not Token.Epsilon)
         {
-            nodes.Add(ParseNode(input));
+            var node = ParseNode(input);
+
+            // ParseNode already guarantees that after the first section only other sections are returned
+            if (node is SectionNode sectionNode)
+            {
+                sections.Add(sectionNode);
+            }
+            else
+            {
+                nodes.Add((SectionChildNode)node);
+            }
         }
 
-        return new IniDocument(nodes.ToImmutable());
+        return new IniDocument(nodes.ToImmutable(), sections.ToImmutable());
     }
 
     private static IniNode ParseNode(IParserInput input)

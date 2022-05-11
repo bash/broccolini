@@ -224,7 +224,7 @@ public sealed class EditingTest
         public void PreservesExistingQuotes(string expected, string input, string newValue)
         {
             var expectedWithKey = $"key = {expected}";
-            var parsedWithKey = Assert.IsType<KeyValueNode>(Assert.Single(Parse($"key = {input}").Children));
+            var parsedWithKey = Assert.IsType<KeyValueNode>(Assert.Single(Parse($"key = {input}").NodesOutsideSection));
             Assert.Equal(expectedWithKey, parsedWithKey.WithValue(newValue).ToString());
         }
 
@@ -233,7 +233,7 @@ public sealed class EditingTest
         {
             const string expected = "\tkey\t=\tnew value\t";
             const string input = "\tkey\t=\tvalue\t";
-            var parsed = Assert.IsType<KeyValueNode>(Assert.Single(Parse(input).Children));
+            var parsed = Assert.IsType<KeyValueNode>(Assert.Single(Parse(input).NodesOutsideSection));
             Assert.Equal(expected, parsed.WithValue("new value").ToString());
         }
     }

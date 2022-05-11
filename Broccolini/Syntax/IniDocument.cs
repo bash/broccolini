@@ -3,20 +3,22 @@ using System.Diagnostics;
 
 namespace Broccolini.Syntax;
 
-public sealed record IniDocument(IImmutableList<IniNode> Children)
+public sealed record IniDocument(IImmutableList<SectionChildNode> NodesOutsideSection, IImmutableList<SectionNode> Sections)
 {
-    public static IniDocument Empty { get; } = new(ImmutableArray<IniNode>.Empty);
+    public static IniDocument Empty { get; } = new(ImmutableArray<SectionChildNode>.Empty, ImmutableArray<SectionNode>.Empty);
 
     public bool Equals(IniDocument? other)
         => other is not null
-            && Children.SequenceEqual(other.Children);
+            && NodesOutsideSection.SequenceEqual(other.NodesOutsideSection)
+            && Sections.SequenceEqual(other.Sections);
 
-    public override int GetHashCode() => Children.Count.GetHashCode();
+    public override int GetHashCode() => HashCode.Combine(NodesOutsideSection.Count, Sections.Count);
 
     public override string ToString()
     {
         var visitor = new ToStringVisitor();
-        visitor.Visit(Children);
+        visitor.Visit(NodesOutsideSection);
+        visitor.Visit(Sections);
         return visitor.ToString();
     }
 }
