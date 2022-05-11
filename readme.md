@@ -40,6 +40,7 @@ File.WriteAllText("config.ini", updated.ToString());
 
 ## Non-Goals
 * Deserialization into non-string types (complex objects, numbers, booleans, etc.)
+* Customizable parsing rules (e.g. different comment syntax)
 * Performance
 
 
