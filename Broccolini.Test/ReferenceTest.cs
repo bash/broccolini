@@ -45,7 +45,7 @@ public sealed class ReferenceTest
         Assert.Equal(value, GetPrivateProfileString(temporaryFile.Path, arbitrarySection, key, "DEFAULT VALUE"));
     }
 
-    [Theory]
+    [SkippableTheory]
     [MemberData(nameof(KeysData))]
     [SupportedOSPlatform("windows")]
     public void IgnoresCaseForKey(string keyInFile, string keyUsedForLookup, bool shouldBeEqual)
@@ -68,7 +68,7 @@ public sealed class ReferenceTest
         }
     }
 
-    [Theory]
+    [SkippableTheory]
     [MemberData(nameof(KeysData))]
     [SupportedOSPlatform("windows")]
     public void IgnoresCaseForSectionName(string sectionInFile, string sectionUsedForLookup, bool shouldBeEqual)
