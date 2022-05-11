@@ -28,7 +28,7 @@ string databasePort = document["database"]["port"];
 var syntax = IniParser.Parse(File.ReadAllText("config.ini"));
 var updated = syntax
     .WithSection("owner", section => section.WithKeyValue("name", "John Doe"))
-    .WithSection("database", section => section.RemoveKeyValue("port"));
+    .UpdateSection("database", section => section.RemoveKeyValue("port"));
 File.WriteAllText("config.ini", updated.ToString());
 ```
 
