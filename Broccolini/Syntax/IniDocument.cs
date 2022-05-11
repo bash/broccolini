@@ -5,6 +5,8 @@ namespace Broccolini.Syntax;
 
 public sealed record IniDocument(IImmutableList<IniNode> Children)
 {
+    public static IniDocument Empty { get; } = new(ImmutableArray<IniNode>.Empty);
+
     public override string ToString()
     {
         var visitor = new ToStringVisitor();
