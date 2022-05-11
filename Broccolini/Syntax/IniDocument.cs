@@ -15,6 +15,8 @@ public sealed record IniDocument(IImmutableList<IniNode> Children)
 
 public abstract record IniNode
 {
+    internal IniNode() { }
+
     public Token? LineBreak { get; init; }
 
     public abstract void Accept(IIniNodeVisitor visitor);

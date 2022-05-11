@@ -2,6 +2,8 @@ namespace Broccolini.Syntax;
 
 public abstract record Token
 {
+    private Token() { }
+
     public sealed record LineBreak(string Value) : Token
     {
         public override string ToString() => Value;
