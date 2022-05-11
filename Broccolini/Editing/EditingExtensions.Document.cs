@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Diagnostics.Contracts;
 using Broccolini.Syntax;
 using static Broccolini.Syntax.SyntaxFactory;
@@ -36,15 +37,23 @@ public static partial class EditingExtensions
 
         while (children.TryFindIndex(node => node is SectionNode { Name: var name } && name == sectionName, out var index))
         {
-            var section = (SectionNode)children[index];
-            var trailingTrivia = section.Children.Reverse().TakeWhile(n => n is TriviaNode).Reverse();
+            var trailingTrivia = GetTrailingTrivia((SectionNode)children[index]);
             children = children.RemoveAt(index);
-            children = index >= 1 && children[index - 1] is SectionNode previousSectionNode
-                ? children.SetItem(index - 1, previousSectionNode with { Children = previousSectionNode.Children.AddRange(trailingTrivia) })
-                : children.InsertRange(index, trailingTrivia);
+            children = InsertNodesAt(children, index, trailingTrivia);
         }
 
         return document with { Children = children };
+
+        static IEnumerable<SectionChildNode> GetTrailingTrivia(SectionNode sectionNode)
+            => sectionNode.Children.Reverse().TakeWhile(n => n is TriviaNode).Reverse();
+
+        static IImmutableList<IniNode> InsertNodesAt(IImmutableList<IniNode> nodes, int index, IEnumerable<SectionChildNode> nodesToInsert)
+        {
+            var previousIndex = index - 1;
+            return index >= 1 && nodes[previousIndex] is SectionNode previousSectionNode
+                ? nodes.SetItem(previousIndex, previousSectionNode with { Children = previousSectionNode.Children.AddRange(nodesToInsert) })
+                : nodes.InsertRange(index, nodesToInsert);
+        }
     }
 
     private static IniDocument AppendChild(this IniDocument document, IniNode node)
