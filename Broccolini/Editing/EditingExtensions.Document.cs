@@ -20,7 +20,13 @@ public static partial class EditingExtensions
 
     /// <summary>Updates a section with the given name. Does nothing when the section does not exist.</summary>
     [Pure]
-    public static IniDocument UpdateSection(this IniDocument document, string sectionName, Func<SectionNode, SectionNode> updateSection) => throw new NotImplementedException();
+    public static IniDocument UpdateSection(this IniDocument document, string sectionName, Func<SectionNode, SectionNode> updateSection)
+        => document.Children.TryUpdateFirst(
+            node => node is SectionNode { Name: var name } && name == sectionName,
+            node => updateSection((SectionNode)node),
+            out var updatedChildren)
+            ? document with { Children = updatedChildren }
+            : document;
 
     /// <summary>Removes all sections with the given name. Preserves trailing trivia.</summary>
     [Pure]

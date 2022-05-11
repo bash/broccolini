@@ -18,9 +18,15 @@ public static partial class EditingExtensions
 
     /// <summary>Updates a key-value entry. Does nothing when the entry does not exist.</summary>
     [Pure]
-    public static SectionNode UpdateKeyValue(this SectionNode sectionNode, string key, string value) => throw new NotImplementedException();
+    public static SectionNode UpdateKeyValue(this SectionNode sectionNode, string key, string value)
+         => sectionNode.Children.TryUpdateFirst(
+            node => node is KeyValueNode { Key: var k } && k == key,
+            node => ((KeyValueNode)node).WithValue(value),
+            out var updatedChildren)
+                ? sectionNode with { Children = updatedChildren }
+                : sectionNode;
 
-    /// <summary>Removes all entry from the section with the given key.</summary>
+    /// <summary>Removes all entries from the section with the given key.</summary>
     [Pure]
     public static SectionNode RemoveKeyValue(this SectionNode sectionNode, string key) => throw new NotImplementedException();
 
