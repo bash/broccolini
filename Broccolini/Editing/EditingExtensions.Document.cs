@@ -30,7 +30,22 @@ public static partial class EditingExtensions
 
     /// <summary>Removes all sections with the given name. Preserves trailing trivia.</summary>
     [Pure]
-    public static IniDocument RemoveSection(this IniDocument document, string sectionName) => throw new NotImplementedException();
+    public static IniDocument RemoveSection(this IniDocument document, string sectionName)
+    {
+        var children = document.Children;
+
+        while (children.TryFindIndex(node => node is SectionNode { Name: var name } && name == sectionName, out var index))
+        {
+            var section = (SectionNode)children[index];
+            var trailingTrivia = section.Children.Reverse().TakeWhile(n => n is TriviaNode).Reverse();
+            children = children.RemoveAt(index);
+            children = index >= 1 && children[index - 1] is SectionNode previousSectionNode
+                ? children.SetItem(index - 1, previousSectionNode with { Children = previousSectionNode.Children.AddRange(trailingTrivia) })
+                : children.InsertRange(index, trailingTrivia);
+        }
+
+        return document with { Children = children };
+    }
 
     private static IniDocument AppendChild(this IniDocument document, IniNode node)
     {

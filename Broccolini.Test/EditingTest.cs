@@ -141,6 +141,79 @@ public sealed class EditingTest
         Assert.Equal(expected, edited.ToString());
     }
 
+    [Theory]
+    [InlineData(
+        "",
+        """
+        [section]
+        """)]
+    [InlineData(
+        "",
+        """
+        [section]
+        [section]
+        """)]
+    [InlineData(
+        "",
+        """
+        [section]
+        key = value
+        """)]
+    [InlineData(
+        """
+        ; trailing trivia node
+        """,
+        """
+        [section]
+        ; leading trivia node
+        key = value
+        ; trailing trivia node
+        """)]
+    [InlineData(
+        """
+        ; trailing trivia node 1
+        ; trailing trivia node 2
+        """,
+        """
+        [section]
+        ; trailing trivia node 1
+        ; trailing trivia node 2
+        """)]
+    [InlineData(
+        """
+        [leading section]
+        ; trailing trivia node
+        """,
+        """
+        [leading section]
+        [section]
+        ; leading trivia node
+        key = value
+        ; trailing trivia node
+        """)]
+    [InlineData(
+        """
+        [leading section]
+        ; trailing trivia node
+        [other section]
+        ; trailing trivia node
+        """,
+        """
+        [leading section]
+        [section]
+        ; trailing trivia node
+        [other section]
+        [section]
+        ; trailing trivia node
+        """)]
+    public void RemovesSection(string expected, string input)
+    {
+        var parsed = Parse(input);
+        var edited = parsed.RemoveSection("section");
+        Assert.Equal(expected, edited.ToString());
+        Assert.Equal(edited, Parse(edited.ToString()));
+    }
+
     public sealed class WithValue
     {
         [Theory]

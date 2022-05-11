@@ -18,7 +18,7 @@ internal static class IImmutableListExtensions
         return false;
     }
 
-    private static bool TryFindIndex<T>(this IImmutableList<T> list, Func<T, bool> predicate, out int index)
+    public static bool TryFindIndex<T>(this IImmutableList<T> list, Func<T, bool> predicate, out int index)
     {
         index = 0;
 

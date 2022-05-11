@@ -7,6 +7,12 @@ public sealed record IniDocument(IImmutableList<IniNode> Children)
 {
     public static IniDocument Empty { get; } = new(ImmutableArray<IniNode>.Empty);
 
+    public bool Equals(IniDocument? other)
+        => other is not null
+            && Children.SequenceEqual(other.Children);
+
+    public override int GetHashCode() => Children.Count.GetHashCode();
+
     public override string ToString()
     {
         var visitor = new ToStringVisitor();
