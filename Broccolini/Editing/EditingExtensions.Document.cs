@@ -15,8 +15,8 @@ public static partial class EditingExtensions
             node => node is SectionNode { Name: var name } && name == sectionName,
             node => updateSection((SectionNode)node),
             out var updatedChildren)
-            ? document with { Children = updatedChildren }
-            : document.AppendChild(updateSection(Section(sectionName)));
+                ? document with { Children = updatedChildren }
+                : document.AppendChild(updateSection(Section(sectionName)));
 
     /// <summary>Updates a section with the given name. Does nothing when the section does not exist.</summary>
     [Pure]
@@ -25,8 +25,8 @@ public static partial class EditingExtensions
             node => node is SectionNode { Name: var name } && name == sectionName,
             node => updateSection((SectionNode)node),
             out var updatedChildren)
-            ? document with { Children = updatedChildren }
-            : document;
+                ? document with { Children = updatedChildren }
+                : document;
 
     /// <summary>Removes all sections with the given name. Preserves trailing trivia.</summary>
     [Pure]
