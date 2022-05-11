@@ -12,7 +12,7 @@ public sealed class EditingTest
     {
         const string input = "[section]";
 
-        var updatedDocument = Parse(input).WithAppendedOrUpdatedSection("section", Identity);
+        var updatedDocument = Parse(input).WithSection("section", Identity);
 
         Assert.Equal(input, updatedDocument.ToString());
     }
@@ -23,7 +23,7 @@ public sealed class EditingTest
     {
         const string expected = "[section]";
 
-        var updatedDocument = IniDocument.Empty.WithAppendedOrUpdatedSection("section", Identity);
+        var updatedDocument = IniDocument.Empty.WithSection("section", Identity);
 
         Assert.Equal(expected.ReplaceLineEndings(), updatedDocument.ToString());
     }
@@ -39,7 +39,7 @@ public sealed class EditingTest
             [new section]
             """;
 
-        var updatedDocument = Parse(input.ReplaceLineEndings()).WithAppendedOrUpdatedSection("new section", Identity);
+        var updatedDocument = Parse(input.ReplaceLineEndings()).WithSection("new section", Identity);
 
         Assert.Equal(expected.ReplaceLineEndings(), updatedDocument.ToString());
     }
@@ -54,7 +54,7 @@ public sealed class EditingTest
             """;
 
         var updatedDocument = IniDocument.Empty
-            .WithAppendedOrUpdatedSection("section", section => section.WithAppendedOrUpdatedEntry("key", "value"));
+            .WithSection("section", section => section.WithKeyValue("key", "value"));
 
         Assert.Equal(expected.ReplaceLineEndings(), updatedDocument.ToString());
     }
@@ -75,7 +75,7 @@ public sealed class EditingTest
             """;
 
         var updatedDocument = Parse(input.ReplaceLineEndings())
-            .WithAppendedOrUpdatedSection("section", section => section.WithAppendedOrUpdatedEntry("new key", "value"));
+            .WithSection("section", section => section.WithKeyValue("new key", "value"));
 
         Assert.Equal(expected.ReplaceLineEndings(), updatedDocument.ToString());
     }
@@ -95,7 +95,7 @@ public sealed class EditingTest
             """;
 
         var updatedDocument = Parse(input.ReplaceLineEndings())
-            .WithAppendedOrUpdatedSection("section", section => section.WithAppendedOrUpdatedEntry("key", "new value"));
+            .WithSection("section", section => section.WithKeyValue("key", "new value"));
 
         Assert.Equal(expected.ReplaceLineEndings(), updatedDocument.ToString());
     }
