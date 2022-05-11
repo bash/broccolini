@@ -1,0 +1,5 @@
+# Set default behavior to automatically normalize line endings on checkin but not on checkout
+* text=auto eol=lf
+
+# Always check out Solution files as CRLF
+*.sln text eol=crlf
