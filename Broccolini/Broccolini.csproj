@@ -6,9 +6,32 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <FunckyImplicitUsings>enable</FunckyImplicitUsings>
         <WarningsAsErrors>nullable</WarningsAsErrors>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <NoWarn>$(NoWarn);CS1591</NoWarn>
     </PropertyGroup>
+    <PropertyGroup>
+        <IsTrimmable>true</IsTrimmable>
+    </PropertyGroup>
+    <PropertyGroup Label="NuGet Packing">
+        <Version>0.1.0</Version>
+        <Description>Funcky is a functional C# library</Description>
+        <Authors>Ruben Schmidmeister</Authors>
+        <PackageLicenseExpression>MIT OR Apache-2.0</PackageLicenseExpression>
+        <Copyright>© Ruben Schmidmeister. All rights reserved.</Copyright>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+    <PropertyGroup Label="Deterministic Builds and Source Link">
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    </PropertyGroup>
+    <ItemGroup Label="Deterministic Builds and Source Link">
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
+    </ItemGroup>
     <ItemGroup>
-        <None Include="*.ini" CopyToOutputDirectory="Always" />
+        <None Include="..\README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
     <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
         <PackageReference Include="Microsoft.Bcl.HashCode" Version="1.1.1" />
