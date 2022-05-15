@@ -27,7 +27,7 @@ string databaseServer = document["database"]["server"];
 string databasePort = document["database"]["port"];
 ```
 
-## Editing
+### Editing
 ```cs
 var syntax = IniParser.Parse(File.ReadAllText("config.ini"));
 var updated = syntax
