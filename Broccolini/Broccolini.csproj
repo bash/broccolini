@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
         <LangVersion>preview</LangVersion>
@@ -14,7 +14,7 @@
     </PropertyGroup>
     <PropertyGroup Label="NuGet Packing">
         <Version>0.1.0</Version>
-        <Description>Funcky is a functional C# library</Description>
+        <Description>Broccolini is a non-destructive parser for INI files compatible with GetPrivateProfileString.</Description>
         <Authors>Ruben Schmidmeister</Authors>
         <PackageLicenseExpression>MIT OR Apache-2.0</PackageLicenseExpression>
         <Copyright>© Ruben Schmidmeister. All rights reserved.</Copyright>
