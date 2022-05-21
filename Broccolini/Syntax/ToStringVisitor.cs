@@ -18,40 +18,40 @@ internal sealed class ToStringVisitor : IIniNodeVisitor
 
     public void Visit(KeyValueNode keyValueNode)
     {
-        VisitTrivia(keyValueNode.LeadingTrivia);
+        VisitToken(keyValueNode.LeadingTrivia);
         _stringBuilder.Append(keyValueNode.Key);
-        VisitTrivia(keyValueNode.TriviaBeforeEqualsSign);
+        VisitToken(keyValueNode.TriviaBeforeEqualsSign);
         _stringBuilder.Append(keyValueNode.EqualsSign);
-        VisitTrivia(keyValueNode.TriviaAfterEqualsSign);
-        VisitToken(keyValueNode.OpeningQuote);
+        VisitToken(keyValueNode.TriviaAfterEqualsSign);
+        VisitToken(keyValueNode.Quote);
         _stringBuilder.Append(keyValueNode.Value);
-        VisitToken(keyValueNode.ClosingQuote);
-        VisitTrivia(keyValueNode.TrailingTrivia);
+        VisitToken(keyValueNode.Quote);
+        VisitToken(keyValueNode.TrailingTrivia);
         VisitToken(keyValueNode.NewLine);
     }
 
     public void Visit(TriviaNode triviaNode)
     {
-        VisitTrivia(triviaNode.Value);
+        VisitTokens(triviaNode.Tokens);
         VisitToken(triviaNode.NewLine);
     }
 
     public void Visit(SectionNode sectionNode)
     {
-        VisitTrivia(sectionNode.LeadingTrivia);
+        VisitToken(sectionNode.LeadingTrivia);
         _stringBuilder.Append(sectionNode.OpeningBracket);
-        VisitTrivia(sectionNode.TriviaAfterOpeningBracket);
+        VisitToken(sectionNode.TriviaAfterOpeningBracket);
         _stringBuilder.Append(sectionNode.Name);
-        VisitTrivia(sectionNode.TriviaBeforeClosingBracket);
+        VisitToken(sectionNode.TriviaBeforeClosingBracket);
         VisitToken(sectionNode.ClosingBracket);
-        VisitTrivia(sectionNode.TrailingTrivia);
+        VisitTokens(sectionNode.TrailingTrivia);
         VisitToken(sectionNode.NewLine);
         Visit(sectionNode.Children);
     }
 
-    private void VisitTrivia(TriviaList trivia)
+    private void VisitTokens(IEnumerable<Token> tokens)
     {
-        foreach (var token in trivia.Tokens)
+        foreach (var token in tokens)
         {
             _stringBuilder.Append(token);
         }

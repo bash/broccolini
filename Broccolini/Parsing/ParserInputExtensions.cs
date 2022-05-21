@@ -13,19 +13,17 @@ internal static class ParserInputExtensions
             : current;
     }
 
-    public static IImmutableList<Token> ReadOrEmpty(this IParserInput input, Func<Token, bool> predicate)
-        => input.ReadOrNull(predicate) is { } token
-            ? ImmutableArray.Create(token)
-            : ImmutableArray<Token>.Empty;
+    public static TToken? ReadOrNull<TToken>(this IParserInput input) where TToken : Token => ReadOrNull<TToken>(input, static _ => true);
 
-    public static Token? ReadOrNull(this IParserInput input, Func<Token, bool> predicate)
+    public static TToken? ReadOrNull<TToken>(this IParserInput input, Func<TToken, bool> predicate)
+        where TToken : Token
     {
         var token = input.Peek();
 
-        if (predicate(token))
+        if (token is TToken t && predicate(t))
         {
             input.Read();
-            return token;
+            return t;
         }
 
         return null;

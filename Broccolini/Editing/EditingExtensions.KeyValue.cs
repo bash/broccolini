@@ -17,8 +17,7 @@ public static partial class EditingExtensions
         return keyValueNode with
         {
             Value = nodeWithNewValue.Value,
-            OpeningQuote = keyValueNode.OpeningQuote ?? nodeWithNewValue.OpeningQuote,
-            ClosingQuote = keyValueNode.OpeningQuote ?? nodeWithNewValue.ClosingQuote,
+            Quote = keyValueNode.Quote ?? nodeWithNewValue.Quote,
         };
     }
 }

@@ -33,7 +33,7 @@ public abstract record IniNode
 {
     internal IniNode() { }
 
-    public Token? NewLine { get; init; }
+    public Token.NewLine? NewLine { get; init; }
 
     public abstract void Accept(IIniNodeVisitor visitor);
 
@@ -54,21 +54,22 @@ public abstract record SectionChildNode : IniNode
 [DebuggerDisplay("{Key}{EqualsSign}{Value}")]
 public sealed record KeyValueNode(string Key, string Value) : SectionChildNode
 {
-    /// <summary>Leading whitespace</summary>
-    public TriviaList LeadingTrivia { get; init; } = TriviaList.Empty;
+    /// <summary>Leading whitespace.</summary>
+    public Token.WhiteSpace? LeadingTrivia { get; init; }
 
-    public TriviaList TriviaBeforeEqualsSign { get; init; } = TriviaList.Empty;
+    /// <summary>Whitespace between key and equals sign.</summary>
+    public Token.WhiteSpace? TriviaBeforeEqualsSign { get; init; }
 
-    public Token EqualsSign { get; init; } = new Token.EqualsSign();
+    public Token.EqualsSign EqualsSign { get; init; } = new();
 
-    public TriviaList TriviaAfterEqualsSign { get; init; } = TriviaList.Empty;
+    /// <summary>Whitespace between equals sign and value.</summary>
+    public Token.WhiteSpace? TriviaAfterEqualsSign { get; init; }
 
-    public Token? OpeningQuote { get; init; }
+    /// <summary>Opening and closing quote when value is quoted.</summary>
+    public Token.Quote? Quote { get; init; }
 
-    public Token? ClosingQuote { get; init; }
-
-    /// <summary>Trailing whitespace and line breaks.</summary>
-    public TriviaList TrailingTrivia { get; init; } = TriviaList.Empty;
+    /// <summary>Whitespace after value.</summary>
+    public Token.WhiteSpace? TrailingTrivia { get; init; }
 
     public override void Accept(IIniNodeVisitor visitor) => visitor.Visit(this);
 
@@ -76,12 +77,19 @@ public sealed record KeyValueNode(string Key, string Value) : SectionChildNode
 }
 
 /// <summary>A comment or an unrecognized line.</summary>
-[DebuggerDisplay("{Value}")]
-public sealed record TriviaNode(TriviaList Value) : SectionChildNode
+[DebuggerDisplay("{DebuggerDisplay,nq}")]
+public sealed record TriviaNode(IImmutableList<Token> Tokens) : SectionChildNode
 {
     public override void Accept(IIniNodeVisitor visitor) => visitor.Visit(this);
 
     public override string ToString() => base.ToString();
+
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+    private string DebuggerDisplay => string.Concat(Tokens);
+
+    public bool Equals(TriviaNode? other) => other is not null && Tokens.SequenceEqual(other.Tokens);
+
+    public override int GetHashCode() => Tokens.Count.GetHashCode();
 }
 
 /// <summary>A section:
@@ -91,19 +99,21 @@ public sealed record TriviaNode(TriviaList Value) : SectionChildNode
 [DebuggerDisplay("{OpeningBracket}{Name}{ClosingBracketDebugView}")]
 public sealed record SectionNode(string Name, IImmutableList<SectionChildNode> Children) : IniNode
 {
-    /// <summary>Leading whitespace</summary>
-    public TriviaList LeadingTrivia { get; init; } = TriviaList.Empty;
+    /// <summary>Leading whitespace.</summary>
+    public Token.WhiteSpace? LeadingTrivia { get; init; }
 
-    public Token OpeningBracket { get; init; } = new Token.OpeningBracket();
+    public Token.OpeningBracket OpeningBracket { get; init; } = new();
 
-    public TriviaList TriviaAfterOpeningBracket { get; init; } = TriviaList.Empty;
+    /// <summary>Whitespace between opening bracket and section name.</summary>
+    public Token.WhiteSpace? TriviaAfterOpeningBracket { get; init; }
 
-    public TriviaList TriviaBeforeClosingBracket { get; init; } = TriviaList.Empty;
+    /// <summary>Whitespace between section name and closing bracket.</summary>
+    public Token.WhiteSpace? TriviaBeforeClosingBracket { get; init; }
 
-    public Token? ClosingBracket { get; init; } = new Token.ClosingBracket();
+    public Token.ClosingBracket? ClosingBracket { get; init; } = new();
 
-    /// <summary>Trailing whitespace, line breaks and garbage after the closing bracket.</summary>
-    public TriviaList TrailingTrivia { get; init; } = TriviaList.Empty;
+    /// <summary>Trailing whitespace and garbage after the closing bracket.</summary>
+    public IImmutableList<Token> TrailingTrivia { get; init; } = ImmutableArray<Token>.Empty;
 
     private string ClosingBracketDebugView => ClosingBracket?.ToString() ?? string.Empty;
 
@@ -118,7 +128,7 @@ public sealed record SectionNode(string Name, IImmutableList<SectionChildNode> C
            && TriviaAfterOpeningBracket == other.TriviaAfterOpeningBracket
            && TriviaBeforeClosingBracket == other.TriviaBeforeClosingBracket
            && ClosingBracket == other.ClosingBracket
-           && TrailingTrivia == other.TrailingTrivia
+           && TrailingTrivia.SequenceEqual(other.TrailingTrivia)
            && NewLine == other.NewLine;
 
     public override int GetHashCode()
@@ -135,22 +145,4 @@ public sealed record SectionNode(string Name, IImmutableList<SectionChildNode> C
                 NewLine));
 
     public override string ToString() => base.ToString();
-}
-
-[DebuggerDisplay("\"{DebuggerDisplay}\"")]
-public sealed record TriviaList(IImmutableList<Token> Tokens)
-{
-    public TriviaList(params Token[] tokens)
-        : this(tokens.ToImmutableArray())
-    {
-    }
-
-    public static TriviaList Empty { get; } = new(ImmutableArray<Token>.Empty);
-
-    public bool Equals(TriviaList? other)
-        => other is not null && Tokens.SequenceEqual(other.Tokens);
-
-    public override int GetHashCode() => Tokens.Count.GetHashCode();
-
-    private string DebuggerDisplay => string.Concat(Tokens);
 }

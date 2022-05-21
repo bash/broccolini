@@ -62,67 +62,66 @@ internal static class Parser
 
     private static IniNode ParseSection(IParserInput input)
     {
-        var leadingTrivia = input.ReadOrEmpty(static t => t is Token.WhiteSpace);
+        var leadingTrivia = input.ReadOrNull<Token.WhiteSpace>();
         var openingBracketToken = input.Read();
-        var triviaAfterOpeningBracket = input.ReadOrEmpty(static t => t is Token.WhiteSpace);
+        var triviaAfterOpeningBracket = input.ReadOrNull<Token.WhiteSpace>();
         var name = string.Concat(input.ReadWhileExcludeTrailingWhitespace(static t => t is not Token.ClosingBracket and not Token.NewLine));
-        var triviaBeforeClosingBracket = input.ReadOrEmpty(static t => t is Token.WhiteSpace);
-        var closingBracket = input.ReadOrNull(static t => t is Token.ClosingBracket);
+        var triviaBeforeClosingBracket = input.ReadOrNull<Token.WhiteSpace>();
+        var closingBracket = input.ReadOrNull<Token.ClosingBracket>();
         var trailingTrivia = input.ReadWhile(static t => t is not Token.NewLine);
-        var newLine = input.ReadOrNull(static t => t is Token.NewLine);
+        var newLine = input.ReadOrNull<Token.NewLine>();
         var children = ParseSectionChildren(input);
         return new SectionNode(name, children)
         {
-            LeadingTrivia = new TriviaList(leadingTrivia),
-            OpeningBracket = openingBracketToken,
-            TriviaAfterOpeningBracket = new TriviaList(triviaAfterOpeningBracket),
-            TriviaBeforeClosingBracket = new TriviaList(triviaBeforeClosingBracket),
+            LeadingTrivia = leadingTrivia,
+            OpeningBracket = (Token.OpeningBracket)openingBracketToken,
+            TriviaAfterOpeningBracket = triviaAfterOpeningBracket,
+            TriviaBeforeClosingBracket = triviaBeforeClosingBracket,
             ClosingBracket = closingBracket,
-            TrailingTrivia = new TriviaList(trailingTrivia),
+            TrailingTrivia = trailingTrivia,
             NewLine = newLine,
         };
     }
 
     private static KeyValueNode ParseKeyValue(IParserInput input)
     {
-        var leadingTrivia = input.ReadOrEmpty(static t => t is Token.WhiteSpace);
+        var leadingTrivia = input.ReadOrNull<Token.WhiteSpace>();
         var key = string.Concat(input.ReadWhileExcludeTrailingWhitespace(static t => t is not Token.EqualsSign));
-        var triviaBeforeEqualsSign = input.ReadOrEmpty(static t => t is Token.WhiteSpace);
+        var triviaBeforeEqualsSign = input.ReadOrNull<Token.WhiteSpace>();
         var equalsSign = input.Read();
-        var triviaAfterEqualsSign = input.ReadOrEmpty(static t => t is Token.WhiteSpace);
-        var (openingQuote, value, closingQuote) = ParseQuotedValue(input);
-        var trailingTrivia = input.ReadWhile(static t => t is not Token.NewLine);
-        var newLine = input.ReadOrNull(static t => t is Token.NewLine);
+        var triviaAfterEqualsSign = input.ReadOrNull<Token.WhiteSpace>();
+        var (quote, value) = ParseQuotedValue(input);
+        var trailingTrivia = input.ReadOrNull<Token.WhiteSpace>();
+        var newLine = input.ReadOrNull<Token.NewLine>();
         return new KeyValueNode(key, value)
         {
-            LeadingTrivia = new TriviaList(leadingTrivia),
-            TriviaBeforeEqualsSign = new TriviaList(triviaBeforeEqualsSign),
-            EqualsSign = equalsSign,
-            TriviaAfterEqualsSign = new TriviaList(triviaAfterEqualsSign),
-            OpeningQuote = openingQuote,
-            ClosingQuote = closingQuote,
-            TrailingTrivia = new TriviaList(trailingTrivia),
+            LeadingTrivia = leadingTrivia,
+            TriviaBeforeEqualsSign = triviaBeforeEqualsSign,
+            EqualsSign = (Token.EqualsSign)equalsSign,
+            TriviaAfterEqualsSign = triviaAfterEqualsSign,
+            Quote = quote,
+            TrailingTrivia = trailingTrivia,
             NewLine = newLine,
         };
     }
 
     private static TriviaNode ParseTrivia(IParserInput input)
-        => new(new TriviaList(input.ReadWhile(t => t is not Token.NewLine)))
+        => new(input.ReadWhile(t => t is not Token.NewLine))
         {
-            NewLine = input.ReadOrNull(static t => t is Token.NewLine),
+            NewLine = input.ReadOrNull<Token.NewLine>(),
         };
 
-    private static (Token?, string, Token?) ParseQuotedValue(IParserInput input)
+    private static (Token.Quote?, string) ParseQuotedValue(IParserInput input)
     {
-        var openingQuote = input.ReadOrNull(static t => t is Token.SingleQuote or Token.DoubleQuote);
+        var openingQuote = input.ReadOrNull<Token.Quote>(static t => t is Token.SingleQuote or Token.DoubleQuote);
         var value = string.Concat(ParseValue(input));
-        var closingQuote = input.ReadOrNull(static t => t is Token.SingleQuote or Token.DoubleQuote);
+        var closingQuote = input.ReadOrNull<Token.Quote>(static t => t is Token.SingleQuote or Token.DoubleQuote);
 
         static string ToString(Token? token) => token?.ToString() ?? string.Empty;
 
         return openingQuote == closingQuote
-            ? (openingQuote, value, closingQuote)
-            : (null, ToString(openingQuote) + value + ToString(closingQuote), null);
+            ? (openingQuote, value)
+            : (null, ToString(openingQuote) + value + ToString(closingQuote));
     }
 
     private static IImmutableList<Token> ParseValue(IParserInput input)

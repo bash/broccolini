@@ -5,7 +5,7 @@ namespace Broccolini.Syntax;
 
 public static class SyntaxFactory
 {
-    private static readonly TriviaList Space = new(new Token.WhiteSpace(" "));
+    private static readonly Token.WhiteSpace Space = new(" ");
 
     /// <summary>Creates a key-value node while taking care of properly quoting the <paramref name="value"/> as needed.</summary>
     /// <param name="key">The key may contain anything except newlines, <c>=</c>, leading <c>[</c> or <c>;</c>, and leading or trailing whitespace.</param>
@@ -26,8 +26,7 @@ public static class SyntaxFactory
         {
             TriviaBeforeEqualsSign = Space,
             TriviaAfterEqualsSign = Space,
-            OpeningQuote = quote,
-            ClosingQuote = quote,
+            Quote = quote,
         };
     }
 

@@ -5,7 +5,7 @@ namespace Broccolini.Editing;
 
 internal static class NewLineExtensions
 {
-    public static IniDocument EnsureTrailingNewLine(this IniDocument document, Token newLine)
+    public static IniDocument EnsureTrailingNewLine(this IniDocument document, Token.NewLine newLine)
         => document switch
         {
             { Sections: { Count: >=1 } sections } => document with { Sections = document.Sections.ReplaceLast(n => EnsureTrailingNewLine(n, newLine)) },
@@ -13,7 +13,7 @@ internal static class NewLineExtensions
             _ => document,
         };
 
-    public static IniNode EnsureTrailingNewLine(this IniNode node, Token newLine)
+    public static IniNode EnsureTrailingNewLine(this IniNode node, Token.NewLine newLine)
         => node switch
         {
             SectionNode sectionNode => EnsureTrailingNewLine(sectionNode, newLine),
@@ -21,7 +21,7 @@ internal static class NewLineExtensions
             _ => throw new InvalidOperationException("Unreachable"),
         };
 
-    public static SectionChildNode EnsureTrailingNewLine(this SectionChildNode node, Token newLine)
+    public static SectionChildNode EnsureTrailingNewLine(this SectionChildNode node, Token.NewLine newLine)
         => node switch
         {
             TriviaNode triviaNode => EnsureTrailingNewLine(triviaNode, newLine),
@@ -29,17 +29,17 @@ internal static class NewLineExtensions
             _ => throw new InvalidOperationException("Unreachable"),
         };
 
-    public static TriviaNode EnsureTrailingNewLine(this TriviaNode node, Token newLine)
+    public static TriviaNode EnsureTrailingNewLine(this TriviaNode node, Token.NewLine newLine)
         => node.NewLine is null
             ? node with { NewLine = newLine }
             : node;
 
-    public static KeyValueNode EnsureTrailingNewLine(this KeyValueNode node, Token newLine)
+    public static KeyValueNode EnsureTrailingNewLine(this KeyValueNode node, Token.NewLine newLine)
         => node.NewLine is null
             ? node with { NewLine = newLine }
             : node;
 
-    public static SectionNode EnsureTrailingNewLine(this SectionNode node, Token newLine)
+    public static SectionNode EnsureTrailingNewLine(this SectionNode node, Token.NewLine newLine)
         => node switch
         {
             { Children: { Count: >=1 } children } => node with { Children = children.ReplaceLast(n => EnsureTrailingNewLine(n, newLine)) },
