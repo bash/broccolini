@@ -36,7 +36,7 @@ internal static class Parser
     private static SectionChildNode ParseSectionChildNode(IParserInput input)
         => input switch
         {
-            _ when IsComment(input) => ParseTrivia(input),
+            _ when IsComment(input) => ParseComment(input),
             _ when IsKeyValue(input) => ParseKeyValue(input),
             _ => ParseTrivia(input),
         };
@@ -105,7 +105,25 @@ internal static class Parser
         };
     }
 
-    private static TriviaNode ParseTrivia(IParserInput input)
+    private static CommentNode ParseComment(IParserInput input)
+    {
+        var leadingTrivia = input.ReadOrNull<Token.WhiteSpace>();
+        var semicolon = (Token.Semicolon)input.Read();
+        var triviaAfterSemicolon = input.ReadOrNull<Token.WhiteSpace>();
+        var text = string.Concat(input.ReadWhileExcludeTrailingWhitespace(static t => t is not Token.NewLine));
+        var trailingTrivia = input.ReadOrNull<Token.WhiteSpace>();
+        var newLine = input.ReadOrNull<Token.NewLine>();
+        return new CommentNode(text)
+        {
+            LeadingTrivia = leadingTrivia,
+            Semicolon = semicolon,
+            TriviaAfterSemicolon = triviaAfterSemicolon,
+            TrailingTrivia = trailingTrivia,
+            NewLine = newLine,
+        };
+    }
+
+    private static UnrecognizedNode ParseTrivia(IParserInput input)
         => new(input.ReadWhile(t => t is not Token.NewLine))
         {
             NewLine = input.ReadOrNull<Token.NewLine>(),

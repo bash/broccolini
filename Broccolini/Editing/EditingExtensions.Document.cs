@@ -41,7 +41,7 @@ public static partial class EditingExtensions
         return document;
 
         static IEnumerable<SectionChildNode> GetTrailingTrivia(SectionNode sectionNode)
-            => sectionNode.Children.Reverse().TakeWhile(n => n is TriviaNode).Reverse();
+            => sectionNode.Children.Reverse().TakeWhile(n => n is UnrecognizedNode or CommentNode).Reverse();
 
         static IniDocument InsertNodesAt(IniDocument document, int index, IEnumerable<SectionChildNode> nodesToInsert)
             => index >= 1 && document.Sections[index - 1] is var previousSection

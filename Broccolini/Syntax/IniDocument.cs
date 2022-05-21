@@ -76,9 +76,9 @@ public sealed record KeyValueNode(string Key, string Value) : SectionChildNode
     public override string ToString() => base.ToString();
 }
 
-/// <summary>A comment or an unrecognized line.</summary>
+/// <summary>A line that can't be recognized as one of the other node types.</summary>
 [DebuggerDisplay("{DebuggerDisplay,nq}")]
-public sealed record TriviaNode(IImmutableList<Token> Tokens) : SectionChildNode
+public sealed record UnrecognizedNode(IImmutableList<Token> Tokens) : SectionChildNode
 {
     public override void Accept(IIniNodeVisitor visitor) => visitor.Visit(this);
 
@@ -87,9 +87,29 @@ public sealed record TriviaNode(IImmutableList<Token> Tokens) : SectionChildNode
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private string DebuggerDisplay => string.Concat(Tokens);
 
-    public bool Equals(TriviaNode? other) => other is not null && Tokens.SequenceEqual(other.Tokens);
+    public bool Equals(UnrecognizedNode? other) => other is not null && Tokens.SequenceEqual(other.Tokens);
 
     public override int GetHashCode() => Tokens.Count.GetHashCode();
+}
+
+/// <summary>A comment: <c>; comment</c>.</summary>
+[DebuggerDisplay("{DebuggerDisplay,nq}")]
+public sealed record CommentNode(string Text) : SectionChildNode
+{
+    /// <summary>Leading whitespace.</summary>
+    public Token.WhiteSpace? LeadingTrivia { get; init; }
+
+    public Token.Semicolon Semicolon { get; init; } = new();
+
+    /// <summary>Whitespace between semicolon and text.</summary>
+    public Token.WhiteSpace? TriviaAfterSemicolon { get; init; }
+
+    /// <summary>Trailing whitespace.</summary>
+    public Token.WhiteSpace? TrailingTrivia { get; init; }
+
+    public override void Accept(IIniNodeVisitor visitor) => visitor.Visit(this);
+
+    public override string ToString() => base.ToString();
 }
 
 /// <summary>A section:

@@ -190,49 +190,61 @@ public sealed class EditingTest
     [InlineData(
         """
         ; trailing trivia node
+        trailing garbage
         """,
         """
         [section]
         ; leading trivia node
+        leading garbage
         key = value
         ; trailing trivia node
+        trailing garbage
         """)]
     [InlineData(
         """
         ; trailing trivia node 1
         ; trailing trivia node 2
+        trailing garbage
         """,
         """
         [section]
         ; trailing trivia node 1
         ; trailing trivia node 2
+        trailing garbage
         """)]
     [InlineData(
         """
         [leading section]
         ; trailing trivia node
+        trailing garbage
         """,
         """
         [leading section]
         [section]
+        leading garbage
         ; leading trivia node
         key = value
         ; trailing trivia node
+        trailing garbage
         """)]
     [InlineData(
         """
         [leading section]
         ; trailing trivia node
+        trailing garbage
         [other section]
         ; trailing trivia node
+        trailing garbage
         """,
         """
         [leading section]
         [section]
         ; trailing trivia node
+        trailing garbage
         [other section]
         [section]
         ; trailing trivia node
+        trailing garbage
         """)]
     public void RemovesSection(string expected, string input)
     {

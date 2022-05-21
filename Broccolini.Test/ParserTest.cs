@@ -11,10 +11,10 @@ public sealed class ParserTest
 {
     [Theory]
     [MemberData(nameof(GetCommentsData))]
-    public void ParsesCommentAsTriviaNode(string input, string leadingNode)
+    public void ParsesCommentNode(string input, string leadingNode)
     {
         var document = Parse(leadingNode + input);
-        var node = Assert.IsType<TriviaNode>(GetLastNode(document));
+        var node = Assert.IsType<CommentNode>(GetLastNode(document));
         Assert.Equal(input, node.ToString());
     }
 
@@ -24,7 +24,7 @@ public sealed class ParserTest
         var input = $"; {commentValue}";
         var document = Parse(input);
         return (document.NodesOutsideSection.Count == 1
-                && document.NodesOutsideSection.First() is TriviaNode triviaNode
+                && document.NodesOutsideSection.First() is CommentNode triviaNode
                 && triviaNode.ToString() == input)
             .ToProperty()
             .When(!input.Contains('\r') && !input.Contains('\n'));
@@ -37,10 +37,10 @@ public sealed class ParserTest
 
     [Theory]
     [MemberData(nameof(GetGarbageData))]
-    public void ParsesGarbageAsTriviaNode(string input, string leadingNode)
+    public void ParsesGarbageAsUnrecognized(string input, string leadingNode)
     {
         var document = Parse(leadingNode + input);
-        var node = Assert.IsType<TriviaNode>(GetLastNode(document));
+        var node = Assert.IsType<UnrecognizedNode>(GetLastNode(document));
         Assert.Equal(input, node.ToString());
     }
 

@@ -22,19 +22,6 @@ internal static class NewLineExtensions
         };
 
     public static SectionChildNode EnsureTrailingNewLine(this SectionChildNode node, Token.NewLine newLine)
-        => node switch
-        {
-            TriviaNode triviaNode => EnsureTrailingNewLine(triviaNode, newLine),
-            KeyValueNode keyValueNode => EnsureTrailingNewLine(keyValueNode, newLine),
-            _ => throw new InvalidOperationException("Unreachable"),
-        };
-
-    public static TriviaNode EnsureTrailingNewLine(this TriviaNode node, Token.NewLine newLine)
-        => node.NewLine is null
-            ? node with { NewLine = newLine }
-            : node;
-
-    public static KeyValueNode EnsureTrailingNewLine(this KeyValueNode node, Token.NewLine newLine)
         => node.NewLine is null
             ? node with { NewLine = newLine }
             : node;
