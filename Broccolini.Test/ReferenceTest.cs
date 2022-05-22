@@ -1,6 +1,6 @@
 using Broccolini.SemanticModel;
+using FsCheck;
 using System.ComponentModel;
-using System.Globalization;
 using System.Runtime.Versioning;
 using System.Text;
 using Xunit;
@@ -11,6 +11,11 @@ namespace Broccolini.Test;
 
 public sealed class ReferenceTest
 {
+    public ReferenceTest()
+    {
+        BroccoliniGenerators.Register();
+    }
+
     [SkippableTheory]
     [MemberData(nameof(GetSectionNameData))]
     [SupportedOSPlatform("windows")]
@@ -21,8 +26,7 @@ public sealed class ReferenceTest
         const string arbitraryKey = "key";
         const string arbitraryValue = "value";
 
-        using var temporaryFile = new TemporaryFile();
-        File.WriteAllText(temporaryFile.Path, $"{input}\r\n{arbitraryKey} = {arbitraryValue}", Encoding.Unicode);
+        using var temporaryFile = TemporaryFile.Write($"{input}\r\n{arbitraryKey} = {arbitraryValue}");
 
         Assert.Equal(arbitraryValue, GetPrivateProfileString(temporaryFile.Path, sectionName, arbitraryKey, "DEFAULT VALUE"));
     }
@@ -39,9 +43,7 @@ public sealed class ReferenceTest
 
         const string arbitrarySection = "section";
 
-        using var temporaryFile = new TemporaryFile();
-        File.WriteAllText(temporaryFile.Path, $"[{arbitrarySection}]\r\n{input}", Encoding.Unicode);
-
+        using var temporaryFile = TemporaryFile.Write($"[{arbitrarySection}]\r\n{input}");
         Assert.Equal(value, GetPrivateProfileString(temporaryFile.Path, arbitrarySection, key, "DEFAULT VALUE"));
     }
 
@@ -55,8 +57,7 @@ public sealed class ReferenceTest
         const string arbitrarySection = "section";
         const string arbitraryValue = "value";
 
-        using var temporaryFile = new TemporaryFile();
-        File.WriteAllText(temporaryFile.Path, $"[{arbitrarySection}]\r\n{keyInFile} = {arbitraryValue}", Encoding.Unicode);
+        using var temporaryFile = TemporaryFile.Write($"[{arbitrarySection}]\r\n{keyInFile} = {arbitraryValue}");
 
         if (shouldBeEqual)
         {
@@ -78,8 +79,7 @@ public sealed class ReferenceTest
         const string arbitraryKey = "key";
         const string arbitraryValue = "value";
 
-        using var temporaryFile = new TemporaryFile();
-        File.WriteAllText(temporaryFile.Path, $"[{sectionInFile}]\r\n{arbitraryKey} = {arbitraryValue}", Encoding.Unicode);
+        using var temporaryFile = TemporaryFile.Write($"[{sectionInFile}]\r\n{arbitraryKey} = {arbitraryValue}");
 
         if (shouldBeEqual)
         {
@@ -107,6 +107,22 @@ public sealed class ReferenceTest
     private sealed class TemporaryFile : IDisposable
     {
         public string Path { get; } = System.IO.Path.GetTempFileName();
+
+        public static TemporaryFile Write(string contents)
+        {
+            var file = new TemporaryFile();
+
+            try
+            {
+                File.WriteAllText(file.Path, contents, Encoding.Unicode);
+                return file;
+            }
+            catch
+            {
+                file.Dispose();
+                throw;
+            }
+        }
 
         public void Dispose() => File.Delete(Path);
     }
