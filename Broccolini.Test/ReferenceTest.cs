@@ -42,11 +42,27 @@ public sealed class ReferenceTest
     {
         Skip.IfNot(OperatingSystem.IsWindows());
 
-        var property = Prop.ForAll((SectionNameNoNulls sectionName) =>
+        var property = Prop.ForAll((SectionNameNoNulls sectionName, Tuple<WhitespaceNoNulls, WhitespaceNoNulls, WhitespaceNoNulls, InlineTextNoNulls> trivia) =>
         {
-            using var temporaryFile = TemporaryFile.Write($"[{sectionName.Value}]");
+            using var temporaryFile = TemporaryFile.Write($"{trivia.Item1.Value}[{trivia.Item2.Value}{sectionName.Value}{trivia.Item3.Value}]{trivia.Item4.Value}");
             var sectionNames = GetSectionNames(temporaryFile.Path);
-            return (sectionNames.Length == 1 && sectionNames[0] == sectionName.Value);
+            return (sectionNames.Length == 1 && sectionNames[0] == sectionName.Value).ToProperty();
+        });
+
+        property.QuickCheckThrowOnFailure(_testOutputHelper);
+    }
+
+    [SkippableFact]
+    [SupportedOSPlatform("windows")]
+    public void ParsesArbitrarySectionNameWithoutClosingBracket()
+    {
+        Skip.IfNot(OperatingSystem.IsWindows());
+
+        var property = Prop.ForAll((SectionNameNoNulls sectionName, Tuple<WhitespaceNoNulls, WhitespaceNoNulls, WhitespaceNoNulls> trivia) =>
+        {
+            using var temporaryFile = TemporaryFile.Write($"{trivia.Item1.Value}[{trivia.Item2.Value}{sectionName.Value}{trivia.Item3.Value}");
+            var sectionNames = GetSectionNames(temporaryFile.Path);
+            return (sectionNames.Length == 1 && sectionNames[0] == sectionName.Value).ToProperty();
         });
 
         property.QuickCheckThrowOnFailure(_testOutputHelper);

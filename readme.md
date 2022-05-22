@@ -44,6 +44,8 @@ there are still some intentional differences:
    Broccolini supports such keys and section names.
 * While the editing API in Broccolini shares the goal of changing as little as possible, its behaviour
   does not explicitly replicate the behaviour of `WritePrivateProfileString`.
+* `GetPrivateProfileString` breaks when a unicode file contains a non-trailing NULL character (`\0`). \
+   Broccolini supports such files.
 
 ## Goals
 * Compatibiliy with INI format in Windows OS.

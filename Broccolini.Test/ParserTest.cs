@@ -64,9 +64,17 @@ public sealed class ParserTest
     }
 
     [Property]
-    public bool ParsesArbitrarySectionName(SectionName name)
+    public bool ParsesArbitrarySectionName(SectionName name, Whitespace ws1, Whitespace ws2, Whitespace ws3, InlineText trailing)
     {
-        var document = Parse($"[{name.Value}]");
+        var document = Parse($"{ws1.Value}[{ws2.Value}{name.Value}{ws3.Value}]{trailing.Value}");
+        return (document.Sections.Count == 1
+            && document.Sections[0].Name == name.Value);
+    }
+
+    [Property]
+    public bool ParsesArbitrarySectionNameWithoutClosingBracket(SectionName name, Whitespace ws1, Whitespace ws2, Whitespace ws3)
+    {
+        var document = Parse($"{ws1.Value}[{ws2.Value}{name.Value}{ws3.Value}");
         return (document.Sections.Count == 1
             && document.Sections[0].Name == name.Value);
     }
