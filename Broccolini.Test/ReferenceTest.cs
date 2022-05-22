@@ -1,9 +1,11 @@
 using Broccolini.SemanticModel;
 using FsCheck;
+using FsCheck.Xunit;
 using System.ComponentModel;
 using System.Runtime.Versioning;
 using System.Text;
 using Xunit;
+using Xunit.Abstractions;
 using static Broccolini.Test.Kernel32;
 using static Broccolini.Test.TestData;
 
@@ -11,8 +13,11 @@ namespace Broccolini.Test;
 
 public sealed class ReferenceTest
 {
-    public ReferenceTest()
+    private readonly ITestOutputHelper _testOutputHelper;
+
+    public ReferenceTest(ITestOutputHelper testOutputHelper)
     {
+        _testOutputHelper = testOutputHelper;
         BroccoliniGenerators.Register();
     }
 
@@ -29,6 +34,22 @@ public sealed class ReferenceTest
         using var temporaryFile = TemporaryFile.Write($"{input}\r\n{arbitraryKey} = {arbitraryValue}");
 
         Assert.Equal(arbitraryValue, GetPrivateProfileString(temporaryFile.Path, sectionName, arbitraryKey, "DEFAULT VALUE"));
+    }
+
+    [SkippableFact]
+    [SupportedOSPlatform("windows")]
+    public void ParsesArbitrarySectionName()
+    {
+        Skip.IfNot(OperatingSystem.IsWindows());
+
+        var property = Prop.ForAll((SectionNameNoNulls sectionName) =>
+        {
+            using var temporaryFile = TemporaryFile.Write($"[{sectionName.Value}]");
+            var sectionNames = GetSectionNames(temporaryFile.Path);
+            return (sectionNames.Length == 1 && sectionNames[0] == sectionName.Value);
+        });
+
+        property.QuickCheckThrowOnFailure(_testOutputHelper);
     }
 
     public static TheoryData<string, string> GetSectionNameData()

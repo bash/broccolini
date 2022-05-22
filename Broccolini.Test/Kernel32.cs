@@ -7,12 +7,12 @@ namespace Broccolini.Test;
 [SupportedOSPlatform("windows")]
 internal static class Kernel32
 {
-    public static IEnumerable<string> GetSectionNames(string filePath)
+    public static string[] GetSectionNames(string filePath)
     {
         var result = GetPrivateProfileStringInternal(appName: null, keyName: null, @default: null, fileName: filePath);
         return result.Length > 0
             ? result[..^1].Split('\0')
-            : Enumerable.Empty<string>();
+            : Array.Empty<string>();
     }
 
     public static IEnumerable<string> GetKeysInSection(string filePath, string section)

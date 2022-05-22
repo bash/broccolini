@@ -9,6 +9,11 @@ namespace Broccolini.Test;
 
 public sealed class ParserTest
 {
+    public ParserTest()
+    {
+        BroccoliniGenerators.Register();
+    }
+
     [Theory]
     [MemberData(nameof(GetCommentsData))]
     public void ParsesCommentNode(string input, string leadingNode)
@@ -56,6 +61,14 @@ public sealed class ParserTest
         var document = Parse(input);
         var node = Assert.IsType<SectionNode>(document.Sections.Last());
         Assert.Equal(name, node.Name);
+    }
+
+    [Property]
+    public bool ParsesArbitrarySectionName(SectionName name)
+    {
+        var document = Parse($"[{name.Value}]");
+        return (document.Sections.Count == 1
+            && document.Sections[0].Name == name.Value);
     }
 
     public static TheoryData<string, string> GetSectionNameData()
