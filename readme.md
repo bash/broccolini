@@ -36,6 +36,15 @@ var updated = syntax
 File.WriteAllText("config.ini", updated.ToString(), Encoding.Unicode);
 ```
 
+## Known Differences
+While Broccolini tries to replicate most of the behaviour found in the Windows APIs,
+there are still some intentional differences:
+
+* `GetPrivateProfileString` does not support keys or section names that contain NULL characters (`\0`). \
+   Broccolini supports such keys and section names.
+* While the editing API in Broccolini shares the goal of changing as little as possible, its behaviour
+  does not explicitly replicate the behaviour of `WritePrivateProfileString`.
+
 ## Goals
 * Compatibiliy with INI format in Windows OS.
 * Roundtrips (`Parse` -> `ToString`) should preserve everything.
