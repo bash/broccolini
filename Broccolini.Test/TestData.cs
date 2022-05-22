@@ -71,7 +71,6 @@ internal static class TestData
         => Sequence.Return(
             new CaseSensitivityInput("foo", "FOO", ShouldBeEqual: true),
             new CaseSensitivityInput("Brötchen", "BRÖTCHEN", ShouldBeEqual: true),
-            new CaseSensitivityInput("Brötchen", "BRÖTCHEN", ShouldBeEqual: true),
             new CaseSensitivityInput("español", "ESPAÑOL", ShouldBeEqual: true),
             new CaseSensitivityInput("é", "É", ShouldBeEqual: true),
             new CaseSensitivityInput("ß", "ẞ", ShouldBeEqual: false),
