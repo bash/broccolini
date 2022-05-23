@@ -60,6 +60,29 @@ public sealed class EditingTest
         Assert.Equal(expected.ReplaceLineEndings(), updatedDocument.ToString());
     }
 
+    [Theory]
+    [MemberData(nameof(NewLineData))]
+    public void AppendingKeyToNewSectionRespectsExistingLineEndings(string newLine)
+    {
+        const string input =
+            """
+            ; existing line with newline
+
+            """;
+
+        const string expected =
+            """
+            ; existing line with newline
+            [section]
+            key = value
+            """;
+
+        var updatedDocument = Parse(input.ReplaceLineEndings(newLine))
+            .WithSection("section", section => section.WithKeyValue("key", "value"));
+
+        Assert.Equal(expected.ReplaceLineEndings(newLine), updatedDocument.ToString());
+    }
+
     public static TheoryData<string> NewLineData() => NewLines.ToTheoryData();
 
     [Theory]

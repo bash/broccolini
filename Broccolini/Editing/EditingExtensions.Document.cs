@@ -10,22 +10,28 @@ public static partial class EditingExtensions
     /// <summary>Appends or updates a section with the given name.</summary>
     [Pure]
     public static IniDocument WithSection(this IniDocument document, string sectionName, Func<SectionNode, SectionNode> updateSection)
-        => document.Sections.TryUpdateFirst(
+    {
+        updateSection = WithNewLineHint(updateSection, document);
+        return document.Sections.TryUpdateFirst(
             section => KeyEquals(section.Name, sectionName),
-            EnsureTrailingNewLine(WithNewLineHint(updateSection, document), document),
+            EnsureTrailingNewLine(updateSection, document),
             out var updatedSections)
                 ? document with { Sections = updatedSections }
                 : document.AppendSection(updateSection(Section(sectionName)));
+    }
 
     /// <summary>Updates a section with the given name. Does nothing when the section does not exist.</summary>
     [Pure]
     public static IniDocument UpdateSection(this IniDocument document, string sectionName, Func<SectionNode, SectionNode> updateSection)
-        => document.Sections.TryUpdateFirst(
+    {
+        updateSection = WithNewLineHint(updateSection, document);
+        return document.Sections.TryUpdateFirst(
             section => KeyEquals(section.Name, sectionName),
-            EnsureTrailingNewLine(WithNewLineHint(updateSection, document), document),
+            EnsureTrailingNewLine(updateSection, document),
             out var updatedSections)
                 ? document with { Sections = updatedSections }
                 : document;
+    }
 
     /// <summary>Removes all sections with the given name. Preserves trailing trivia.</summary>
     [Pure]
