@@ -12,7 +12,7 @@ public static partial class EditingExtensions
     public static IniDocument WithSection(this IniDocument document, string sectionName, Func<SectionNode, SectionNode> updateSection)
         => document.Sections.TryUpdateFirst(
             section => KeyEquals(section.Name, sectionName),
-            EnsureTrailingNewLine(updateSection, document),
+            EnsureTrailingNewLine(WithNewLineHint(updateSection, document), document),
             out var updatedSections)
                 ? document with { Sections = updatedSections }
                 : document.AppendSection(updateSection(Section(sectionName)));
@@ -22,7 +22,7 @@ public static partial class EditingExtensions
     public static IniDocument UpdateSection(this IniDocument document, string sectionName, Func<SectionNode, SectionNode> updateSection)
         => document.Sections.TryUpdateFirst(
             section => KeyEquals(section.Name, sectionName),
-            EnsureTrailingNewLine(updateSection, document),
+            EnsureTrailingNewLine(WithNewLineHint(updateSection, document), document),
             out var updatedSections)
                 ? document with { Sections = updatedSections }
                 : document;
@@ -54,6 +54,9 @@ public static partial class EditingExtensions
         var documentWithNewLine = document.EnsureTrailingNewLine(document.DetectNewLine());
         return documentWithNewLine with { Sections = documentWithNewLine.Sections.Add(node) };
     }
+
+    private static Func<SectionNode, SectionNode> WithNewLineHint(Func<SectionNode, SectionNode> updateSection, IniDocument document)
+        => section => updateSection(section with { NewLineHint = document.DetectNewLine() }) with { NewLineHint = null };
 
     private static Func<SectionNode, bool, SectionNode> EnsureTrailingNewLine(Func<SectionNode, SectionNode> updateSection, IniDocument document)
         => (section, isLast)

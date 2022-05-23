@@ -66,10 +66,10 @@ public sealed class EditingTest
     [MemberData(nameof(AppendsKeyToExistingSectionData))]
     public void AppendsKeyToExistingSection(string expected, string input)
     {
-        var updatedDocument = Parse(input.ReplaceLineEndings())
+        var updatedDocument = Parse(input)
             .WithSection("section", section => section.WithKeyValue("new key", "value"));
 
-        Assert.Equal(expected.ReplaceLineEndings(), updatedDocument.ToString());
+        Assert.Equal(expected, updatedDocument.ToString());
     }
 
     public static TheoryData<string, string> AppendsKeyToExistingSectionData()
@@ -81,6 +81,15 @@ public sealed class EditingTest
              """
              [section]
 
+             """),
+             ("""
+             ; we need at least one newline in the document
+             [section]
+             new key = value
+             """,
+             """
+             ; we need at least one newline in the document
+             [section]
              """),
             ("""
              [section]

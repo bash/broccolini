@@ -12,6 +12,6 @@ internal static class NewlineDetectionExtensions
             .FirstOrDefault()
                 ?? NativeNewLine;
 
-    public static Token.NewLine DetectNewLine(this IniNode node)
-        => node.NewLine ?? NativeNewLine;
+    public static Token.NewLine DetectNewLine(this SectionNode node)
+        => node.NewLine ?? node.NewLineHint ?? NativeNewLine;
 }

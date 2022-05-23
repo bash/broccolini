@@ -135,6 +135,8 @@ public sealed record SectionNode(string Name, IImmutableList<SectionChildNode> C
     /// <summary>Trailing whitespace and garbage after the closing bracket.</summary>
     public IImmutableList<Token> TrailingTrivia { get; init; } = ImmutableArray<Token>.Empty;
 
+    internal Token.NewLine? NewLineHint { get; init; }
+
     private string ClosingBracketDebugView => ClosingBracket?.ToString() ?? string.Empty;
 
     public override void Accept(IIniNodeVisitor visitor) => visitor.Visit(this);
