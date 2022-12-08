@@ -22,7 +22,7 @@ port = 1234
 ### Reading
 ```cs
 var syntax = IniParser.Parse(File.ReadAllText("config.ini"));
-var document = syntax.ToSemanticModel();
+var document = syntax.GetSemanticModel();
 string databaseServer = document["database"]["server"];
 string databasePort = document["database"]["port"];
 ```
