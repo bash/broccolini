@@ -34,7 +34,20 @@ public static partial class EditingExtensions
 
     private static SectionNode AppendChild(this SectionNode sectionNode, SectionChildNode node)
     {
-        var sectionWithNewLine = sectionNode.EnsureTrailingNewLine(sectionNode.DetectNewLine());
-        return sectionWithNewLine with { Children = sectionWithNewLine.Children.Add(node) };
+        return sectionNode.Children.TryFindIndex(IsBlank, out var index)
+            ? InsertAtIndex(index)
+            : AppendTrailing();
+
+        SectionNode InsertAtIndex(int childIndex)
+            => sectionNode with { Children = sectionNode.Children.Insert(childIndex, node.EnsureTrailingNewLine(sectionNode.DetectNewLine())) };
+
+        SectionNode AppendTrailing()
+        {
+            var sectionWithNewLine = sectionNode.EnsureTrailingNewLine(sectionNode.DetectNewLine());
+            return sectionWithNewLine with { Children = sectionWithNewLine.Children.Add(node) };
+        }
+
+        static bool IsBlank(SectionChildNode node)
+            => node is UnrecognizedNode unrecognizedNode && unrecognizedNode.IsBlank();
     }
 }

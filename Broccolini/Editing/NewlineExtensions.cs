@@ -21,7 +21,7 @@ internal static class NewLineExtensions
             _ => node,
         };
 
-    private static SectionChildNode EnsureTrailingNewLine(this SectionChildNode node, Token.NewLine newLine)
+    public static SectionChildNode EnsureTrailingNewLine(this SectionChildNode node, Token.NewLine newLine)
         => node.NewLine is null
             ? node with { NewLine = newLine }
             : node;

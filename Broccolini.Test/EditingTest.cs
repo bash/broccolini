@@ -97,45 +97,62 @@ public sealed class EditingTest
 
     public static TheoryData<string, string> AppendsKeyToExistingSectionData()
         => Sequence.Return(
-             ("""
-             [section]
-             new key = value
-             """,
-             """
-             [section]
+              ("""
+              [section]
+              new key = value
+              """,
+              """
+              [section]
 
-             """),
+              """),
+              ("""
+              ; we need at least one newline in the document
+              [section]
+              new key = value
+              """,
+              """
+              ; we need at least one newline in the document
+              [section]
+              """),
              ("""
-             ; we need at least one newline in the document
-             [section]
-             new key = value
-             """,
-             """
-             ; we need at least one newline in the document
-             [section]
-             """),
-            ("""
+              [section]
+              key = value
+              new key = value
+              """,
+              """
+              [section]
+              key = value
+              """),
+             (
+              """
+              [section]
+              key = value
+              new key = value
+              [other section]
+              """,
+              """
+              [section]
+              key = value
+              [other section]
+              """
+             ),
+             ($$"""
              [section]
              key = value
              new key = value
-             """,
-             """
-             [section]
-             key = value
-             """),
-            (
-             """
-             [section]
-             key = value
-             new key = value
+
+             {{"     \t     \v  "}}
+
              [other section]
              """,
-             """
+             $$"""
              [section]
              key = value
+
+             {{"     \t     \v  "}}
+
              [other section]
-             """
-            ))
+             """))
             .AsEnumerable()
             .SelectMany(_ => NewLines, (data, newLine) => (data.Item1.ReplaceLineEndings(newLine), data.Item2.ReplaceLineEndings(newLine)))
             .ToTheoryData();

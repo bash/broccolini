@@ -90,6 +90,8 @@ public sealed record UnrecognizedNode(IImmutableList<Token> Tokens) : SectionChi
     public bool Equals(UnrecognizedNode? other) => other is not null && Tokens.SequenceEqual(other.Tokens);
 
     public override int GetHashCode() => Tokens.Count.GetHashCode();
+
+    internal bool IsBlank() => Tokens.All(static token => token is Token.WhiteSpace or Token.NewLine);
 }
 
 /// <summary>A comment: <c>; comment</c>.</summary>
