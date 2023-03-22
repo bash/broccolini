@@ -1,4 +1,7 @@
 # Changelog
+## 0.2.2
+* Improve insertion heuristic for keys when section contains trailing whitespace. (#5)
+
 ## 0.2.1
 * Fix broken newline detection for appending a node to new section (Follow up to #1).
 

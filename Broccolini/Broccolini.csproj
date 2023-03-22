@@ -13,7 +13,7 @@
         <IsTrimmable>true</IsTrimmable>
     </PropertyGroup>
     <PropertyGroup Label="NuGet Packing">
-        <Version>0.2.1</Version>
+        <Version>0.2.2</Version>
         <Description>Broccolini is a non-destructive parser for INI files compatible with GetPrivateProfileString.</Description>
         <Authors>Ruben Schmidmeister</Authors>
         <PackageLicenseExpression>MIT OR Apache-2.0</PackageLicenseExpression>
