@@ -41,6 +41,7 @@ public abstract record IniNode
     [EditorBrowsable(EditorBrowsableState.Never)]
     protected IniNode(IniNode original)
     {
+        NewLine = original.NewLine;
     }
 
     public Token.NewLine? NewLine { get; init; }
@@ -53,6 +54,8 @@ public abstract record IniNode
         Accept(visitor);
         return visitor.ToString();
     }
+
+    private protected abstract void InternalImplementorsOnly();
 }
 
 public abstract record SectionChildNode : IniNode
@@ -60,10 +63,7 @@ public abstract record SectionChildNode : IniNode
     private protected SectionChildNode() { }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
-    protected SectionChildNode(SectionChildNode original)
-        : base(original)
-    {
-    }
+    protected SectionChildNode(SectionChildNode original) : base(original) { }
 
     public override string ToString() => base.ToString();
 }
@@ -103,6 +103,8 @@ public sealed record KeyValueNode : SectionChildNode
     public override void Accept(IIniNodeVisitor visitor) => visitor.Visit(this);
 
     public override string ToString() => base.ToString();
+
+    private protected override void InternalImplementorsOnly() { }
 }
 
 /// <summary>A line that can't be recognized as one of the other node types.</summary>
@@ -129,6 +131,8 @@ public sealed record UnrecognizedNode : SectionChildNode
     public override int GetHashCode() => Tokens.Count.GetHashCode();
 
     internal bool IsBlank() => Tokens.All(static token => token is Token.WhiteSpace or Token.NewLine);
+
+    private protected override void InternalImplementorsOnly() { }
 }
 
 /// <summary>A comment: <c>; comment</c>.</summary>
@@ -157,6 +161,8 @@ public sealed record CommentNode : SectionChildNode
     public override void Accept(IIniNodeVisitor visitor) => visitor.Visit(this);
 
     public override string ToString() => base.ToString();
+
+    private protected override void InternalImplementorsOnly() { }
 }
 
 /// <summary>A section:
@@ -225,4 +231,6 @@ public sealed record SectionNode : IniNode
                 NewLine));
 
     public override string ToString() => base.ToString();
+
+    private protected override void InternalImplementorsOnly() { }
 }
