@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Diagnostics.Contracts;
 using Broccolini.Syntax;
 using static Broccolini.SemanticModel.KeyComparision;
 
@@ -8,6 +9,7 @@ public static class IniDocumentExtensions
 {
     /// <summary>Converts the AST to a semantic representation of the INI document.</summary>
     /// <remarks>This representation is intended for reading only and discards formatting and trivia.</remarks>
+    [Pure]
     public static IDocument GetSemanticModel(this IniDocument document)
         => new Document(
             document.Sections

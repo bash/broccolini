@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Diagnostics.Contracts;
 using static Broccolini.Tokenization.Tokenizer;
 
 namespace Broccolini.Syntax;
@@ -11,6 +12,7 @@ public static class SyntaxFactory
     /// <param name="key">The key may contain anything except newlines, <c>=</c>, leading <c>[</c> or <c>;</c>, and leading or trailing whitespace.</param>
     /// <param name="value">The value may contain anything except newlines. Quotes are automatically added as needed to preserve whitespace.</param>
     /// <exception cref="ArgumentException">Thrown when the created node would result in something different when parsed back.</exception>
+    [Pure]
     public static KeyValueNode KeyValue(string key, string value)
     {
         var tokenizedValue = Tokenize(value);
@@ -33,6 +35,7 @@ public static class SyntaxFactory
     /// <summary>Creates a section node while validating that the <paramref name="name"/> is valid.</summary>
     /// <param name="name">The name may contain anything except newlines, <c>]</c>, and leading or trailing whitespace.</param>
     /// <exception cref="ArgumentException">Thrown when the created node would result in something different when parsed back.</exception>
+    [Pure]
     public static SectionNode Section(string name)
     {
         ValidateSectionName(name);
