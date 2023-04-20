@@ -54,7 +54,7 @@ public abstract record Token
         public override string ToString() => Value;
     }
 
-    public sealed record Epsilon : Token
+    internal sealed record Epsilon : Token
     {
         public override string ToString() => string.Empty;
     }
