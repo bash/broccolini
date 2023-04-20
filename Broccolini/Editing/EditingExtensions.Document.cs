@@ -9,24 +9,24 @@ public static partial class EditingExtensions
 {
     /// <summary>Appends or updates a section with the given name.</summary>
     [Pure]
-    public static IniDocument WithSection(this IniDocument document, string sectionName, Func<SectionIniNode, SectionIniNode> updateSection)
+    public static IniDocument WithSection(this IniDocument document, string name, Func<SectionIniNode, SectionIniNode> updateSection)
     {
         updateSection = WithNewLineHint(updateSection, document);
         return document.Sections.TryUpdateFirst(
-            section => KeyEquals(section.Name, sectionName),
+            section => KeyEquals(section.Name, name),
             EnsureTrailingNewLine(updateSection, document),
             out var updatedSections)
                 ? document with { Sections = updatedSections }
-                : document.AppendSection(updateSection(Section(sectionName)));
+                : document.AppendSection(updateSection(Section(name)));
     }
 
     /// <summary>Updates a section with the given name. Does nothing when the section does not exist.</summary>
     [Pure]
-    public static IniDocument UpdateSection(this IniDocument document, string sectionName, Func<SectionIniNode, SectionIniNode> updateSection)
+    public static IniDocument UpdateSection(this IniDocument document, string name, Func<SectionIniNode, SectionIniNode> updateSection)
     {
         updateSection = WithNewLineHint(updateSection, document);
         return document.Sections.TryUpdateFirst(
-            section => KeyEquals(section.Name, sectionName),
+            section => KeyEquals(section.Name, name),
             EnsureTrailingNewLine(updateSection, document),
             out var updatedSections)
                 ? document with { Sections = updatedSections }
@@ -35,9 +35,9 @@ public static partial class EditingExtensions
 
     /// <summary>Removes all sections with the given name. Preserves trailing trivia.</summary>
     [Pure]
-    public static IniDocument RemoveSection(this IniDocument document, string sectionName)
+    public static IniDocument RemoveSection(this IniDocument document, string name)
     {
-        while (document.Sections.TryFindIndex(section => KeyEquals(section.Name, sectionName), out var index))
+        while (document.Sections.TryFindIndex(section => KeyEquals(section.Name, name), out var index))
         {
             var trailingTrivia = GetTrailingTrivia(document.Sections[index]);
             document = document with { Sections = document.Sections.RemoveAt(index) };
