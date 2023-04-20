@@ -4,16 +4,16 @@ using static Broccolini.Tokenization.Tokenizer;
 
 namespace Broccolini.Syntax;
 
-public static class SyntaxFactory
+public static class IniSyntaxFactory
 {
-    private static readonly Token.WhiteSpace Space = new(" ");
+    private static readonly IniToken.WhiteSpace Space = new(" ");
 
     /// <summary>Creates a key-value node while taking care of properly quoting the <paramref name="value"/> as needed.</summary>
     /// <param name="key">The key may contain anything except newlines, <c>=</c>, leading <c>[</c> or <c>;</c>, and leading or trailing whitespace.</param>
     /// <param name="value">The value may contain anything except newlines. Quotes are automatically added as needed to preserve whitespace.</param>
     /// <exception cref="ArgumentException">Thrown when the created node would result in something different when parsed back.</exception>
     [Pure]
-    public static KeyValueNode KeyValue(string key, string value)
+    public static KeyValueIniNode KeyValue(string key, string value)
     {
         var tokenizedValue = Tokenize(value);
 
@@ -21,10 +21,10 @@ public static class SyntaxFactory
         ValidateValue(value, tokenizedValue);
 
         var quote = ShouldAddQuotesAroundValue(tokenizedValue)
-            ? new Token.DoubleQuote()
+            ? new IniToken.DoubleQuote()
             : null;
 
-        return new KeyValueNode(key, value)
+        return new KeyValueIniNode(key, value)
         {
             TriviaBeforeEqualsSign = Space,
             TriviaAfterEqualsSign = Space,
@@ -36,22 +36,22 @@ public static class SyntaxFactory
     /// <param name="name">The name may contain anything except newlines, <c>]</c>, and leading or trailing whitespace.</param>
     /// <exception cref="ArgumentException">Thrown when the created node would result in something different when parsed back.</exception>
     [Pure]
-    public static SectionNode Section(string name)
+    public static SectionIniNode Section(string name)
     {
         ValidateSectionName(name);
-        return new SectionNode(name, ImmutableArray<SectionChildNode>.Empty);
+        return new SectionIniNode(name, ImmutableArray<SectionChildIniNode>.Empty);
     }
 
     private static void ValidateSectionName(string name)
     {
         var tokens = Tokenize(name);
 
-        if (tokens.Any(static t => t is Token.NewLine or Token.ClosingBracket))
+        if (tokens.Any(static t => t is IniToken.NewLine or IniToken.ClosingBracket))
         {
             throw new ArgumentException($"Section name '{name}' contains one ore more invalid characters: line breaks and ] are not allowed", nameof(name));
         }
 
-        if (tokens is [Token.WhiteSpace, ..] or [.., Token.WhiteSpace])
+        if (tokens is [IniToken.WhiteSpace, ..] or [.., IniToken.WhiteSpace])
         {
             throw new ArgumentException($"Section name '{name}' contains leading or trailing whitespace, which will not be preserved", nameof(name));
         }
@@ -61,42 +61,42 @@ public static class SyntaxFactory
     {
         var tokens = Tokenize(key);
 
-        if (tokens.Any(static t => t is Token.NewLine or Token.EqualsSign))
+        if (tokens.Any(static t => t is IniToken.NewLine or IniToken.EqualsSign))
         {
             throw new ArgumentException($"Key '{key}' contains one ore more invalid characters: line breaks and = are not allowed", nameof(key));
         }
 
-        if (tokens is [Token.OpeningBracket, ..] or [Token.WhiteSpace, Token.OpeningBracket, ..])
+        if (tokens is [IniToken.OpeningBracket, ..] or [IniToken.WhiteSpace, IniToken.OpeningBracket, ..])
         {
             throw new ArgumentException($"Key '{key}' may not start with an opening bracket", nameof(key));
         }
 
-        if (tokens is [Token.Semicolon, ..] or [Token.WhiteSpace, Token.Semicolon, ..])
+        if (tokens is [IniToken.Semicolon, ..] or [IniToken.WhiteSpace, IniToken.Semicolon, ..])
         {
             throw new ArgumentException($"Key '{key}' may not start with a semicolon", nameof(key));
         }
 
-        if (tokens is [Token.WhiteSpace, ..] or [.., Token.WhiteSpace])
+        if (tokens is [IniToken.WhiteSpace, ..] or [.., IniToken.WhiteSpace])
         {
             throw new ArgumentException($"Key '{key}' contains leading or trailing whitespace, which will not be preserved", nameof(key));
         }
     }
 
-    private static void ValidateValue(string value, IReadOnlyList<Token> tokens)
+    private static void ValidateValue(string value, IReadOnlyList<IniToken> tokens)
     {
-        if (tokens.Any(static t => t is Token.NewLine))
+        if (tokens.Any(static t => t is IniToken.NewLine))
         {
             throw new ArgumentException($"Value '{value}' contains one ore more invalid characters: line breaks are not allowed", nameof(value));
         }
     }
 
-    private static bool ShouldAddQuotesAroundValue(IReadOnlyList<Token> tokens)
+    private static bool ShouldAddQuotesAroundValue(IReadOnlyList<IniToken> tokens)
     {
         bool HasLeadingOrTrailingWhitespace()
-            => tokens is [Token.WhiteSpace, ..] or [.., Token.WhiteSpace];
+            => tokens is [IniToken.WhiteSpace, ..] or [.., IniToken.WhiteSpace];
 
         bool IsQuoted()
-            => tokens is [Token.DoubleQuote, .., Token.DoubleQuote] or [Token.SingleQuote, .., Token.SingleQuote];
+            => tokens is [IniToken.DoubleQuote, .., IniToken.DoubleQuote] or [IniToken.SingleQuote, .., IniToken.SingleQuote];
 
         return HasLeadingOrTrailingWhitespace() || IsQuoted();
     }

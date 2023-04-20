@@ -4,5 +4,5 @@ namespace Broccolini.Tokenization;
 
 internal interface ITokenizerRule
 {
-    Token? Match(ITokenizerInput input);
+    IniToken? Match(ITokenizerInput input);
 }

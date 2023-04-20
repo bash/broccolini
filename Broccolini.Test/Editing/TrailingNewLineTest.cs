@@ -10,7 +10,7 @@ public sealed class TrailingNewLineTest
     [Fact]
     public void DoesNothingForEmptyDocument()
     {
-        var newLine = new Token.NewLine("\n");
+        var newLine = new IniToken.NewLine("\n");
         Assert.Equal(IniDocument.Empty, IniDocument.Empty.EnsureTrailingNewLine(newLine));
     }
 
@@ -18,7 +18,7 @@ public sealed class TrailingNewLineTest
     [MemberData(nameof(NodesWithoutNewlines))]
     public void AddsTrailingNewLine(string input)
     {
-        var newLine = new Token.NewLine("\n");
+        var newLine = new IniToken.NewLine("\n");
         var document = Parse(input);
         Assert.Equal(input + "\n", document.EnsureTrailingNewLine(newLine).ToString());
     }
@@ -29,7 +29,7 @@ public sealed class TrailingNewLineTest
     {
         var inputWithTrailingNewLine = input + "\n";
         var document = Parse(inputWithTrailingNewLine);
-        Assert.Equal(inputWithTrailingNewLine, document.EnsureTrailingNewLine(new Token.NewLine("\r\n")).ToString());
+        Assert.Equal(inputWithTrailingNewLine, document.EnsureTrailingNewLine(new IniToken.NewLine("\r\n")).ToString());
     }
 
     public static TheoryData<string> NodesWithoutNewlines()

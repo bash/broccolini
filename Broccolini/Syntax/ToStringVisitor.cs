@@ -16,7 +16,7 @@ internal sealed class ToStringVisitor : IIniNodeVisitor
         }
     }
 
-    public void Visit(KeyValueNode keyValueNode)
+    public void Visit(KeyValueIniNode keyValueNode)
     {
         VisitToken(keyValueNode.LeadingTrivia);
         _stringBuilder.Append(keyValueNode.Key);
@@ -30,13 +30,13 @@ internal sealed class ToStringVisitor : IIniNodeVisitor
         VisitToken(keyValueNode.NewLine);
     }
 
-    public void Visit(UnrecognizedNode triviaNode)
+    public void Visit(UnrecognizedIniNode triviaNode)
     {
         VisitTokens(triviaNode.Tokens);
         VisitToken(triviaNode.NewLine);
     }
 
-    public void Visit(SectionNode sectionNode)
+    public void Visit(SectionIniNode sectionNode)
     {
         VisitToken(sectionNode.LeadingTrivia);
         _stringBuilder.Append(sectionNode.OpeningBracket);
@@ -49,7 +49,7 @@ internal sealed class ToStringVisitor : IIniNodeVisitor
         Visit(sectionNode.Children);
     }
 
-    public void Visit(CommentNode commentNode)
+    public void Visit(CommentIniNode commentNode)
     {
         VisitToken(commentNode.LeadingTrivia);
         VisitToken(commentNode.Semicolon);
@@ -59,7 +59,7 @@ internal sealed class ToStringVisitor : IIniNodeVisitor
         VisitToken(commentNode.NewLine);
     }
 
-    private void VisitTokens(IEnumerable<Token> tokens)
+    private void VisitTokens(IEnumerable<IniToken> tokens)
     {
         foreach (var token in tokens)
         {
@@ -67,7 +67,7 @@ internal sealed class ToStringVisitor : IIniNodeVisitor
         }
     }
 
-    private void VisitToken(Token? token)
+    private void VisitToken(IniToken? token)
     {
         if (token is not null)
         {

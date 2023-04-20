@@ -9,7 +9,7 @@ namespace Broccolini.Test.SemanticModel;
 [SupportedOSPlatform("windows")]
 public sealed class ReferenceImplementation
 {
-    public static IDocument CreateReferenceDocument(string input)
+    public static IIniDocument CreateReferenceDocument(string input)
     {
         var temporaryFile = Path.GetTempFileName();
 
@@ -24,9 +24,9 @@ public sealed class ReferenceImplementation
         }
     }
 
-    private static IDocument CreateDocumentFromWin32Api(string filePath)
+    private static IIniDocument CreateDocumentFromWin32Api(string filePath)
     {
-        ISection CreateSection(string sectionName)
+        IIniSection CreateSection(string sectionName)
             => new Section(sectionName, GetKeysInSection(filePath, sectionName)
                 .Distinct(KeyComparer)
                 .ToImmutableDictionary(Identity, GetValueForKey(sectionName), keyComparer: KeyComparer));

@@ -86,7 +86,7 @@ public sealed class SemanticModelTest
         AssertEquals(reference, document);
     }
 
-    private static (IDocument?, IDocument) Parse(string input)
+    private static (IIniDocument?, IIniDocument) Parse(string input)
     {
         var document = IniParser.Parse(input).GetSemanticModel();
         return OperatingSystem.IsWindows()
@@ -94,7 +94,7 @@ public sealed class SemanticModelTest
             : (null, document);
     }
 
-    private static void AssertEquals(IDocument? expected, IDocument actual)
+    private static void AssertEquals(IIniDocument? expected, IIniDocument actual)
     {
         if (expected is null) return;
 

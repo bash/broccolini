@@ -4,11 +4,11 @@ namespace Broccolini.Tokenization.Rules;
 
 internal sealed class WhiteSpaceRule : ITokenizerRule
 {
-    public Token? Match(ITokenizerInput input)
+    public IniToken? Match(ITokenizerInput input)
     {
         var value = input.ReadWhile(CharPredicates.IsWhitespace);
         return value.Length > 0
-            ? new Token.WhiteSpace(value)
+            ? new IniToken.WhiteSpace(value)
             : null;
     }
 }

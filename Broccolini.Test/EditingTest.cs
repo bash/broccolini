@@ -313,7 +313,7 @@ public sealed class EditingTest
         public void PreservesExistingQuotes(string expected, string input, string newValue)
         {
             var expectedWithKey = $"key = {expected}";
-            var parsedWithKey = Assert.IsType<KeyValueNode>(Assert.Single(Parse($"key = {input}").NodesOutsideSection));
+            var parsedWithKey = Assert.IsType<KeyValueIniNode>(Assert.Single(Parse($"key = {input}").NodesOutsideSection));
             Assert.Equal(expectedWithKey, parsedWithKey.WithValue(newValue).ToString());
         }
 
@@ -322,7 +322,7 @@ public sealed class EditingTest
         {
             const string expected = "\tkey\t=\tnew value\t";
             const string input = "\tkey\t=\tvalue\t";
-            var parsed = Assert.IsType<KeyValueNode>(Assert.Single(Parse(input).NodesOutsideSection));
+            var parsed = Assert.IsType<KeyValueIniNode>(Assert.Single(Parse(input).NodesOutsideSection));
             Assert.Equal(expected, parsed.WithValue("new value").ToString());
         }
     }
@@ -332,14 +332,14 @@ public sealed class EditingTest
         [Fact]
         public void UsesNativeNewLinesForEmptyDocument()
         {
-            Assert.Equal(new Token.NewLine(Environment.NewLine), IniDocument.Empty.DetectNewLine());
+            Assert.Equal(new IniToken.NewLine(Environment.NewLine), IniDocument.Empty.DetectNewLine());
         }
 
         [Theory]
         [MemberData(nameof(NewLineData))]
         public void UsesNewLineOfFirstNode(string newLine, string input)
         {
-            Assert.Equal(new Token.NewLine(newLine), Parse(input).DetectNewLine());
+            Assert.Equal(new IniToken.NewLine(newLine), Parse(input).DetectNewLine());
         }
 
         public static TheoryData<string, string> NewLineData()

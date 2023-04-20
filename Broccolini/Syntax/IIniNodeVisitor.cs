@@ -2,11 +2,11 @@ namespace Broccolini.Syntax;
 
 public interface IIniNodeVisitor
 {
-    void Visit(KeyValueNode keyValueNode);
+    void Visit(KeyValueIniNode keyValueNode);
 
-    void Visit(UnrecognizedNode triviaNode);
+    void Visit(UnrecognizedIniNode triviaNode);
 
-    void Visit(SectionNode sectionNode);
+    void Visit(SectionIniNode sectionNode);
 
-    void Visit(CommentNode commentNode);
+    void Visit(CommentIniNode commentNode);
 }

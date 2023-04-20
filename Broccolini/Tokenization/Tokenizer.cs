@@ -10,19 +10,19 @@ internal sealed class Tokenizer
         new NewLineRule(),
         new WhiteSpaceRule(),
         new IdentifierRule(),
-        new SimpleRule(';', new Token.Semicolon()),
-        new SimpleRule('[', new Token.OpeningBracket()),
-        new SimpleRule(']', new Token.ClosingBracket()),
-        new SimpleRule('\'', new Token.SingleQuote()),
-        new SimpleRule('\"', new Token.DoubleQuote()),
-        new SimpleRule('=', new Token.EqualsSign()));
+        new SimpleRule(';', new IniToken.Semicolon()),
+        new SimpleRule('[', new IniToken.OpeningBracket()),
+        new SimpleRule(']', new IniToken.ClosingBracket()),
+        new SimpleRule('\'', new IniToken.SingleQuote()),
+        new SimpleRule('\"', new IniToken.DoubleQuote()),
+        new SimpleRule('=', new IniToken.EqualsSign()));
 
-    public static IImmutableList<Token> Tokenize(string input)
+    public static IImmutableList<IniToken> Tokenize(string input)
         => Tokenize(new TokenizerInput(input), Rules);
 
-    private static IImmutableList<Token> Tokenize(ITokenizerInput input, IReadOnlyList<ITokenizerRule> rules)
+    private static IImmutableList<IniToken> Tokenize(ITokenizerInput input, IReadOnlyList<ITokenizerRule> rules)
     {
-        var tokens = ImmutableArray.CreateBuilder<Token>();
+        var tokens = ImmutableArray.CreateBuilder<IniToken>();
 
         while (input.Peek(out _))
         {

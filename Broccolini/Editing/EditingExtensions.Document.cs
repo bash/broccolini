@@ -1,7 +1,7 @@
 using System.Diagnostics.Contracts;
 using Broccolini.Syntax;
 using static Broccolini.SemanticModel.KeyComparision;
-using static Broccolini.Syntax.SyntaxFactory;
+using static Broccolini.Syntax.IniSyntaxFactory;
 
 namespace Broccolini.Editing;
 
@@ -9,7 +9,7 @@ public static partial class EditingExtensions
 {
     /// <summary>Appends or updates a section with the given name.</summary>
     [Pure]
-    public static IniDocument WithSection(this IniDocument document, string sectionName, Func<SectionNode, SectionNode> updateSection)
+    public static IniDocument WithSection(this IniDocument document, string sectionName, Func<SectionIniNode, SectionIniNode> updateSection)
     {
         updateSection = WithNewLineHint(updateSection, document);
         return document.Sections.TryUpdateFirst(
@@ -22,7 +22,7 @@ public static partial class EditingExtensions
 
     /// <summary>Updates a section with the given name. Does nothing when the section does not exist.</summary>
     [Pure]
-    public static IniDocument UpdateSection(this IniDocument document, string sectionName, Func<SectionNode, SectionNode> updateSection)
+    public static IniDocument UpdateSection(this IniDocument document, string sectionName, Func<SectionIniNode, SectionIniNode> updateSection)
     {
         updateSection = WithNewLineHint(updateSection, document);
         return document.Sections.TryUpdateFirst(
@@ -46,25 +46,25 @@ public static partial class EditingExtensions
 
         return document;
 
-        static IEnumerable<SectionChildNode> GetTrailingTrivia(SectionNode sectionNode)
-            => sectionNode.Children.Reverse().TakeWhile(n => n is UnrecognizedNode or CommentNode).Reverse();
+        static IEnumerable<SectionChildIniNode> GetTrailingTrivia(SectionIniNode sectionNode)
+            => sectionNode.Children.Reverse().TakeWhile(n => n is UnrecognizedIniNode or CommentIniNode).Reverse();
 
-        static IniDocument InsertNodesAt(IniDocument document, int index, IEnumerable<SectionChildNode> nodesToInsert)
+        static IniDocument InsertNodesAt(IniDocument document, int index, IEnumerable<SectionChildIniNode> nodesToInsert)
             => index >= 1 && document.Sections[index - 1] is var previousSection
                 ? document with { Sections = document.Sections.SetItem(index - 1, previousSection with { Children = previousSection.Children.AddRange(nodesToInsert) }) }
                 : document with { NodesOutsideSection = document.NodesOutsideSection.InsertRange(index, nodesToInsert) };
     }
 
-    private static IniDocument AppendSection(this IniDocument document, SectionNode node)
+    private static IniDocument AppendSection(this IniDocument document, SectionIniNode node)
     {
         var documentWithNewLine = document.EnsureTrailingNewLine(document.DetectNewLine());
         return documentWithNewLine with { Sections = documentWithNewLine.Sections.Add(node) };
     }
 
-    private static Func<SectionNode, SectionNode> WithNewLineHint(Func<SectionNode, SectionNode> updateSection, IniDocument document)
+    private static Func<SectionIniNode, SectionIniNode> WithNewLineHint(Func<SectionIniNode, SectionIniNode> updateSection, IniDocument document)
         => section => updateSection(section with { NewLineHint = document.DetectNewLine() }) with { NewLineHint = null };
 
-    private static Func<SectionNode, bool, SectionNode> EnsureTrailingNewLine(Func<SectionNode, SectionNode> updateSection, IniDocument document)
+    private static Func<SectionIniNode, bool, SectionIniNode> EnsureTrailingNewLine(Func<SectionIniNode, SectionIniNode> updateSection, IniDocument document)
         => (section, isLast)
             => isLast
                 ? updateSection(section)

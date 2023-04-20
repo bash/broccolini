@@ -2,16 +2,16 @@ using System.ComponentModel;
 
 namespace Broccolini.Syntax;
 
-public abstract record Token
+public abstract record IniToken
 {
-    private Token() { }
+    private IniToken() { }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
-    protected Token(Token original) { }
+    protected IniToken(IniToken original) { }
 
     private protected abstract void InternalImplementorsOnly();
 
-    public sealed record NewLine : Token
+    public sealed record NewLine : IniToken
     {
         public NewLine(string value)
         {
@@ -25,7 +25,7 @@ public abstract record Token
         private protected override void InternalImplementorsOnly() { }
     }
 
-    public sealed record WhiteSpace : Token
+    public sealed record WhiteSpace : IniToken
     {
         public WhiteSpace(string value)
         {
@@ -39,35 +39,35 @@ public abstract record Token
         private protected override void InternalImplementorsOnly() { }
     }
 
-    public sealed record Semicolon : Token
+    public sealed record Semicolon : IniToken
     {
         public override string ToString() => ";";
 
         private protected override void InternalImplementorsOnly() { }
     }
 
-    public sealed record OpeningBracket : Token
+    public sealed record OpeningBracket : IniToken
     {
         public override string ToString() => "[";
 
         private protected override void InternalImplementorsOnly() { }
     }
 
-    public sealed record ClosingBracket : Token
+    public sealed record ClosingBracket : IniToken
     {
         public override string ToString() => "]";
 
         private protected override void InternalImplementorsOnly() { }
     }
 
-    public sealed record EqualsSign : Token
+    public sealed record EqualsSign : IniToken
     {
         public override string ToString() => "=";
 
         private protected override void InternalImplementorsOnly() { }
     }
 
-    public abstract record Quote : Token
+    public abstract record Quote : IniToken
     {
         private protected Quote() { }
 
@@ -89,7 +89,7 @@ public abstract record Token
         private protected override void InternalImplementorsOnly() { }
     }
 
-    public sealed record Identifier : Token
+    public sealed record Identifier : IniToken
     {
         public Identifier(string value)
         {
@@ -103,7 +103,7 @@ public abstract record Token
         private protected override void InternalImplementorsOnly() { }
     }
 
-    internal sealed record Epsilon : Token
+    internal sealed record Epsilon : IniToken
     {
         public override string ToString() => string.Empty;
 

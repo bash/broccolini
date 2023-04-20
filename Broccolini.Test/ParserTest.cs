@@ -19,7 +19,7 @@ public sealed class ParserTest
     public void ParsesCommentNode(string input, string leadingNode)
     {
         var document = Parse(leadingNode + input);
-        var node = Assert.IsType<CommentNode>(GetLastNode(document));
+        var node = Assert.IsType<CommentIniNode>(GetLastNode(document));
         Assert.Equal(input, node.ToString());
     }
 
@@ -29,7 +29,7 @@ public sealed class ParserTest
         var input = $"; {commentValue}";
         var document = Parse(input);
         return (document.NodesOutsideSection.Count == 1
-                && document.NodesOutsideSection.First() is CommentNode triviaNode
+                && document.NodesOutsideSection.First() is CommentIniNode triviaNode
                 && triviaNode.ToString() == input)
             .ToProperty()
             .When(!input.Contains('\r') && !input.Contains('\n'));
@@ -45,7 +45,7 @@ public sealed class ParserTest
     public void ParsesGarbageAsUnrecognized(string input, string leadingNode)
     {
         var document = Parse(leadingNode + input);
-        var node = Assert.IsType<UnrecognizedNode>(GetLastNode(document));
+        var node = Assert.IsType<UnrecognizedIniNode>(GetLastNode(document));
         Assert.Equal(input, node.ToString());
     }
 
@@ -59,7 +59,7 @@ public sealed class ParserTest
     public void ParsesSectionNames(string name, string input)
     {
         var document = Parse(input);
-        var node = Assert.IsType<SectionNode>(document.Sections.Last());
+        var node = Assert.IsType<SectionIniNode>(document.Sections.Last());
         Assert.Equal(name, node.Name);
     }
 
@@ -87,7 +87,7 @@ public sealed class ParserTest
     public void ParsesKeyValuePair(string key, string value, string input)
     {
         var document = Parse(input);
-        var node = Assert.IsType<KeyValueNode>(document.NodesOutsideSection.Last());
+        var node = Assert.IsType<KeyValueIniNode>(document.NodesOutsideSection.Last());
         Assert.Equal(key, node.Key);
         Assert.Equal(value, node.Value);
     }
@@ -101,11 +101,11 @@ public sealed class ParserTest
     private static IniNode GetLastNode(IEnumerable<IniNode> nodes)
         => nodes.Last() switch
         {
-            SectionNode sectionNode => GetLastNode(sectionNode),
+            SectionIniNode sectionNode => GetLastNode(sectionNode),
             var node => node,
         };
 
-    private static IniNode GetLastNode(SectionNode sectionNode)
+    private static IniNode GetLastNode(SectionIniNode sectionNode)
         => sectionNode.Children.Count > 0
             ? GetLastNode(sectionNode.Children)
             : sectionNode;

@@ -2,7 +2,7 @@ using Broccolini.Syntax;
 using FsCheck;
 using FsCheck.Xunit;
 using Xunit;
-using static Broccolini.Syntax.SyntaxFactory;
+using static Broccolini.Syntax.IniSyntaxFactory;
 using static Broccolini.Test.TestData;
 
 namespace Broccolini.Test;
@@ -17,7 +17,7 @@ public sealed class SyntaxFactoryTests
             var node = Section(value.Get);
             var parsedNode = IniParser.Parse(node.ToString());
             return (parsedNode.Sections.Count == 1
-                    && parsedNode.Sections.Single() is SectionNode sectionNode
+                    && parsedNode.Sections.Single() is SectionIniNode sectionNode
                     && sectionNode.Name == value.Get).ToProperty();
         }
         catch (ArgumentException)
@@ -46,7 +46,7 @@ public sealed class SyntaxFactoryTests
             var node = KeyValue(key.Get, value.Get);
             var parsedNode = IniParser.Parse(node.ToString());
             return (parsedNode.NodesOutsideSection.Count == 1
-                && parsedNode.NodesOutsideSection.First() is KeyValueNode keyValueNode
+                && parsedNode.NodesOutsideSection.First() is KeyValueIniNode keyValueNode
                 && keyValueNode.Key == key.Get
                 && keyValueNode.Value == value.Get).ToProperty();
         }
@@ -72,7 +72,7 @@ public sealed class SyntaxFactoryTests
     public void ParsesCreatedKeyValueNode(string key, string value)
     {
         var node = KeyValue(key, value);
-        var parsedNode = Assert.IsType<KeyValueNode>(Assert.Single(IniParser.Parse(node.ToString()).NodesOutsideSection));
+        var parsedNode = Assert.IsType<KeyValueIniNode>(Assert.Single(IniParser.Parse(node.ToString()).NodesOutsideSection));
         Assert.Equal(key, parsedNode.Key);
         Assert.Equal(value, parsedNode.Value);
     }
@@ -84,7 +84,7 @@ public sealed class SyntaxFactoryTests
         {
             var node = KeyValue(string.Empty, value.Get);
             var parsedNode = IniParser.Parse(node.ToString());
-            return (parsedNode.NodesOutsideSection.Count == 1 && parsedNode.NodesOutsideSection.Single() is KeyValueNode keyValueNode
+            return (parsedNode.NodesOutsideSection.Count == 1 && parsedNode.NodesOutsideSection.Single() is KeyValueIniNode keyValueNode
                 && keyValueNode.Key == string.Empty
                 && keyValueNode.Value == value.Get).ToProperty();
         }
