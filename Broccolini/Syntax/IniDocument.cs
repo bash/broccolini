@@ -69,7 +69,7 @@ public abstract record SectionChildNode : IniNode
 }
 
 /// <summary>A key-value pair: <c>key = value</c>. Use <see cref="SyntaxFactory.KeyValue"/> to create this node.</summary>
-[DebuggerDisplay("{Key}{EqualsSign}{Value}")]
+[DebuggerDisplay("{Key,nq}{EqualsSign,nq}{Value,nq}")]
 public sealed record KeyValueNode : SectionChildNode
 {
     [EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -136,7 +136,7 @@ public sealed record UnrecognizedNode : SectionChildNode
 }
 
 /// <summary>A comment: <c>; comment</c>.</summary>
-[DebuggerDisplay("{DebuggerDisplay,nq}")]
+[DebuggerDisplay("{Semicolon,nq}{Text,nq}")]
 public sealed record CommentNode : SectionChildNode
 {
     [EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -169,7 +169,7 @@ public sealed record CommentNode : SectionChildNode
 /// <code>[section]
 /// key = value</code>
 /// Use <see cref="SyntaxFactory.Section"/> to create this node.</summary>
-[DebuggerDisplay("{OpeningBracket}{Name}{ClosingBracketDebugView}")]
+[DebuggerDisplay("{OpeningBracket,nq}{Name,nq}{ClosingBracketDebugView,nq}")]
 public sealed record SectionNode : IniNode
 {
     [EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -201,6 +201,7 @@ public sealed record SectionNode : IniNode
 
     internal Token.NewLine? NewLineHint { get; init; }
 
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private string ClosingBracketDebugView => ClosingBracket?.ToString() ?? string.Empty;
 
     public override void Accept(IIniNodeVisitor visitor) => visitor.Visit(this);
