@@ -1,11 +1,22 @@
 using System.Collections.Immutable;
+using System.ComponentModel;
 using System.Diagnostics;
 
 namespace Broccolini.Syntax;
 
-public sealed record IniDocument(IImmutableList<SectionChildNode> NodesOutsideSection, IImmutableList<SectionNode> Sections)
+public sealed record IniDocument
 {
+    internal IniDocument(ImmutableArray<SectionChildNode> nodesOutsideSection, ImmutableArray<SectionNode> sections)
+    {
+        NodesOutsideSection = nodesOutsideSection;
+        Sections = sections;
+    }
+
     public static IniDocument Empty { get; } = new(ImmutableArray<SectionChildNode>.Empty, ImmutableArray<SectionNode>.Empty);
+
+    public IImmutableList<SectionChildNode> NodesOutsideSection { get; init; }
+
+    public IImmutableList<SectionNode> Sections { get; init; }
 
     public bool Equals(IniDocument? other)
         => other is not null
@@ -25,7 +36,12 @@ public sealed record IniDocument(IImmutableList<SectionChildNode> NodesOutsideSe
 
 public abstract record IniNode
 {
-    internal IniNode() { }
+    private protected IniNode() { }
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    protected IniNode(IniNode original)
+    {
+    }
 
     public Token.NewLine? NewLine { get; init; }
 
@@ -41,13 +57,32 @@ public abstract record IniNode
 
 public abstract record SectionChildNode : IniNode
 {
+    private protected SectionChildNode() { }
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    protected SectionChildNode(SectionChildNode original)
+        : base(original)
+    {
+    }
+
     public override string ToString() => base.ToString();
 }
 
 /// <summary>A key-value pair: <c>key = value</c>. Use <see cref="SyntaxFactory.KeyValue"/> to create this node.</summary>
 [DebuggerDisplay("{Key}{EqualsSign}{Value}")]
-public sealed record KeyValueNode(string Key, string Value) : SectionChildNode
+public sealed record KeyValueNode : SectionChildNode
 {
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public KeyValueNode(string key, string value)
+    {
+        Key = key;
+        Value = value;
+    }
+
+    public string Key { get; init; }
+
+    public string Value { get; init; }
+
     /// <summary>Leading whitespace.</summary>
     public Token.WhiteSpace? LeadingTrivia { get; init; }
 
@@ -72,8 +107,16 @@ public sealed record KeyValueNode(string Key, string Value) : SectionChildNode
 
 /// <summary>A line that can't be recognized as one of the other node types.</summary>
 [DebuggerDisplay("{DebuggerDisplay,nq}")]
-public sealed record UnrecognizedNode(IImmutableList<Token> Tokens) : SectionChildNode
+public sealed record UnrecognizedNode : SectionChildNode
 {
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public UnrecognizedNode(IImmutableList<Token> tokens)
+    {
+        Tokens = tokens;
+    }
+
+    public IImmutableList<Token> Tokens { get; init; }
+
     public override void Accept(IIniNodeVisitor visitor) => visitor.Visit(this);
 
     public override string ToString() => base.ToString();
@@ -90,8 +133,16 @@ public sealed record UnrecognizedNode(IImmutableList<Token> Tokens) : SectionChi
 
 /// <summary>A comment: <c>; comment</c>.</summary>
 [DebuggerDisplay("{DebuggerDisplay,nq}")]
-public sealed record CommentNode(string Text) : SectionChildNode
+public sealed record CommentNode : SectionChildNode
 {
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public CommentNode(string text)
+    {
+        Text = text;
+    }
+
+    public string Text { get; init; }
+
     /// <summary>Leading whitespace.</summary>
     public Token.WhiteSpace? LeadingTrivia { get; init; }
 
@@ -113,8 +164,19 @@ public sealed record CommentNode(string Text) : SectionChildNode
 /// key = value</code>
 /// Use <see cref="SyntaxFactory.Section"/> to create this node.</summary>
 [DebuggerDisplay("{OpeningBracket}{Name}{ClosingBracketDebugView}")]
-public sealed record SectionNode(string Name, IImmutableList<SectionChildNode> Children) : IniNode
+public sealed record SectionNode : IniNode
 {
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public SectionNode(string name, IImmutableList<SectionChildNode> children)
+    {
+        Name = name;
+        Children = children;
+    }
+
+    public string Name { get; init; }
+
+    public IImmutableList<SectionChildNode> Children { get; init; }
+
     /// <summary>Leading whitespace.</summary>
     public Token.WhiteSpace? LeadingTrivia { get; init; }
 

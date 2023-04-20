@@ -4,13 +4,27 @@ public abstract record Token
 {
     private Token() { }
 
-    public sealed record NewLine(string Value) : Token
+    public sealed record NewLine : Token
     {
+        public NewLine(string value)
+        {
+            Value = value;
+        }
+
+        public string Value { get; init; }
+
         public override string ToString() => Value;
     }
 
-    public sealed record WhiteSpace(string Value) : Token
+    public sealed record WhiteSpace : Token
     {
+        public WhiteSpace(string value)
+        {
+            Value = value;
+        }
+
+        public string Value { get; init; }
+
         public override string ToString() => Value;
     }
 
@@ -49,8 +63,15 @@ public abstract record Token
         public override string ToString() => "\"";
     }
 
-    public sealed record Identifier(string Value) : Token
+    public sealed record Identifier : Token
     {
+        public Identifier(string value)
+        {
+            Value = value;
+        }
+
+        public string Value { get; init; }
+
         public override string ToString() => Value;
     }
 
