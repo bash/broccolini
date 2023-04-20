@@ -1,0 +1,137 @@
+#nullable enable
+abstract Broccolini.Syntax.IniNode.Accept(Broccolini.Syntax.IIniNodeVisitor! visitor) -> void
+Broccolini.Editing.EditingExtensions
+Broccolini.IniParser
+Broccolini.SemanticModel.IIniDocument
+Broccolini.SemanticModel.IIniSection
+Broccolini.SemanticModel.IIniSection.Name.get -> string!
+Broccolini.SemanticModel.IniDocumentExtensions
+Broccolini.Syntax.CommentIniNode
+Broccolini.Syntax.CommentIniNode.CommentIniNode(string! text) -> void
+Broccolini.Syntax.CommentIniNode.LeadingTrivia.get -> Broccolini.Syntax.IniToken.WhiteSpace?
+Broccolini.Syntax.CommentIniNode.LeadingTrivia.init -> void
+Broccolini.Syntax.CommentIniNode.Semicolon.get -> Broccolini.Syntax.IniToken.Semicolon!
+Broccolini.Syntax.CommentIniNode.Semicolon.init -> void
+Broccolini.Syntax.CommentIniNode.Text.get -> string!
+Broccolini.Syntax.CommentIniNode.Text.init -> void
+Broccolini.Syntax.CommentIniNode.TrailingTrivia.get -> Broccolini.Syntax.IniToken.WhiteSpace?
+Broccolini.Syntax.CommentIniNode.TrailingTrivia.init -> void
+Broccolini.Syntax.CommentIniNode.TriviaAfterSemicolon.get -> Broccolini.Syntax.IniToken.WhiteSpace?
+Broccolini.Syntax.CommentIniNode.TriviaAfterSemicolon.init -> void
+Broccolini.Syntax.IIniNodeVisitor
+Broccolini.Syntax.IIniNodeVisitor.Visit(Broccolini.Syntax.CommentIniNode! commentNode) -> void
+Broccolini.Syntax.IIniNodeVisitor.Visit(Broccolini.Syntax.KeyValueIniNode! keyValueNode) -> void
+Broccolini.Syntax.IIniNodeVisitor.Visit(Broccolini.Syntax.SectionIniNode! sectionNode) -> void
+Broccolini.Syntax.IIniNodeVisitor.Visit(Broccolini.Syntax.UnrecognizedIniNode! triviaNode) -> void
+Broccolini.Syntax.IniDocument
+Broccolini.Syntax.IniDocument.Equals(Broccolini.Syntax.IniDocument? other) -> bool
+Broccolini.Syntax.IniDocument.NodesOutsideSection.get -> System.Collections.Immutable.IImmutableList<Broccolini.Syntax.SectionChildIniNode!>!
+Broccolini.Syntax.IniDocument.NodesOutsideSection.init -> void
+Broccolini.Syntax.IniDocument.Sections.get -> System.Collections.Immutable.IImmutableList<Broccolini.Syntax.SectionIniNode!>!
+Broccolini.Syntax.IniDocument.Sections.init -> void
+Broccolini.Syntax.IniNode
+Broccolini.Syntax.IniNode.IniNode(Broccolini.Syntax.IniNode! original) -> void
+Broccolini.Syntax.IniNode.NewLine.get -> Broccolini.Syntax.IniToken.NewLine?
+Broccolini.Syntax.IniNode.NewLine.init -> void
+Broccolini.Syntax.IniSyntaxFactory
+Broccolini.Syntax.IniToken
+Broccolini.Syntax.IniToken.ClosingBracket
+Broccolini.Syntax.IniToken.DoubleQuote
+Broccolini.Syntax.IniToken.EqualsSign
+Broccolini.Syntax.IniToken.Identifier
+Broccolini.Syntax.IniToken.Identifier.Identifier(string! value) -> void
+Broccolini.Syntax.IniToken.Identifier.Value.get -> string!
+Broccolini.Syntax.IniToken.Identifier.Value.init -> void
+Broccolini.Syntax.IniToken.IniToken(Broccolini.Syntax.IniToken! original) -> void
+Broccolini.Syntax.IniToken.NewLine
+Broccolini.Syntax.IniToken.NewLine.NewLine(string! value) -> void
+Broccolini.Syntax.IniToken.NewLine.Value.get -> string!
+Broccolini.Syntax.IniToken.NewLine.Value.init -> void
+Broccolini.Syntax.IniToken.OpeningBracket
+Broccolini.Syntax.IniToken.Quote
+Broccolini.Syntax.IniToken.Quote.Quote(Broccolini.Syntax.IniToken.Quote! original) -> void
+Broccolini.Syntax.IniToken.Semicolon
+Broccolini.Syntax.IniToken.SingleQuote
+Broccolini.Syntax.IniToken.WhiteSpace
+Broccolini.Syntax.IniToken.WhiteSpace.Value.get -> string!
+Broccolini.Syntax.IniToken.WhiteSpace.Value.init -> void
+Broccolini.Syntax.IniToken.WhiteSpace.WhiteSpace(string! value) -> void
+Broccolini.Syntax.KeyValueIniNode
+Broccolini.Syntax.KeyValueIniNode.EqualsSign.get -> Broccolini.Syntax.IniToken.EqualsSign!
+Broccolini.Syntax.KeyValueIniNode.EqualsSign.init -> void
+Broccolini.Syntax.KeyValueIniNode.Key.get -> string!
+Broccolini.Syntax.KeyValueIniNode.Key.init -> void
+Broccolini.Syntax.KeyValueIniNode.KeyValueIniNode(string! key, string! value) -> void
+Broccolini.Syntax.KeyValueIniNode.LeadingTrivia.get -> Broccolini.Syntax.IniToken.WhiteSpace?
+Broccolini.Syntax.KeyValueIniNode.LeadingTrivia.init -> void
+Broccolini.Syntax.KeyValueIniNode.Quote.get -> Broccolini.Syntax.IniToken.Quote?
+Broccolini.Syntax.KeyValueIniNode.Quote.init -> void
+Broccolini.Syntax.KeyValueIniNode.TrailingTrivia.get -> Broccolini.Syntax.IniToken.WhiteSpace?
+Broccolini.Syntax.KeyValueIniNode.TrailingTrivia.init -> void
+Broccolini.Syntax.KeyValueIniNode.TriviaAfterEqualsSign.get -> Broccolini.Syntax.IniToken.WhiteSpace?
+Broccolini.Syntax.KeyValueIniNode.TriviaAfterEqualsSign.init -> void
+Broccolini.Syntax.KeyValueIniNode.TriviaBeforeEqualsSign.get -> Broccolini.Syntax.IniToken.WhiteSpace?
+Broccolini.Syntax.KeyValueIniNode.TriviaBeforeEqualsSign.init -> void
+Broccolini.Syntax.KeyValueIniNode.Value.get -> string!
+Broccolini.Syntax.KeyValueIniNode.Value.init -> void
+Broccolini.Syntax.SectionChildIniNode
+Broccolini.Syntax.SectionChildIniNode.SectionChildIniNode(Broccolini.Syntax.SectionChildIniNode! original) -> void
+Broccolini.Syntax.SectionIniNode
+Broccolini.Syntax.SectionIniNode.Children.get -> System.Collections.Immutable.IImmutableList<Broccolini.Syntax.SectionChildIniNode!>!
+Broccolini.Syntax.SectionIniNode.Children.init -> void
+Broccolini.Syntax.SectionIniNode.ClosingBracket.get -> Broccolini.Syntax.IniToken.ClosingBracket?
+Broccolini.Syntax.SectionIniNode.ClosingBracket.init -> void
+Broccolini.Syntax.SectionIniNode.Equals(Broccolini.Syntax.SectionIniNode? other) -> bool
+Broccolini.Syntax.SectionIniNode.LeadingTrivia.get -> Broccolini.Syntax.IniToken.WhiteSpace?
+Broccolini.Syntax.SectionIniNode.LeadingTrivia.init -> void
+Broccolini.Syntax.SectionIniNode.Name.get -> string!
+Broccolini.Syntax.SectionIniNode.Name.init -> void
+Broccolini.Syntax.SectionIniNode.OpeningBracket.get -> Broccolini.Syntax.IniToken.OpeningBracket!
+Broccolini.Syntax.SectionIniNode.OpeningBracket.init -> void
+Broccolini.Syntax.SectionIniNode.SectionIniNode(string! name, System.Collections.Immutable.IImmutableList<Broccolini.Syntax.SectionChildIniNode!>! children) -> void
+Broccolini.Syntax.SectionIniNode.TrailingTrivia.get -> System.Collections.Immutable.IImmutableList<Broccolini.Syntax.IniToken!>!
+Broccolini.Syntax.SectionIniNode.TrailingTrivia.init -> void
+Broccolini.Syntax.SectionIniNode.TriviaAfterOpeningBracket.get -> Broccolini.Syntax.IniToken.WhiteSpace?
+Broccolini.Syntax.SectionIniNode.TriviaAfterOpeningBracket.init -> void
+Broccolini.Syntax.SectionIniNode.TriviaBeforeClosingBracket.get -> Broccolini.Syntax.IniToken.WhiteSpace?
+Broccolini.Syntax.SectionIniNode.TriviaBeforeClosingBracket.init -> void
+Broccolini.Syntax.UnrecognizedIniNode
+Broccolini.Syntax.UnrecognizedIniNode.Equals(Broccolini.Syntax.UnrecognizedIniNode? other) -> bool
+Broccolini.Syntax.UnrecognizedIniNode.Tokens.get -> System.Collections.Immutable.IImmutableList<Broccolini.Syntax.IniToken!>!
+Broccolini.Syntax.UnrecognizedIniNode.Tokens.init -> void
+Broccolini.Syntax.UnrecognizedIniNode.UnrecognizedIniNode(System.Collections.Immutable.IImmutableList<Broccolini.Syntax.IniToken!>! tokens) -> void
+override Broccolini.Syntax.CommentIniNode.Accept(Broccolini.Syntax.IIniNodeVisitor! visitor) -> void
+override Broccolini.Syntax.CommentIniNode.ToString() -> string!
+override Broccolini.Syntax.IniDocument.GetHashCode() -> int
+override Broccolini.Syntax.IniDocument.ToString() -> string!
+override Broccolini.Syntax.IniNode.ToString() -> string!
+override Broccolini.Syntax.IniToken.ClosingBracket.ToString() -> string!
+override Broccolini.Syntax.IniToken.DoubleQuote.ToString() -> string!
+override Broccolini.Syntax.IniToken.EqualsSign.ToString() -> string!
+override Broccolini.Syntax.IniToken.Identifier.ToString() -> string!
+override Broccolini.Syntax.IniToken.NewLine.ToString() -> string!
+override Broccolini.Syntax.IniToken.OpeningBracket.ToString() -> string!
+override Broccolini.Syntax.IniToken.Semicolon.ToString() -> string!
+override Broccolini.Syntax.IniToken.SingleQuote.ToString() -> string!
+override Broccolini.Syntax.IniToken.WhiteSpace.ToString() -> string!
+override Broccolini.Syntax.KeyValueIniNode.Accept(Broccolini.Syntax.IIniNodeVisitor! visitor) -> void
+override Broccolini.Syntax.KeyValueIniNode.ToString() -> string!
+override Broccolini.Syntax.SectionChildIniNode.ToString() -> string!
+override Broccolini.Syntax.SectionIniNode.Accept(Broccolini.Syntax.IIniNodeVisitor! visitor) -> void
+override Broccolini.Syntax.SectionIniNode.GetHashCode() -> int
+override Broccolini.Syntax.SectionIniNode.ToString() -> string!
+override Broccolini.Syntax.UnrecognizedIniNode.Accept(Broccolini.Syntax.IIniNodeVisitor! visitor) -> void
+override Broccolini.Syntax.UnrecognizedIniNode.GetHashCode() -> int
+override Broccolini.Syntax.UnrecognizedIniNode.ToString() -> string!
+static Broccolini.Editing.EditingExtensions.RemoveKeyValue(this Broccolini.Syntax.SectionIniNode! sectionNode, string! key) -> Broccolini.Syntax.SectionIniNode!
+static Broccolini.Editing.EditingExtensions.RemoveSection(this Broccolini.Syntax.IniDocument! document, string! name) -> Broccolini.Syntax.IniDocument!
+static Broccolini.Editing.EditingExtensions.UpdateKeyValue(this Broccolini.Syntax.SectionIniNode! sectionNode, string! key, string! value) -> Broccolini.Syntax.SectionIniNode!
+static Broccolini.Editing.EditingExtensions.UpdateSection(this Broccolini.Syntax.IniDocument! document, string! name, System.Func<Broccolini.Syntax.SectionIniNode!, Broccolini.Syntax.SectionIniNode!>! updateSection) -> Broccolini.Syntax.IniDocument!
+static Broccolini.Editing.EditingExtensions.WithKeyValue(this Broccolini.Syntax.SectionIniNode! sectionNode, string! key, string! value) -> Broccolini.Syntax.SectionIniNode!
+static Broccolini.Editing.EditingExtensions.WithSection(this Broccolini.Syntax.IniDocument! document, string! name, System.Func<Broccolini.Syntax.SectionIniNode!, Broccolini.Syntax.SectionIniNode!>! updateSection) -> Broccolini.Syntax.IniDocument!
+static Broccolini.Editing.EditingExtensions.WithValue(this Broccolini.Syntax.KeyValueIniNode! keyValueNode, string! value) -> Broccolini.Syntax.KeyValueIniNode!
+static Broccolini.IniParser.Parse(string! input) -> Broccolini.Syntax.IniDocument!
+static Broccolini.SemanticModel.IniDocumentExtensions.ToSemanticModel(this Broccolini.Syntax.IniDocument! document) -> Broccolini.SemanticModel.IIniDocument!
+static Broccolini.Syntax.IniDocument.Empty.get -> Broccolini.Syntax.IniDocument!
+static Broccolini.Syntax.IniSyntaxFactory.KeyValue(string! key, string! value) -> Broccolini.Syntax.KeyValueIniNode!
+static Broccolini.Syntax.IniSyntaxFactory.Section(string! name) -> Broccolini.Syntax.SectionIniNode!
