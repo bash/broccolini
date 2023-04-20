@@ -23,12 +23,6 @@ public sealed record IniDocument(IImmutableList<SectionChildNode> NodesOutsideSe
     }
 }
 
-internal static class IniDocumentExtensions
-{
-    public static IEnumerable<IniNode> GetNodes(this IniDocument document)
-        => ((IEnumerable<IniNode>)document.NodesOutsideSection).Concat(document.Sections);
-}
-
 public abstract record IniNode
 {
     internal IniNode() { }
