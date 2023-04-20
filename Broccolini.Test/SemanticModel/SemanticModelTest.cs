@@ -88,7 +88,7 @@ public sealed class SemanticModelTest
 
     private static (IIniDocument?, IIniDocument) Parse(string input)
     {
-        var document = IniParser.Parse(input).GetSemanticModel();
+        var document = IniParser.Parse(input).ToSemanticModel();
         return OperatingSystem.IsWindows()
             ? (CreateReferenceDocument(input), document)
             : (null, document);
