@@ -1,0 +1,110 @@
+* {
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    color: inherit;
+    box-sizing: border-box;
+}
+
+:root {
+    --base: #eff1f5;
+    --text: #4c4f69;
+    --red: #d20f39;
+    --sky: #04a5e5;
+    --subtext-0: #6c6f85;
+    --green: #40a02b;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --base: #1e1e2e;
+        --text: #cdd6f4;
+        --red: #f38ba8;
+        --sky: #89dceb;
+        --subtext-0: #a6adc8;
+        --green: #a6e3a1;
+    }
+}
+
+:root {
+    color-scheme: light dark;
+    font-size: 112.5%;
+    font-family: 'Jetbrains Mono', monospace;
+    line-height: 1.5;
+    background-color: var(--base);
+    color: var(--text);
+}
+
+body {
+    display: grid;
+    grid-template-columns: minmax(0, 700px);
+    justify-content: center;
+}
+
+main {
+    padding: 60px 20px 40px 20px;
+}
+
+._bracket,
+._key {
+    color: var(--red);
+}
+
+._section {
+    color: var(--sky);
+}
+
+._comment {
+    color: var(--subtext-0);
+    font-style: italic;
+}
+
+._value {
+    color: var(--green);
+}
+
+h1 {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+h1, p {
+    margin-bottom: 1rem;
+}
+
+footer {
+    font-size: .6rem;
+    margin-top: 40px;
+}
+
+@font-face {
+    font-family: 'Jetbrains Mono';
+    font-weight: 400;
+    font-style: normal;
+    font-stretch: normal;
+    src: url('./fonts/jetbrains-mono/JetBrainsMono-Regular.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Jetbrains Mono';
+    font-weight: 400;
+    font-style: italic;
+    font-stretch: normal;
+    src: url('./fonts/jetbrains-mono/JetBrainsMono-Italic.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Jetbrains Mono';
+    font-weight: 700;
+    font-style: normal;
+    font-stretch: normal;
+    src: url('./fonts/jetbrains-mono/JetBrainsMono-Bold.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Jetbrains Mono';
+    font-weight: 700;
+    font-style: italic;
+    font-stretch: normal;
+    src: url('./fonts/jetbrains-mono/JetBrainsMono-BoldItalic.woff2') format('woff2');
+}
