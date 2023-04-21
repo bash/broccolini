@@ -14,13 +14,13 @@ public static class IniDocumentExtensions
         => new Document(
             document.Sections
                 .DistinctBy(section => section.Name, KeyComparer)
-                .ToImmutableDictionary(
+                .ToDictionary(
                     section => section.Name,
                     section => (IIniSection)new Section(
                         section.Name,
                         section.Children
                             .OfType<KeyValueIniNode>()
                             .DistinctBy(kv => kv.Key, KeyComparer)
-                            .ToImmutableDictionary(kv => kv.Key, kv => kv.Value, keyComparer: KeyComparer)),
-                    keyComparer: KeyComparer));
+                            .ToDictionary(kv => kv.Key, kv => kv.Value, comparer: KeyComparer)),
+                    comparer: KeyComparer));
 }
