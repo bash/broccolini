@@ -1,9 +1,13 @@
 using System.Collections.Immutable;
 using System.ComponentModel;
 using System.Diagnostics;
+using Broccolini.Editing;
 
 namespace Broccolini.Syntax;
 
+/// <summary><para>An immutable AST representation of an INI document.</para>
+/// <para>Use <see cref="IniParser.Parse"/> to parse an INI document from a string.</para>
+/// <para>The document can be converted back its string representation using <see cref="ToString"/> including all trivia (comments, whitespace and unrecognized lines).</para></summary>
 public sealed record IniDocument
 {
     internal IniDocument(ImmutableArray<SectionChildIniNode> nodesOutsideSection, ImmutableArray<SectionIniNode> sections)
@@ -12,10 +16,18 @@ public sealed record IniDocument
         Sections = sections;
     }
 
+    /// <summary>An empty document.</summary>
     public static IniDocument Empty { get; } = new(ImmutableArray<SectionChildIniNode>.Empty, ImmutableArray<SectionIniNode>.Empty);
 
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
     public IImmutableList<SectionChildIniNode> NodesOutsideSection { get; init; }
 
+    /// <remarks>Prefer
+    /// <see cref="EditingExtensions.WithSection"/>,
+    /// <see cref="EditingExtensions.UpdateSection"/>, or
+    /// <see cref="EditingExtensions.RemoveSection"/>
+    /// to edit a document's sections over manually editing the sections.</remarks>
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
     public IImmutableList<SectionIniNode> Sections { get; init; }
 
     public bool Equals(IniDocument? other)
@@ -34,6 +46,7 @@ public sealed record IniDocument
     }
 }
 
+[EditorBrowsable(EditorBrowsableState.Advanced)]
 public abstract record IniNode
 {
     private protected IniNode() { }
@@ -44,6 +57,7 @@ public abstract record IniNode
         NewLine = original.NewLine;
     }
 
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
     public IniToken.NewLine? NewLine { get; init; }
 
     public abstract void Accept(IIniNodeVisitor visitor);
@@ -58,6 +72,7 @@ public abstract record IniNode
     private protected abstract void InternalImplementorsOnly();
 }
 
+[EditorBrowsable(EditorBrowsableState.Advanced)]
 public abstract record SectionChildIniNode : IniNode
 {
     private protected SectionChildIniNode() { }
@@ -70,6 +85,7 @@ public abstract record SectionChildIniNode : IniNode
 
 /// <summary>A key-value pair: <c>key = value</c>. Use <see cref="IniSyntaxFactory.KeyValue"/> to create this node.</summary>
 [DebuggerDisplay("{Key,nq}{EqualsSign,nq}{Value,nq}")]
+[EditorBrowsable(EditorBrowsableState.Advanced)]
 public sealed record KeyValueIniNode : SectionChildIniNode
 {
     [EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -109,6 +125,7 @@ public sealed record KeyValueIniNode : SectionChildIniNode
 
 /// <summary>A line that can't be recognized as one of the other node types.</summary>
 [DebuggerDisplay("{DebuggerDisplay,nq}")]
+[EditorBrowsable(EditorBrowsableState.Advanced)]
 public sealed record UnrecognizedIniNode : SectionChildIniNode
 {
     [EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -137,6 +154,7 @@ public sealed record UnrecognizedIniNode : SectionChildIniNode
 
 /// <summary>A comment: <c>; comment</c>.</summary>
 [DebuggerDisplay("{Semicolon,nq}{Text,nq}")]
+[EditorBrowsable(EditorBrowsableState.Advanced)]
 public sealed record CommentIniNode : SectionChildIniNode
 {
     [EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -181,22 +199,29 @@ public sealed record SectionIniNode : IniNode
 
     public string Name { get; init; }
 
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
     public IImmutableList<SectionChildIniNode> Children { get; init; }
 
     /// <summary>Leading whitespace.</summary>
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
     public IniToken.WhiteSpace? LeadingTrivia { get; init; }
 
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
     public IniToken.OpeningBracket OpeningBracket { get; init; } = new();
 
     /// <summary>Whitespace between opening bracket and section name.</summary>
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
     public IniToken.WhiteSpace? TriviaAfterOpeningBracket { get; init; }
 
     /// <summary>Whitespace between section name and closing bracket.</summary>
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
     public IniToken.WhiteSpace? TriviaBeforeClosingBracket { get; init; }
 
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
     public IniToken.ClosingBracket? ClosingBracket { get; init; } = new();
 
     /// <summary>Trailing whitespace and garbage after the closing bracket.</summary>
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
     public IImmutableList<IniToken> TrailingTrivia { get; init; } = ImmutableArray<IniToken>.Empty;
 
     internal IniToken.NewLine? NewLineHint { get; init; }

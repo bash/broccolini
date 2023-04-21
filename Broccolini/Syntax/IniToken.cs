@@ -2,6 +2,7 @@ using System.ComponentModel;
 
 namespace Broccolini.Syntax;
 
+[EditorBrowsable(EditorBrowsableState.Advanced)]
 public abstract record IniToken
 {
     private IniToken() { }

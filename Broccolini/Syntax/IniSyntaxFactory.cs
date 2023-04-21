@@ -1,9 +1,11 @@
 using System.Collections.Immutable;
+using System.ComponentModel;
 using System.Diagnostics.Contracts;
 using static Broccolini.Tokenization.Tokenizer;
 
 namespace Broccolini.Syntax;
 
+[EditorBrowsable(EditorBrowsableState.Advanced)]
 public static class IniSyntaxFactory
 {
     private static readonly IniToken.WhiteSpace Space = new(" ");
