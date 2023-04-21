@@ -21,16 +21,15 @@ port = 1234
 
 ### Reading
 ```cs
-var syntax = IniParser.Parse(File.ReadAllText("config.ini"));
-var document = syntax.ToSemanticModel();
+var document = IniParser.ParseToSemanticModel(File.ReadAllText("config.ini"));
 string databaseServer = document["database"]["server"];
 string databasePort = document["database"]["port"];
 ```
 
 ### Editing
 ```cs
-var syntax = IniParser.Parse(File.ReadAllText("config.ini"));
-var updated = syntax
+var document = IniParser.Parse(File.ReadAllText("config.ini"));
+var updated = document
     .WithSection("owner", section => section.WithKeyValue("name", "John Doe"))
     .UpdateSection("database", section => section.RemoveKeyValue("port"));
 File.WriteAllText("config.ini", updated.ToString(), Encoding.Unicode);

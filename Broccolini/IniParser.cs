@@ -1,5 +1,6 @@
 using System.Diagnostics.Contracts;
 using Broccolini.Parsing;
+using Broccolini.SemanticModel;
 using Broccolini.Syntax;
 using Broccolini.Tokenization;
 
@@ -16,4 +17,8 @@ public static class IniParser
         var tokens = Tokenizer.Tokenize(input);
         return Parser.Parse(new ParserInput(tokens));
     }
+
+    [Pure]
+    public static IIniDocument ParseToSemanticModel(string input)
+        => Parse(input).ToSemanticModel();
 }

@@ -131,6 +131,7 @@ static Broccolini.Editing.EditingExtensions.WithKeyValue(this Broccolini.Syntax.
 static Broccolini.Editing.EditingExtensions.WithSection(this Broccolini.Syntax.IniDocument! document, string! name, System.Func<Broccolini.Syntax.SectionIniNode!, Broccolini.Syntax.SectionIniNode!>! updateSection) -> Broccolini.Syntax.IniDocument!
 static Broccolini.Editing.EditingExtensions.WithValue(this Broccolini.Syntax.KeyValueIniNode! keyValueNode, string! value) -> Broccolini.Syntax.KeyValueIniNode!
 static Broccolini.IniParser.Parse(string! input) -> Broccolini.Syntax.IniDocument!
+static Broccolini.IniParser.ParseToSemanticModel(string! input) -> Broccolini.SemanticModel.IIniDocument!
 static Broccolini.SemanticModel.IniDocumentExtensions.ToSemanticModel(this Broccolini.Syntax.IniDocument! document) -> Broccolini.SemanticModel.IIniDocument!
 static Broccolini.Syntax.IniDocument.Empty.get -> Broccolini.Syntax.IniDocument!
 static Broccolini.Syntax.IniSyntaxFactory.KeyValue(string! key, string! value) -> Broccolini.Syntax.KeyValueIniNode!
