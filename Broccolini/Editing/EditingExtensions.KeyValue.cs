@@ -2,7 +2,8 @@ using Broccolini.Syntax;
 using System.Diagnostics.Contracts;
 using static Broccolini.Syntax.IniSyntaxFactory;
 
-namespace Broccolini.Editing;
+// ReSharper disable once CheckNamespace
+namespace Broccolini;
 
 public static partial class EditingExtensions
 {
