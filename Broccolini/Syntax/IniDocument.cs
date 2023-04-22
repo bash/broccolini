@@ -88,6 +88,8 @@ public abstract record SectionChildIniNode : IniNode
 [EditorBrowsable(EditorBrowsableState.Advanced)]
 public sealed record KeyValueIniNode : SectionChildIniNode
 {
+    /// <summary>Creates a key-value node without validating the parts.
+    /// Prefer <see cref="IniSyntaxFactory.KeyValue"/> over this constructor.</summary>
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     public KeyValueIniNode(string key, string value)
     {
@@ -128,6 +130,7 @@ public sealed record KeyValueIniNode : SectionChildIniNode
 [EditorBrowsable(EditorBrowsableState.Advanced)]
 public sealed record UnrecognizedIniNode : SectionChildIniNode
 {
+    /// <summary>Creates an unrecognized node without validating the parts.</summary>
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     public UnrecognizedIniNode(IImmutableList<IniToken> tokens)
     {
@@ -136,6 +139,7 @@ public sealed record UnrecognizedIniNode : SectionChildIniNode
 
     public IImmutableList<IniToken> Tokens { get; init; }
 
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
     public override void Accept(IIniNodeVisitor visitor) => visitor.Visit(this);
 
     public override string ToString() => base.ToString();
@@ -157,6 +161,7 @@ public sealed record UnrecognizedIniNode : SectionChildIniNode
 [EditorBrowsable(EditorBrowsableState.Advanced)]
 public sealed record CommentIniNode : SectionChildIniNode
 {
+    /// <summary>Creates a comment node without validating the parts.</summary>
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     public CommentIniNode(string text)
     {
@@ -190,6 +195,8 @@ public sealed record CommentIniNode : SectionChildIniNode
 [DebuggerDisplay("{OpeningBracket,nq}{Name,nq}{ClosingBracketDebugView,nq}")]
 public sealed record SectionIniNode : IniNode
 {
+    /// <summary>Creates a section node without validating the parts.
+    /// Prefer <see cref="IniSyntaxFactory.Section"/> over this constructor.</summary>
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     public SectionIniNode(string name, IImmutableList<SectionChildIniNode> children)
     {
