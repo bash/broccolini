@@ -37,6 +37,7 @@ public sealed record IniDocument
 
     public override int GetHashCode() => HashCode.Combine(NodesOutsideSection.Count, Sections.Count);
 
+    /// <summary>Converts this INI document back to its string representation.</summary>
     public override string ToString()
     {
         var visitor = new ToStringVisitor();
@@ -63,6 +64,7 @@ public abstract record IniNode
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     public abstract void Accept(IIniNodeVisitor visitor);
 
+    /// <summary>Converts this INI node back to its string representation.</summary>
     public override string ToString()
     {
         var visitor = new ToStringVisitor();
