@@ -60,6 +60,7 @@ public abstract record IniNode
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     public IniToken.NewLine? NewLine { get; init; }
 
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
     public abstract void Accept(IIniNodeVisitor visitor);
 
     public override string ToString()
@@ -118,6 +119,7 @@ public sealed record KeyValueIniNode : SectionChildIniNode
     /// <summary>Whitespace after value.</summary>
     public IniToken.WhiteSpace? TrailingTrivia { get; init; }
 
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
     public override void Accept(IIniNodeVisitor visitor) => visitor.Visit(this);
 
     public override string ToString() => base.ToString();
@@ -181,6 +183,7 @@ public sealed record CommentIniNode : SectionChildIniNode
     /// <summary>Trailing whitespace.</summary>
     public IniToken.WhiteSpace? TrailingTrivia { get; init; }
 
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
     public override void Accept(IIniNodeVisitor visitor) => visitor.Visit(this);
 
     public override string ToString() => base.ToString();
@@ -236,6 +239,7 @@ public sealed record SectionIniNode : IniNode
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private string ClosingBracketDebugView => ClosingBracket?.ToString() ?? string.Empty;
 
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
     public override void Accept(IIniNodeVisitor visitor) => visitor.Visit(this);
 
     public bool Equals(SectionIniNode? other)

@@ -1,5 +1,8 @@
+using System.ComponentModel;
+
 namespace Broccolini.Syntax;
 
+[EditorBrowsable(EditorBrowsableState.Advanced)]
 public interface IIniNodeVisitor
 {
     void Visit(KeyValueIniNode keyValueNode);
