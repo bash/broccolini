@@ -5,7 +5,7 @@ namespace Broccolini.Editing;
 
 internal static class NewLineExtensions
 {
-    public static IniDocument EnsureTrailingNewLine(this IniDocument document, Token.NewLine newLine)
+    public static IniDocument EnsureTrailingNewLine(this IniDocument document, IniToken.NewLine newLine)
         => document switch
         {
             { Sections: { Count: >=1 } sections } => document with { Sections = sections.ReplaceLast(n => EnsureTrailingNewLine(n, newLine)) },
@@ -13,7 +13,7 @@ internal static class NewLineExtensions
             _ => document,
         };
 
-    public static SectionNode EnsureTrailingNewLine(this SectionNode node, Token.NewLine newLine)
+    public static SectionIniNode EnsureTrailingNewLine(this SectionIniNode node, IniToken.NewLine newLine)
         => node switch
         {
             { Children: { Count: >=1 } children } => node with { Children = children.ReplaceLast(n => EnsureTrailingNewLine(n, newLine)) },
@@ -21,7 +21,7 @@ internal static class NewLineExtensions
             _ => node,
         };
 
-    public static SectionChildNode EnsureTrailingNewLine(this SectionChildNode node, Token.NewLine newLine)
+    public static SectionChildIniNode EnsureTrailingNewLine(this SectionChildIniNode node, IniToken.NewLine newLine)
         => node.NewLine is null
             ? node with { NewLine = newLine }
             : node;

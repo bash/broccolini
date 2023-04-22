@@ -4,14 +4,14 @@ namespace Broccolini.Editing;
 
 internal static class NewlineDetectionExtensions
 {
-    private static readonly Token.NewLine NativeNewLine = new(Environment.NewLine);
+    private static readonly IniToken.NewLine NativeNewLine = new(Environment.NewLine);
 
-    public static Token.NewLine DetectNewLine(this IniDocument document)
+    public static IniToken.NewLine DetectNewLine(this IniDocument document)
         => document.GetNodes()
             .Select(n => n.NewLine)
             .FirstOrDefault()
                 ?? NativeNewLine;
 
-    public static Token.NewLine DetectNewLine(this SectionNode node)
+    public static IniToken.NewLine DetectNewLine(this SectionIniNode node)
         => node.NewLine ?? node.NewLineHint ?? NativeNewLine;
 }

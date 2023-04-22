@@ -2,9 +2,9 @@ using System.Collections;
 
 namespace Broccolini.SemanticModel;
 
-internal sealed record Document(IReadOnlyDictionary<string, ISection> Sections) : IDocument
+internal sealed record Document(IReadOnlyDictionary<string, IIniSection> Sections) : IIniDocument
 {
-    public IEnumerator<KeyValuePair<string, ISection>> GetEnumerator() => Sections.GetEnumerator();
+    public IEnumerator<KeyValuePair<string, IIniSection>> GetEnumerator() => Sections.GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
@@ -13,19 +13,19 @@ internal sealed record Document(IReadOnlyDictionary<string, ISection> Sections) 
     public bool ContainsKey(string key) => Sections.ContainsKey(key);
 
 #if NET6_0_OR_GREATER
-    public bool TryGetValue(string key, [System.Diagnostics.CodeAnalysis.MaybeNullWhen(false)] out ISection value) => Sections.TryGetValue(key, out value);
+    public bool TryGetValue(string key, [System.Diagnostics.CodeAnalysis.MaybeNullWhen(false)] out IIniSection value) => Sections.TryGetValue(key, out value);
 #else
-    public bool TryGetValue(string key, out ISection value) => Sections.TryGetValue(key, out value);
+    public bool TryGetValue(string key, out IIniSection value) => Sections.TryGetValue(key, out value);
 #endif
 
-    public ISection this[string key] => Sections[key];
+    public IIniSection this[string key] => Sections[key];
 
     public IEnumerable<string> Keys => Sections.Keys;
 
-    public IEnumerable<ISection> Values => Sections.Values;
+    public IEnumerable<IIniSection> Values => Sections.Values;
 }
 
-internal sealed record Section(string Name, IReadOnlyDictionary<string, string> Entries) : ISection
+internal sealed record Section(string Name, IReadOnlyDictionary<string, string> Entries) : IIniSection
 {
     public IEnumerator<KeyValuePair<string, string>> GetEnumerator() => Entries.GetEnumerator();
 

@@ -1,11 +1,34 @@
 using System.Collections.Immutable;
+using System.ComponentModel;
 using System.Diagnostics;
+using Broccolini.Editing;
 
 namespace Broccolini.Syntax;
 
-public sealed record IniDocument(IImmutableList<SectionChildNode> NodesOutsideSection, IImmutableList<SectionNode> Sections)
+/// <summary><para>An immutable AST representation of an INI document.</para>
+/// <para>Use <see cref="IniParser.Parse"/> to parse an INI document from a string.</para>
+/// <para>The document can be converted back its string representation using <see cref="ToString"/> including all trivia (comments, whitespace and unrecognized lines).</para></summary>
+public sealed record IniDocument
 {
-    public static IniDocument Empty { get; } = new(ImmutableArray<SectionChildNode>.Empty, ImmutableArray<SectionNode>.Empty);
+    internal IniDocument(ImmutableArray<SectionChildIniNode> nodesOutsideSection, ImmutableArray<SectionIniNode> sections)
+    {
+        NodesOutsideSection = nodesOutsideSection;
+        Sections = sections;
+    }
+
+    /// <summary>An empty document.</summary>
+    public static IniDocument Empty { get; } = new(ImmutableArray<SectionChildIniNode>.Empty, ImmutableArray<SectionIniNode>.Empty);
+
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public IImmutableList<SectionChildIniNode> NodesOutsideSection { get; init; }
+
+    /// <remarks>Prefer
+    /// <see cref="EditingExtensions.WithSection"/>,
+    /// <see cref="EditingExtensions.UpdateSection"/>, or
+    /// <see cref="EditingExtensions.RemoveSection"/>
+    /// to edit a document's sections over manually editing the sections.</remarks>
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public IImmutableList<SectionIniNode> Sections { get; init; }
 
     public bool Equals(IniDocument? other)
         => other is not null
@@ -14,6 +37,7 @@ public sealed record IniDocument(IImmutableList<SectionChildNode> NodesOutsideSe
 
     public override int GetHashCode() => HashCode.Combine(NodesOutsideSection.Count, Sections.Count);
 
+    /// <summary>Converts this INI document back to its string representation.</summary>
     public override string ToString()
     {
         var visitor = new ToStringVisitor();
@@ -23,63 +47,103 @@ public sealed record IniDocument(IImmutableList<SectionChildNode> NodesOutsideSe
     }
 }
 
-internal static class IniDocumentExtensions
-{
-    public static IEnumerable<IniNode> GetNodes(this IniDocument document)
-        => ((IEnumerable<IniNode>)document.NodesOutsideSection).Concat(document.Sections);
-}
-
+[EditorBrowsable(EditorBrowsableState.Advanced)]
 public abstract record IniNode
 {
-    internal IniNode() { }
+    private protected IniNode() { }
 
-    public Token.NewLine? NewLine { get; init; }
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    protected IniNode(IniNode original)
+    {
+        NewLine = original.NewLine;
+    }
 
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public IniToken.NewLine? NewLine { get; init; }
+
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
     public abstract void Accept(IIniNodeVisitor visitor);
 
+    /// <summary>Converts this INI node back to its string representation.</summary>
     public override string ToString()
     {
         var visitor = new ToStringVisitor();
         Accept(visitor);
         return visitor.ToString();
     }
+
+    private protected abstract void InternalImplementorsOnly();
 }
 
-public abstract record SectionChildNode : IniNode
+[EditorBrowsable(EditorBrowsableState.Advanced)]
+public abstract record SectionChildIniNode : IniNode
 {
+    private protected SectionChildIniNode() { }
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    protected SectionChildIniNode(SectionChildIniNode original) : base(original) { }
+
     public override string ToString() => base.ToString();
 }
 
-/// <summary>A key-value pair: <c>key = value</c>. Use <see cref="SyntaxFactory.KeyValue"/> to create this node.</summary>
-[DebuggerDisplay("{Key}{EqualsSign}{Value}")]
-public sealed record KeyValueNode(string Key, string Value) : SectionChildNode
+/// <summary>A key-value pair: <c>key = value</c>. Use <see cref="IniSyntaxFactory.KeyValue"/> to create this node.</summary>
+[DebuggerDisplay("{Key,nq}{EqualsSign,nq}{Value,nq}")]
+[EditorBrowsable(EditorBrowsableState.Advanced)]
+public sealed record KeyValueIniNode : SectionChildIniNode
 {
+    /// <summary>Creates a key-value node without validating the parts.
+    /// Prefer <see cref="IniSyntaxFactory.KeyValue"/> over this constructor.</summary>
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public KeyValueIniNode(string key, string value)
+    {
+        Key = key;
+        Value = value;
+    }
+
+    public string Key { get; init; }
+
+    public string Value { get; init; }
+
     /// <summary>Leading whitespace.</summary>
-    public Token.WhiteSpace? LeadingTrivia { get; init; }
+    public IniToken.WhiteSpace? LeadingTrivia { get; init; }
 
     /// <summary>Whitespace between key and equals sign.</summary>
-    public Token.WhiteSpace? TriviaBeforeEqualsSign { get; init; }
+    public IniToken.WhiteSpace? TriviaBeforeEqualsSign { get; init; }
 
-    public Token.EqualsSign EqualsSign { get; init; } = new();
+    public IniToken.EqualsSign EqualsSign { get; init; } = new();
 
     /// <summary>Whitespace between equals sign and value.</summary>
-    public Token.WhiteSpace? TriviaAfterEqualsSign { get; init; }
+    public IniToken.WhiteSpace? TriviaAfterEqualsSign { get; init; }
 
     /// <summary>Opening and closing quote when value is quoted.</summary>
-    public Token.Quote? Quote { get; init; }
+    public IniToken.Quote? Quote { get; init; }
 
     /// <summary>Whitespace after value.</summary>
-    public Token.WhiteSpace? TrailingTrivia { get; init; }
+    public IniToken.WhiteSpace? TrailingTrivia { get; init; }
 
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
     public override void Accept(IIniNodeVisitor visitor) => visitor.Visit(this);
 
     public override string ToString() => base.ToString();
+
+    private protected override void InternalImplementorsOnly() { }
 }
 
 /// <summary>A line that can't be recognized as one of the other node types.</summary>
 [DebuggerDisplay("{DebuggerDisplay,nq}")]
-public sealed record UnrecognizedNode(IImmutableList<Token> Tokens) : SectionChildNode
+[EditorBrowsable(EditorBrowsableState.Advanced)]
+public sealed record UnrecognizedIniNode : SectionChildIniNode
 {
+    /// <summary>Creates an unrecognized node without validating the parts.</summary>
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public UnrecognizedIniNode(IImmutableList<IniToken> tokens)
+    {
+        Tokens = tokens;
+    }
+
+    public IImmutableList<IniToken> Tokens { get; init; }
+
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
     public override void Accept(IIniNodeVisitor visitor) => visitor.Visit(this);
 
     public override string ToString() => base.ToString();
@@ -87,63 +151,100 @@ public sealed record UnrecognizedNode(IImmutableList<Token> Tokens) : SectionChi
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private string DebuggerDisplay => string.Concat(Tokens);
 
-    public bool Equals(UnrecognizedNode? other) => other is not null && Tokens.SequenceEqual(other.Tokens);
+    public bool Equals(UnrecognizedIniNode? other) => other is not null && Tokens.SequenceEqual(other.Tokens);
 
     public override int GetHashCode() => Tokens.Count.GetHashCode();
 
-    internal bool IsBlank() => Tokens.All(static token => token is Token.WhiteSpace or Token.NewLine);
+    internal bool IsBlank() => Tokens.All(static token => token is IniToken.WhiteSpace or IniToken.NewLine);
+
+    private protected override void InternalImplementorsOnly() { }
 }
 
 /// <summary>A comment: <c>; comment</c>.</summary>
-[DebuggerDisplay("{DebuggerDisplay,nq}")]
-public sealed record CommentNode(string Text) : SectionChildNode
+[DebuggerDisplay("{Semicolon,nq}{Text,nq}")]
+[EditorBrowsable(EditorBrowsableState.Advanced)]
+public sealed record CommentIniNode : SectionChildIniNode
 {
-    /// <summary>Leading whitespace.</summary>
-    public Token.WhiteSpace? LeadingTrivia { get; init; }
+    /// <summary>Creates a comment node without validating the parts.</summary>
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public CommentIniNode(string text)
+    {
+        Text = text;
+    }
 
-    public Token.Semicolon Semicolon { get; init; } = new();
+    public string Text { get; init; }
+
+    /// <summary>Leading whitespace.</summary>
+    public IniToken.WhiteSpace? LeadingTrivia { get; init; }
+
+    public IniToken.Semicolon Semicolon { get; init; } = new();
 
     /// <summary>Whitespace between semicolon and text.</summary>
-    public Token.WhiteSpace? TriviaAfterSemicolon { get; init; }
+    public IniToken.WhiteSpace? TriviaAfterSemicolon { get; init; }
 
     /// <summary>Trailing whitespace.</summary>
-    public Token.WhiteSpace? TrailingTrivia { get; init; }
+    public IniToken.WhiteSpace? TrailingTrivia { get; init; }
 
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
     public override void Accept(IIniNodeVisitor visitor) => visitor.Visit(this);
 
     public override string ToString() => base.ToString();
+
+    private protected override void InternalImplementorsOnly() { }
 }
 
 /// <summary>A section:
 /// <code>[section]
 /// key = value</code>
-/// Use <see cref="SyntaxFactory.Section"/> to create this node.</summary>
-[DebuggerDisplay("{OpeningBracket}{Name}{ClosingBracketDebugView}")]
-public sealed record SectionNode(string Name, IImmutableList<SectionChildNode> Children) : IniNode
+/// Use <see cref="IniSyntaxFactory.Section"/> to create this node.</summary>
+[DebuggerDisplay("{OpeningBracket,nq}{Name,nq}{ClosingBracketDebugView,nq}")]
+public sealed record SectionIniNode : IniNode
 {
-    /// <summary>Leading whitespace.</summary>
-    public Token.WhiteSpace? LeadingTrivia { get; init; }
+    /// <summary>Creates a section node without validating the parts.
+    /// Prefer <see cref="IniSyntaxFactory.Section"/> over this constructor.</summary>
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public SectionIniNode(string name, IImmutableList<SectionChildIniNode> children)
+    {
+        Name = name;
+        Children = children;
+    }
 
-    public Token.OpeningBracket OpeningBracket { get; init; } = new();
+    public string Name { get; init; }
+
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public IImmutableList<SectionChildIniNode> Children { get; init; }
+
+    /// <summary>Leading whitespace.</summary>
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public IniToken.WhiteSpace? LeadingTrivia { get; init; }
+
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public IniToken.OpeningBracket OpeningBracket { get; init; } = new();
 
     /// <summary>Whitespace between opening bracket and section name.</summary>
-    public Token.WhiteSpace? TriviaAfterOpeningBracket { get; init; }
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public IniToken.WhiteSpace? TriviaAfterOpeningBracket { get; init; }
 
     /// <summary>Whitespace between section name and closing bracket.</summary>
-    public Token.WhiteSpace? TriviaBeforeClosingBracket { get; init; }
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public IniToken.WhiteSpace? TriviaBeforeClosingBracket { get; init; }
 
-    public Token.ClosingBracket? ClosingBracket { get; init; } = new();
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public IniToken.ClosingBracket? ClosingBracket { get; init; } = new();
 
     /// <summary>Trailing whitespace and garbage after the closing bracket.</summary>
-    public IImmutableList<Token> TrailingTrivia { get; init; } = ImmutableArray<Token>.Empty;
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public IImmutableList<IniToken> TrailingTrivia { get; init; } = ImmutableArray<IniToken>.Empty;
 
-    internal Token.NewLine? NewLineHint { get; init; }
+    internal IniToken.NewLine? NewLineHint { get; init; }
 
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private string ClosingBracketDebugView => ClosingBracket?.ToString() ?? string.Empty;
 
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
     public override void Accept(IIniNodeVisitor visitor) => visitor.Visit(this);
 
-    public bool Equals(SectionNode? other)
+    public bool Equals(SectionIniNode? other)
         => other is not null
            && Name == other.Name
            && Children.SequenceEqual(other.Children)
@@ -169,4 +270,6 @@ public sealed record SectionNode(string Name, IImmutableList<SectionChildNode> C
                 NewLine));
 
     public override string ToString() => base.ToString();
+
+    private protected override void InternalImplementorsOnly() { }
 }

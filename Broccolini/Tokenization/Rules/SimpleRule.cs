@@ -5,15 +5,15 @@ namespace Broccolini.Tokenization.Rules;
 internal sealed record SimpleRule : ITokenizerRule
 {
     private readonly char _expectedCharacter;
-    private readonly Token _token;
+    private readonly IniToken _token;
 
-    public SimpleRule(char expectedCharacter, Token token)
+    public SimpleRule(char expectedCharacter, IniToken token)
     {
         _expectedCharacter = expectedCharacter;
         _token = token;
     }
 
-    public Token? Match(ITokenizerInput input)
+    public IniToken? Match(ITokenizerInput input)
     {
         if (input.Peek(out var character) && character == _expectedCharacter)
         {

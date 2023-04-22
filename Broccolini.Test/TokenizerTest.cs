@@ -11,7 +11,7 @@ public sealed class TokenizerTest
     [MemberData(nameof(GetNewLinesData))]
     public void TokenizeNewLines(string input)
     {
-        Assert.Single(Tokenize(input), new Token.NewLine(input));
+        Assert.Single(Tokenize(input), new IniToken.NewLine(input));
     }
 
     private static TheoryData<string> GetNewLinesData() => NewLines.ToTheoryData();
@@ -20,7 +20,7 @@ public sealed class TokenizerTest
     [MemberData(nameof(GetConsecutiveNewLinesData))]
     public void TokenizesConsecutiveNewLines(params string[] inputs)
     {
-        Assert.Equal(inputs.Select(x => new Token.NewLine(x)), Tokenize(inputs.ConcatToString()));
+        Assert.Equal(inputs.Select(x => new IniToken.NewLine(x)), Tokenize(inputs.ConcatToString()));
     }
 
     private static TheoryData<string, string> GetConsecutiveNewLinesData()

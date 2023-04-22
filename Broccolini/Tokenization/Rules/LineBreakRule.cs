@@ -5,18 +5,18 @@ namespace Broccolini.Tokenization.Rules;
 
 internal sealed class NewLineRule : ITokenizerRule
 {
-    public Token? Match(ITokenizerInput input)
+    public IniToken? Match(ITokenizerInput input)
     {
         if (input.Peek(out var firstCharacter) && firstCharacter == '\r' && input.Peek(out var secondCharacter, 1) && secondCharacter == '\n')
         {
             input.Read();
             input.Read();
-            return new Token.NewLine("\r\n");
+            return new IniToken.NewLine("\r\n");
         }
 
         if (input.Peek(out var character) && IsNewLine(character))
         {
-            return new Token.NewLine(input.Read().ToString());
+            return new IniToken.NewLine(input.Read().ToString());
         }
 
         return null;

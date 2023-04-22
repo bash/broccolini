@@ -4,7 +4,6 @@
         <LangVersion>preview</LangVersion>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-        <FunckyImplicitUsings>enable</FunckyImplicitUsings>
         <WarningsAsErrors>nullable</WarningsAsErrors>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <NoWarn>$(NoWarn);CS1591</NoWarn>
@@ -28,10 +27,13 @@
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
     </PropertyGroup>
     <ItemGroup Label="Deterministic Builds and Source Link">
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
     </ItemGroup>
     <ItemGroup>
         <None Include="..\readme.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="3.3.4" PrivateAssets="all" />
     </ItemGroup>
     <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
         <PackageReference Include="Microsoft.Bcl.HashCode" Version="1.1.1" />

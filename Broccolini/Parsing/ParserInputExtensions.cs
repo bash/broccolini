@@ -5,18 +5,18 @@ namespace Broccolini.Parsing;
 
 internal static class ParserInputExtensions
 {
-    public static Token PeekIgnoreWhitespace(this IParserInput input, int lookAhead = 0)
+    public static IniToken PeekIgnoreWhitespace(this IParserInput input, int lookAhead = 0)
     {
         var current = input.Peek(lookAhead);
-        return current is Token.WhiteSpace
+        return current is IniToken.WhiteSpace
             ? input.Peek(lookAhead + 1)
             : current;
     }
 
-    public static TToken? ReadOrNull<TToken>(this IParserInput input) where TToken : Token => ReadOrNull<TToken>(input, static _ => true);
+    public static TToken? ReadOrNull<TToken>(this IParserInput input) where TToken : IniToken => ReadOrNull<TToken>(input, static _ => true);
 
     public static TToken? ReadOrNull<TToken>(this IParserInput input, Func<TToken, bool> predicate)
-        where TToken : Token
+        where TToken : IniToken
     {
         var token = input.Peek();
 
@@ -29,20 +29,20 @@ internal static class ParserInputExtensions
         return null;
     }
 
-    public static IImmutableList<Token> ReadWhile(this IParserInput input, Func<Token, bool> predicate)
+    public static IImmutableList<IniToken> ReadWhile(this IParserInput input, Func<IniToken, bool> predicate)
         => input.ReadWhile(static input => input.Peek(), predicate);
 
-    public static IImmutableList<Token> ReadWhileExcludeTrailingWhitespace(this IParserInput input, Func<Token, bool> predicate)
+    public static IImmutableList<IniToken> ReadWhileExcludeTrailingWhitespace(this IParserInput input, Func<IniToken, bool> predicate)
         => input.ReadWhile(static input => input.PeekIgnoreWhitespace(), predicate);
 
-    private static IImmutableList<Token> ReadWhile(this IParserInput input, Func<IParserInput, Token> peek, Func<Token, bool> predicate)
+    private static IImmutableList<IniToken> ReadWhile(this IParserInput input, Func<IParserInput, IniToken> peek, Func<IniToken, bool> predicate)
     {
-        var tokens = ImmutableArray.CreateBuilder<Token>();
+        var tokens = ImmutableArray.CreateBuilder<IniToken>();
 
         while (true)
         {
             var token = peek(input);
-            if (token is Token.Epsilon || !predicate(token)) break;
+            if (token is IniToken.Epsilon || !predicate(token)) break;
             tokens.Add(input.Read());
         }
 
