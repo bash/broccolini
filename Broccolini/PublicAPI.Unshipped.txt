@@ -39,12 +39,10 @@ Broccolini.Syntax.IniToken.ClosingBracket
 Broccolini.Syntax.IniToken.DoubleQuote
 Broccolini.Syntax.IniToken.EqualsSign
 Broccolini.Syntax.IniToken.Identifier
-Broccolini.Syntax.IniToken.Identifier.Identifier(string! value) -> void
 Broccolini.Syntax.IniToken.Identifier.Value.get -> string!
 Broccolini.Syntax.IniToken.Identifier.Value.init -> void
 Broccolini.Syntax.IniToken.IniToken(Broccolini.Syntax.IniToken! original) -> void
 Broccolini.Syntax.IniToken.NewLine
-Broccolini.Syntax.IniToken.NewLine.NewLine(string! value) -> void
 Broccolini.Syntax.IniToken.NewLine.Value.get -> string!
 Broccolini.Syntax.IniToken.NewLine.Value.init -> void
 Broccolini.Syntax.IniToken.OpeningBracket
@@ -55,7 +53,6 @@ Broccolini.Syntax.IniToken.SingleQuote
 Broccolini.Syntax.IniToken.WhiteSpace
 Broccolini.Syntax.IniToken.WhiteSpace.Value.get -> string!
 Broccolini.Syntax.IniToken.WhiteSpace.Value.init -> void
-Broccolini.Syntax.IniToken.WhiteSpace.WhiteSpace(string! value) -> void
 Broccolini.Syntax.KeyValueIniNode
 Broccolini.Syntax.KeyValueIniNode.EqualsSign.get -> Broccolini.Syntax.IniToken.EqualsSign!
 Broccolini.Syntax.KeyValueIniNode.EqualsSign.init -> void
@@ -134,5 +131,8 @@ static Broccolini.IniParser.Parse(string! input) -> Broccolini.Syntax.IniDocumen
 static Broccolini.IniParser.ParseToSemanticModel(string! input) -> Broccolini.SemanticModel.IIniDocument!
 static Broccolini.SemanticModel.IniDocumentExtensions.ToSemanticModel(this Broccolini.Syntax.IniDocument! document) -> Broccolini.SemanticModel.IIniDocument!
 static Broccolini.Syntax.IniDocument.Empty.get -> Broccolini.Syntax.IniDocument!
+static Broccolini.Syntax.IniSyntaxFactory.Identifier(string! value) -> Broccolini.Syntax.IniToken.Identifier!
 static Broccolini.Syntax.IniSyntaxFactory.KeyValue(string! key, string! value) -> Broccolini.Syntax.KeyValueIniNode!
+static Broccolini.Syntax.IniSyntaxFactory.NewLine(string! value) -> Broccolini.Syntax.IniToken.NewLine!
 static Broccolini.Syntax.IniSyntaxFactory.Section(string! name) -> Broccolini.Syntax.SectionIniNode!
+static Broccolini.Syntax.IniSyntaxFactory.WhiteSpace(string! value) -> Broccolini.Syntax.IniToken.WhiteSpace!

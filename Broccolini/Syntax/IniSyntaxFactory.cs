@@ -1,6 +1,8 @@
 using System.Collections.Immutable;
 using System.ComponentModel;
 using System.Diagnostics.Contracts;
+using Broccolini.Tokenization.Rules;
+using static Broccolini.Tokenization.Rules.CharPredicates;
 using static Broccolini.Tokenization.Tokenizer;
 
 namespace Broccolini.Syntax;
@@ -43,6 +45,30 @@ public static class IniSyntaxFactory
         ValidateSectionName(name);
         return new SectionIniNode(name, ImmutableArray<SectionChildIniNode>.Empty);
     }
+
+    /// <summary>Creates a whitespace token.</summary>
+    /// <exception cref="ArgumentException">Thrown when the value is not valid whitespace.</exception>
+    [Pure]
+    public static IniToken.WhiteSpace WhiteSpace(string value)
+        => value.All(IsWhitespace)
+            ? new IniToken.WhiteSpace(value)
+            : throw new ArgumentException($"'{value}' is not valid whitespace", nameof(value));
+
+    /// <summary>Creates a newline token.</summary>
+    /// <exception cref="ArgumentException">Thrown when the value is not a newline.</exception>
+    [Pure]
+    public static IniToken.NewLine NewLine(string value)
+        => value is "\r" or "\n" or "\r\n"
+            ? new IniToken.NewLine(value)
+            : throw new ArgumentException($"'{value}' is not a valid newline");
+
+    /// <summary>Creates a identifier token.</summary>
+    /// <exception cref="ArgumentException">Thrown when the value is not a valid identifier.</exception>
+    [Pure]
+    public static IniToken.Identifier Identifier(string value)
+        => value.All(IsIdentifier)
+            ? new IniToken.Identifier(value)
+            : throw new ArgumentException($"'{value}' is not a valid identifier");
 
     private static void ValidateSectionName(string name)
     {

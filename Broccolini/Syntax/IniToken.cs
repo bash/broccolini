@@ -12,9 +12,10 @@ public abstract record IniToken
 
     private protected abstract void InternalImplementorsOnly();
 
+    /// <summary>Use <see cref="IniSyntaxFactory.NewLine"/> to create this token.</summary>
     public sealed record NewLine : IniToken
     {
-        public NewLine(string value)
+        internal NewLine(string value)
         {
             Value = value;
         }
@@ -26,9 +27,10 @@ public abstract record IniToken
         private protected override void InternalImplementorsOnly() { }
     }
 
+    /// <summary>Use <see cref="IniSyntaxFactory.WhiteSpace"/> to create this token.</summary>
     public sealed record WhiteSpace : IniToken
     {
-        public WhiteSpace(string value)
+        internal WhiteSpace(string value)
         {
             Value = value;
         }
@@ -92,7 +94,7 @@ public abstract record IniToken
 
     public sealed record Identifier : IniToken
     {
-        public Identifier(string value)
+        internal Identifier(string value)
         {
             Value = value;
         }
