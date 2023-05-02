@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using System.ComponentModel;
 using System.Diagnostics.Contracts;
 using static Broccolini.Tokenization.Rules.CharPredicates;

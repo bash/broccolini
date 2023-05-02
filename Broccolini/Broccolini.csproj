@@ -2,11 +2,6 @@
     <PropertyGroup>
         <TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
         <LangVersion>preview</LangVersion>
-        <Nullable>enable</Nullable>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <WarningsAsErrors>nullable</WarningsAsErrors>
-        <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        <NoWarn>$(NoWarn);CS1591</NoWarn>
     </PropertyGroup>
     <PropertyGroup>
         <IsTrimmable>true</IsTrimmable>
