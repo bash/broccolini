@@ -19,7 +19,5 @@ trim_trailing_whitespace = false
 insert_final_newline = false
 
 [*.cs]
-# IDE0005: Using directive is unnecessary.
-dotnet_diagnostic.IDE0005.severity = warning
-csharp_style_namespace_declarations = file_scoped:warning
-
+dotnet_diagnostic.IDE0005.severity = warning # IDE0005: Using directive is unnecessary.
+csharp_style_namespace_declarations = file_scoped:error

@@ -1,7 +1,6 @@
 using System.Collections.Immutable;
 using System.ComponentModel;
 using System.Diagnostics.Contracts;
-using Broccolini.Tokenization.Rules;
 using static Broccolini.Tokenization.Rules.CharPredicates;
 using static Broccolini.Tokenization.Tokenizer;
 
