@@ -1,4 +1,3 @@
-using Broccolini.SemanticModel;
 using Xunit;
 using static Broccolini.Test.SemanticModel.ReferenceImplementation;
 

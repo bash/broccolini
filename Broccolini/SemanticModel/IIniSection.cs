@@ -1,4 +1,4 @@
-namespace Broccolini.SemanticModel;
+namespace Broccolini;
 
 /// <summary>A section of an <see cref="IIniDocument"/>. A section is a collection of key-value pairs.</summary>
 /// <example><code>

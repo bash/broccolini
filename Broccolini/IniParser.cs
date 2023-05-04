@@ -1,6 +1,5 @@
 using System.Diagnostics.Contracts;
 using Broccolini.Parsing;
-using Broccolini.SemanticModel;
 using Broccolini.Syntax;
 using Broccolini.Tokenization;
 
@@ -10,7 +9,7 @@ public static class IniParser
 {
     /// <summary><para>Parses an INI document to an AST. This function always succeeds even when invalid input is provided.</para>
     /// <para>Use <see cref="ParseToSemanticModel"/> if you want to get a semantic representation instead.
-    /// You can alternatively use <see cref="SemanticModel.IniDocumentExtensions.ToSemanticModel"/> on the parsed AST document.</para></summary>
+    /// You can alternatively use <see cref="SemanticModelExtensions.ToSemanticModel"/> on the parsed AST document.</para></summary>
     /// <example>
     /// Editing a document
     /// <code>

@@ -1,11 +1,11 @@
 #nullable enable
 abstract Broccolini.Syntax.IniNode.Accept(Broccolini.Syntax.IIniNodeVisitor! visitor) -> void
 Broccolini.EditingExtensions
+Broccolini.IIniDocument
+Broccolini.IIniSection
+Broccolini.IIniSection.Name.get -> string!
 Broccolini.IniParser
-Broccolini.SemanticModel.IIniDocument
-Broccolini.SemanticModel.IIniSection
-Broccolini.SemanticModel.IIniSection.Name.get -> string!
-Broccolini.SemanticModel.IniDocumentExtensions
+Broccolini.SemanticModelExtensions
 Broccolini.Syntax.CommentIniNode
 Broccolini.Syntax.CommentIniNode.CommentIniNode(string! text) -> void
 Broccolini.Syntax.CommentIniNode.LeadingTrivia.get -> Broccolini.Syntax.IniToken.WhiteSpace?
@@ -128,8 +128,8 @@ static Broccolini.EditingExtensions.WithKeyValue(this Broccolini.Syntax.SectionI
 static Broccolini.EditingExtensions.WithSection(this Broccolini.Syntax.IniDocument! document, string! name, System.Func<Broccolini.Syntax.SectionIniNode!, Broccolini.Syntax.SectionIniNode!>! updateSection) -> Broccolini.Syntax.IniDocument!
 static Broccolini.EditingExtensions.WithValue(this Broccolini.Syntax.KeyValueIniNode! keyValueNode, string! value) -> Broccolini.Syntax.KeyValueIniNode!
 static Broccolini.IniParser.Parse(string! input) -> Broccolini.Syntax.IniDocument!
-static Broccolini.IniParser.ParseToSemanticModel(string! input) -> Broccolini.SemanticModel.IIniDocument!
-static Broccolini.SemanticModel.IniDocumentExtensions.ToSemanticModel(this Broccolini.Syntax.IniDocument! document) -> Broccolini.SemanticModel.IIniDocument!
+static Broccolini.IniParser.ParseToSemanticModel(string! input) -> Broccolini.IIniDocument!
+static Broccolini.SemanticModelExtensions.ToSemanticModel(this Broccolini.Syntax.IniDocument! document) -> Broccolini.IIniDocument!
 static Broccolini.Syntax.IniDocument.Empty.get -> Broccolini.Syntax.IniDocument!
 static Broccolini.Syntax.IniSyntaxFactory.Identifier(string! value) -> Broccolini.Syntax.IniToken.Identifier!
 static Broccolini.Syntax.IniSyntaxFactory.KeyValue(string! key, string! value) -> Broccolini.Syntax.KeyValueIniNode!

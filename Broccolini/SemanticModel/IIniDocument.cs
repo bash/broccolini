@@ -1,8 +1,8 @@
-namespace Broccolini.SemanticModel;
+namespace Broccolini;
 
 /// <summary><para>An immutable semantic view of an INI document.
 /// A document is a collection of sections.</para>
-/// <para>Use <see cref="IniDocumentExtensions.ToSemanticModel"/> to
+/// <para>Use <see cref="SemanticModelExtensions.ToSemanticModel"/> to
 /// convert a parse result to an <see cref="IIniDocument"/>.</para></summary>
 /// <example><code>
 /// [database]

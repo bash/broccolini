@@ -1,10 +1,11 @@
 using System.Diagnostics.Contracts;
 using Broccolini.Syntax;
+using Broccolini.SemanticModel;
 using static Broccolini.SemanticModel.KeyComparision;
 
-namespace Broccolini.SemanticModel;
+namespace Broccolini;
 
-public static class IniDocumentExtensions
+public static class SemanticModelExtensions
 {
     /// <summary>Converts the AST to a semantic representation of the INI document.</summary>
     /// <remarks>This representation is intended for reading only and discards formatting and trivia.</remarks>
