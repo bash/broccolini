@@ -11,18 +11,29 @@ The main entry point of the library is as before the `IniParser` class with two 
 A lot of advanced APIs are now marked as `[EditorBrowsable(Advanced)]` to create a pit of success
 when looking at the API surface.
 
-## 0.2.2
+<details>
+
+<summary>
+
+## Development Releases
+
+</summary>
+
+### 0.2.2
 * Improve insertion heuristic for keys when section contains trailing whitespace. (#5)
 
-## 0.2.1
+### 0.2.1
 * Fix broken newline detection for appending a node to new section (Follow up to #1).
 
-## 0.2.0
+### 0.2.0
 * Fix incorrect package description.
 * Fix broken newline detection for appending a node to an empty section. (#1)
 * Use stronger types in AST.
 * Distinguish comment nodes from unrecognized nodes in AST.
 * Treat all characters `< ' '` as whitespace to align with Windows' behaviour.
 
-## 0.1.0
+### 0.1.0
 Initial release
+
+</details>
+
