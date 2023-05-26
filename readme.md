@@ -35,6 +35,10 @@ var updated = document
 File.WriteAllText("config.ini", updated.ToString(), Encoding.Unicode);
 ```
 
+## Stability
+This library is feature-complete and stable.
+Contributions are welcome, please create an issue first for discussion.
+
 ## Known Differences
 While Broccolini tries to replicate most of the behaviour found in the Windows APIs,
 there are still some intentional differences:
