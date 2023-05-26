@@ -1,7 +1,7 @@
 # Changelog
 ## 1.0.0
 This release polishes the API by simplifying names, namespaces and adding some convenience:
-Most notably, all important types now have a `Ini` prefix: `IniDocument`, `IIniSection`, etc.
+Most notably, all important types now have the `Ini` prefix: `IniDocument`, `IIniSection`, etc.
 All of the APIs which are expected to be used by regular consumers of the library now live in the main namespace `Broccolini`.
 
 The main entry point of the library is as before the `IniParser` class with two methods:
