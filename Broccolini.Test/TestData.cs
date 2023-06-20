@@ -78,6 +78,12 @@ internal static class TestData
             new CaseSensitivityInput("ı", "I", ShouldBeEqual: false))
                 .SelectMany(pair => Sequence.Return(pair, new CaseSensitivityInput(pair.Variant2, pair.Variant1, ShouldBeEqual: pair.ShouldBeEqual)));
 
+    public static IEnumerable<char> WhiteSpace
+        => Enumerable.Range(1, 0x20)
+            .Skip(1) // U+0000 is not whitespace
+            .Select(n => (char)n)
+            .Except(Sequence.Return('\r', '\n'));
+
     private static IEnumerable<KeyValuePairWithKeyAndValue> KeyValuePairsWithQuotes
         => Sequence.Return(
             new KeyValuePairWithKeyAndValue("\"quoted key\" = \"quoted value\"", "\"quoted key\"", "quoted value"),

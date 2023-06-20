@@ -23,6 +23,15 @@ public sealed class TokenizerTest
         Assert.Equal(inputs.Select(x => new IniToken.NewLine(x)), Tokenize(inputs.ConcatToString()));
     }
 
+    [Theory]
+    [MemberData(nameof(GetWhiteSpaceData))]
+    public void TokenizesWhiteSpace(char whitespace)
+    {
+        Assert.Single(Tokenize(whitespace.ToString()), new IniToken.WhiteSpace(whitespace.ToString()));
+    }
+
+    private static TheoryData<char> GetWhiteSpaceData() => WhiteSpace.ToTheoryData();
+
     private static TheoryData<string, string> GetConsecutiveNewLinesData()
         => NewLines.SelectMany(_ => NewLines, ValueTuple.Create)
             .Except(Sequence.Return(("\r", "\n")))

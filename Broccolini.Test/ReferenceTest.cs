@@ -135,6 +135,24 @@ public sealed class ReferenceTest
         Assert.Equal(shouldBeEqual, KeyComparision.KeyEquals(lhs, rhs));
     }
 
+
+    [SkippableTheory]
+    [MemberData(nameof(GetWhiteSpaceData))]
+    [SupportedOSPlatform("windows")]
+    public void RecognizesWhitespace(char whitespace)
+    {
+        Skip.IfNot(OperatingSystem.IsWindows());
+
+        const string arbitrarySection = "section";
+        const string arbitraryKey = "key";
+        const string arbitraryValue = "value";
+        using var temporaryFile = TemporaryFile.Write($"{whitespace}[{arbitrarySection}]\r\n{arbitraryKey} = {arbitraryValue}");
+
+        Assert.Equal(arbitraryValue, GetPrivateProfileString(temporaryFile.Path, arbitrarySection, arbitraryKey, "DEFAULT VALUE"));
+    }
+
+    private static TheoryData<char> GetWhiteSpaceData() => WhiteSpace.ToTheoryData();
+
     public static TheoryData<string, string, bool> KeysData()
         => CaseSensitivityInputs.Select(input => (input.Variant1, input.Variant2, input.ShouldBeEqual)).ToTheoryData();
 
