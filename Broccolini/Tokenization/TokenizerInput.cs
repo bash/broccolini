@@ -29,6 +29,6 @@ internal sealed class TokenizerInput(string input) : ITokenizerInput
         {
         }
 
-        return input.Substring(startPosition, _position - startPosition);
+        return input[startPosition.._position];
     }
 }

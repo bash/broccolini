@@ -35,8 +35,12 @@
         <PackageReference Include="System.Collections.Immutable" Version="5.0.0" />
     </ItemGroup>
     <ItemGroup>
+        <PackageReference Include="PolySharp" Version="1.14.0" PrivateAssets="all" />
         <PackageReference Include="IsExternalInit" Version="1.0.2" PrivateAssets="all" />
     </ItemGroup>
+    <PropertyGroup>
+        <PolySharpExcludeGeneratedTypes>System.Runtime.CompilerServices.IsExternalInit</PolySharpExcludeGeneratedTypes>
+    </PropertyGroup>
     <ItemGroup>
         <InternalsVisibleTo Include="Broccolini.Test" />
     </ItemGroup>
