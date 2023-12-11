@@ -12,7 +12,7 @@ internal static class Kernel32
         var result = GetPrivateProfileStringInternal(appName: null, keyName: null, @default: null, fileName: filePath);
         return result.Length > 0
             ? result[..^1].Split('\0')
-            : Array.Empty<string>();
+            : [];
     }
 
     public static IEnumerable<string> GetKeysInSection(string filePath, string section)
@@ -20,7 +20,7 @@ internal static class Kernel32
         var result = GetPrivateProfileStringInternal(appName: section, keyName: null, @default: null, fileName: filePath);
         return result.Length > 0
             ? result[..^1].Split('\0')
-            : Enumerable.Empty<string>();
+            : [];
     }
 
     public static string GetPrivateProfileString(string filePath, string section, string key, string defaultValue)

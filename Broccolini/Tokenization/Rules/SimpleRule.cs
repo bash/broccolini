@@ -2,23 +2,14 @@ using Broccolini.Syntax;
 
 namespace Broccolini.Tokenization.Rules;
 
-internal sealed record SimpleRule : ITokenizerRule
+internal sealed class SimpleRule(char expectedCharacter, IniToken token) : ITokenizerRule
 {
-    private readonly char _expectedCharacter;
-    private readonly IniToken _token;
-
-    public SimpleRule(char expectedCharacter, IniToken token)
-    {
-        _expectedCharacter = expectedCharacter;
-        _token = token;
-    }
-
     public IniToken? Match(ITokenizerInput input)
     {
-        if (input.Peek(out var character) && character == _expectedCharacter)
+        if (input.Peek(out var character) && character == expectedCharacter)
         {
             input.Read();
-            return _token;
+            return token;
         }
 
         return null;

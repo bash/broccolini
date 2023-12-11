@@ -7,10 +7,10 @@ internal static class BroccoliniGenerators
     private static readonly char[] WhitespaceChars =
         Enumerable.Range(0, count: ' ' + 1)
             .Select(n => (char)n)
-            .Except(new[] { '\r', '\n' })
+            .Except([ '\r', '\n' ])
             .ToArray();
 
-    private static readonly char[] NewLineChars = { '\r', '\n' };
+    private static readonly char[] NewLineChars = ['\r', '\n'];
 
     public static void Register()
     {

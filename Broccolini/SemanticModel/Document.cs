@@ -2,48 +2,50 @@ using System.Collections;
 
 namespace Broccolini.SemanticModel;
 
-internal sealed record Document(IReadOnlyDictionary<string, IIniSection> Sections) : IIniDocument
+internal sealed class Document(IReadOnlyDictionary<string, IIniSection> sections) : IIniDocument
 {
-    public IEnumerator<KeyValuePair<string, IIniSection>> GetEnumerator() => Sections.GetEnumerator();
+    public IEnumerator<KeyValuePair<string, IIniSection>> GetEnumerator() => sections.GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-    public int Count => Sections.Count;
+    public int Count => sections.Count;
 
-    public bool ContainsKey(string key) => Sections.ContainsKey(key);
+    public bool ContainsKey(string key) => sections.ContainsKey(key);
 
 #if NET6_0_OR_GREATER
-    public bool TryGetValue(string key, [System.Diagnostics.CodeAnalysis.MaybeNullWhen(false)] out IIniSection value) => Sections.TryGetValue(key, out value);
+    public bool TryGetValue(string key, [System.Diagnostics.CodeAnalysis.MaybeNullWhen(false)] out IIniSection value) => sections.TryGetValue(key, out value);
 #else
-    public bool TryGetValue(string key, out IIniSection value) => Sections.TryGetValue(key, out value);
+    public bool TryGetValue(string key, out IIniSection value) => sections.TryGetValue(key, out value);
 #endif
 
-    public IIniSection this[string key] => Sections[key];
+    public IIniSection this[string key] => sections[key];
 
-    public IEnumerable<string> Keys => Sections.Keys;
+    public IEnumerable<string> Keys => sections.Keys;
 
-    public IEnumerable<IIniSection> Values => Sections.Values;
+    public IEnumerable<IIniSection> Values => sections.Values;
 }
 
-internal sealed record Section(string Name, IReadOnlyDictionary<string, string> Entries) : IIniSection
+internal sealed class Section(string name, IReadOnlyDictionary<string, string> entries) : IIniSection
 {
-    public IEnumerator<KeyValuePair<string, string>> GetEnumerator() => Entries.GetEnumerator();
+    public IEnumerator<KeyValuePair<string, string>> GetEnumerator() => entries.GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-    public int Count => Entries.Count;
+    public string Name { get; } = name;
 
-    public bool ContainsKey(string key) => Entries.ContainsKey(key);
+    public int Count => entries.Count;
+
+    public bool ContainsKey(string key) => entries.ContainsKey(key);
 
 #if NET6_0_OR_GREATER
-    public bool TryGetValue(string key, [System.Diagnostics.CodeAnalysis.MaybeNullWhen(false)] out string value) => Entries.TryGetValue(key, out value);
+    public bool TryGetValue(string key, [System.Diagnostics.CodeAnalysis.MaybeNullWhen(false)] out string value) => entries.TryGetValue(key, out value);
 #else
-    public bool TryGetValue(string key, out string value) => Entries.TryGetValue(key, out value);
+    public bool TryGetValue(string key, out string value) => entries.TryGetValue(key, out value);
 #endif
 
-    public string this[string key] => Entries[key];
+    public string this[string key] => entries[key];
 
-    public IEnumerable<string> Keys => Entries.Keys;
+    public IEnumerable<string> Keys => entries.Keys;
 
-    public IEnumerable<string> Values => Entries.Values;
+    public IEnumerable<string> Values => entries.Values;
 }
