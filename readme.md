@@ -52,7 +52,7 @@ there are still some intentional differences:
 
 ## Goals
 * Compatibiliy with INI format in Windows OS.
-* Roundtrips (`Parse` -> `ToString`) should preserve everything.
+* Roundtrips (`Parse` → `ToString`) should preserve everything.
 * Editing should preserve as much (whitespace, comments, etc.) as possible.
 * An extensive test suite.
 
