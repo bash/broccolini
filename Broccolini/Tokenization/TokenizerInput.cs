@@ -1,17 +1,14 @@
 namespace Broccolini.Tokenization;
 
-internal sealed class TokenizerInput : ITokenizerInput
+internal sealed class TokenizerInput(string input) : ITokenizerInput
 {
-    private readonly string _input;
     private int _position;
-
-    public TokenizerInput(string input) => _input = input;
 
     public bool Peek(out char character, int lookAhead = 0)
     {
-        if (_position + lookAhead < _input.Length)
+        if (_position + lookAhead < input.Length)
         {
-            character = _input[_position + lookAhead];
+            character = input[_position + lookAhead];
             return true;
         }
 
@@ -20,18 +17,18 @@ internal sealed class TokenizerInput : ITokenizerInput
     }
 
     public char Read()
-        => _position < _input.Length
-            ? _input[_position++]
+        => _position < input.Length
+            ? input[_position++]
             : throw new InvalidOperationException("Unable to advance tokenizer: End of input");
 
     public string ReadWhile(Func<char, bool> predicate)
     {
         var startPosition = _position;
 
-        for (; _position < _input.Length && predicate(_input[_position]); _position++)
+        for (; _position < input.Length && predicate(input[_position]); _position++)
         {
         }
 
-        return _input.Substring(startPosition, _position - startPosition);
+        return input.Substring(startPosition, _position - startPosition);
     }
 }
