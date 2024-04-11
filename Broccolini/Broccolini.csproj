@@ -8,9 +8,9 @@
     <PropertyGroup Label="NuGet Packing">
         <Version>1.0.0</Version>
         <Description>Broccolini is a non-destructive parser for INI files compatible with GetPrivateProfileString.</Description>
-        <Authors>Ruben Schmidmeister</Authors>
+        <Authors>Tau Gärtli</Authors>
         <PackageLicenseExpression>MIT OR Apache-2.0</PackageLicenseExpression>
-        <Copyright>© Ruben Schmidmeister. All rights reserved.</Copyright>
+        <Copyright>© Tau Gärtli. All rights reserved.</Copyright>
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
         <PackageReadmeFile>readme.md</PackageReadmeFile>
