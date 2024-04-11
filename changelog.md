@@ -1,4 +1,7 @@
 # Changelog
+## 1.0.1
+* Update package metadata
+
 ## 1.0.0
 This release polishes the API by simplifying names, namespaces and adding some convenience:
 Most notably, all important types now have the `Ini` prefix: `IniDocument`, `IIniSection`, etc.
