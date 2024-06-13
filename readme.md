@@ -62,4 +62,12 @@ there are still some intentional differences:
 * Performance
 
 
+## License
+Licensed under the MIT license ([license-mit.txt](license-mit.txt) or <http://opensource.org/licenses/MIT>).
+
+## Contribution
+Unless you explicitly state otherwise, any contribution intentionally submitted
+for inclusion in the work by you, as defined in the [Apache-2.0 license](http://www.apache.org/licenses/LICENSE-2.0), shall be
+licensed as above, without any additional terms or conditions.
+
 [`GetPrivateProfileString`]: https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-getprivateprofilestring
