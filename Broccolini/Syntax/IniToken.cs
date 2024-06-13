@@ -1,8 +1,10 @@
 using System.ComponentModel;
+using System.Diagnostics;
 
 namespace Broccolini.Syntax;
 
 [EditorBrowsable(EditorBrowsableState.Advanced)]
+[DebuggerDisplay("{ToString(),nq}")]
 public abstract record IniToken
 {
     private IniToken() { }
