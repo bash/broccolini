@@ -30,6 +30,12 @@ public sealed class TokenizerTest
         Assert.Single(Tokenize(whitespace.ToString()), new IniToken.WhiteSpace(whitespace.ToString()));
     }
 
+    [Fact]
+    public void CorrectlyTokenizesNewLineFollowingWhitesSpace()
+    {
+        Assert.Equal([new IniToken.WhiteSpace("\t"), new IniToken.NewLine("\n")], Tokenize("\t\n"));
+    }
+
     private static TheoryData<char> GetWhiteSpaceData() => WhiteSpace.ToTheoryData();
 
     private static TheoryData<string, string> GetConsecutiveNewLinesData()

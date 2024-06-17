@@ -92,6 +92,16 @@ public sealed class ParserTest
         Assert.Equal(value, node.Value);
     }
 
+    [Fact]
+    public void ParsesNodesSeparatedByWhitespaceAndNewline()
+    {
+        var document = Parse("one=1\t\ntwo=2");
+        Assert.Equal(2, document.NodesOutsideSection.Count);
+        var secondNode = Assert.IsType<KeyValueIniNode>(document.NodesOutsideSection.Last());
+        Assert.Equal("two", secondNode.Key);
+        Assert.Equal("2", secondNode.Value);
+    }
+
     public static TheoryData<string, string, string> GetKeyValuePairData()
         => KeyValuePairsWithKeyAndValue.Select(s => (s.Key, s.Value, s.Input)).ToTheoryData();
 
