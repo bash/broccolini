@@ -2,6 +2,9 @@ namespace Broccolini.Test;
 
 internal static class TestData
 {
+    // This tests against a bug in the tokenizer that classifies whitespace + newline as whitespace.
+    private const string NewLineWithPrecedingWhiteSpace = "\t\n";
+
     // TODO: test parsing with newline at the end
     public static IEnumerable<string> GarbageNodes
         => Sequence.Return(
@@ -41,6 +44,7 @@ internal static class TestData
             .SelectMany(VaryClosingBracket)
             .SelectMany(VaryTrailingWhitespace)
             .SelectMany(VaryNewLines)
+            .SelectMany(VaryLeadingNewLines)
             .Distinct();
 
     public static IEnumerable<KeyValuePairWithKeyAndValue> KeyValuePairsWithKeyAndValue
@@ -62,7 +66,8 @@ internal static class TestData
             new KeyValuePairWithKeyAndValue("# key = not a comment", "# key", "not a comment"),
             new KeyValuePairWithKeyAndValue("key = \"quoted value'", "key", "\"quoted value'"),
             new KeyValuePairWithKeyAndValue("key = 'quoted value\"", "key", "'quoted value\""))
-            .Concat(KeyValuePairsWithQuotes);
+            .Concat(KeyValuePairsWithQuotes)
+            .SelectMany(VaryLeadingNewLines);
             // TODO: vary leading and trailing whitespace and line break
 
     public static IEnumerable<string> NewLines => Sequence.Return("\r\n", "\r", "\n");
@@ -119,6 +124,16 @@ internal static class TestData
         => Sequence.Return(
             sectionWithName,
             sectionWithName with { Input = " \t\v\f " + sectionWithName.Input });
+
+    private static IEnumerable<SectionWithName> VaryLeadingNewLines(SectionWithName sectionWithName)
+        => [sectionWithName,
+            sectionWithName with { Input = "\n" + sectionWithName.Input },
+            sectionWithName with { Input = "; comment" + NewLineWithPrecedingWhiteSpace + sectionWithName.Input }];
+
+    private static IEnumerable<KeyValuePairWithKeyAndValue> VaryLeadingNewLines(KeyValuePairWithKeyAndValue keyValuePair)
+        => [keyValuePair,
+            keyValuePair with { Input = "\n" + keyValuePair.Input },
+            keyValuePair with { Input = "; comment" + NewLineWithPrecedingWhiteSpace + keyValuePair.Input }];
 
     private static IEnumerable<SectionWithName> VaryTrailingWhitespace(SectionWithName sectionWithName)
         => Sequence.Return(

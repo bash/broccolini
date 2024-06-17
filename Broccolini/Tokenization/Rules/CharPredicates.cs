@@ -6,5 +6,5 @@ internal static class CharPredicates
 
     public static bool IsNewLine(char c) => c is '\r' or '\n';
 
-    public static bool IsWhitespace(char c) => c <= ' ';
+    public static bool IsWhitespace(char c) => c <= ' ' && !IsNewLine(c);
 }
