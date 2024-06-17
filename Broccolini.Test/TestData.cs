@@ -18,13 +18,16 @@ internal static class TestData
             "; key = value",
             "; [section]");
 
-    public static IEnumerable<string> LeadingNodes
+    public static IEnumerable<string> NotEmptyLeadingNodes
         => Sequence.Return(
             "; comment\r\n" +
             "garbage\r\n",
             "[section]\r\n",
-            "\r\n",
             "key = value\r\n");
+
+    public static IEnumerable<string> LeadingNodes
+        => NotEmptyLeadingNodes
+            .Append("\r\n");
 
     public static IEnumerable<SectionWithName> SectionsWithNames
         => Sequence.Return(

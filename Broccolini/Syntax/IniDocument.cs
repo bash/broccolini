@@ -48,13 +48,25 @@ public sealed record IniDocument
 [EditorBrowsable(EditorBrowsableState.Advanced)]
 public abstract record IniNode
 {
-    private protected IniNode() { }
+    private protected IniNode()
+    {
+    }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
     protected IniNode(IniNode original)
     {
+        LeadingTrivia = original.LeadingTrivia;
+        TrailingTrivia = original.TrailingTrivia;
         NewLine = original.NewLine;
     }
+
+    /// <summary>Leading whitespace.</summary>
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public IImmutableList<IniToken> LeadingTrivia { get; init; } = ImmutableArray<IniToken>.Empty;
+
+    /// <summary>Trailing whitespace and garbage after the closing bracket.</summary>
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public IImmutableList<IniToken> TrailingTrivia { get; init; } = ImmutableArray<IniToken>.Empty;
 
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     public IniToken.NewLine? NewLine { get; init; }
@@ -102,9 +114,6 @@ public sealed record KeyValueIniNode : SectionChildIniNode
 
     public string Value { get; init; }
 
-    /// <summary>Leading whitespace.</summary>
-    public IniToken.WhiteSpace? LeadingTrivia { get; init; }
-
     /// <summary>Whitespace between key and equals sign.</summary>
     public IniToken.WhiteSpace? TriviaBeforeEqualsSign { get; init; }
 
@@ -115,9 +124,6 @@ public sealed record KeyValueIniNode : SectionChildIniNode
 
     /// <summary>Opening and closing quote when value is quoted.</summary>
     public IniToken.Quote? Quote { get; init; }
-
-    /// <summary>Whitespace after value.</summary>
-    public IniToken.WhiteSpace? TrailingTrivia { get; init; }
 
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     public override void Accept(IIniNodeVisitor visitor) => visitor.Visit(this);
@@ -172,16 +178,10 @@ public sealed record CommentIniNode : SectionChildIniNode
 
     public string Text { get; init; }
 
-    /// <summary>Leading whitespace.</summary>
-    public IniToken.WhiteSpace? LeadingTrivia { get; init; }
-
     public IniToken.Semicolon Semicolon { get; init; } = new();
 
     /// <summary>Whitespace between semicolon and text.</summary>
     public IniToken.WhiteSpace? TriviaAfterSemicolon { get; init; }
-
-    /// <summary>Trailing whitespace.</summary>
-    public IniToken.WhiteSpace? TrailingTrivia { get; init; }
 
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     public override void Accept(IIniNodeVisitor visitor) => visitor.Visit(this);
@@ -212,10 +212,6 @@ public sealed record SectionIniNode : IniNode
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     public IImmutableList<SectionChildIniNode> Children { get; init; }
 
-    /// <summary>Leading whitespace.</summary>
-    [EditorBrowsable(EditorBrowsableState.Advanced)]
-    public IniToken.WhiteSpace? LeadingTrivia { get; init; }
-
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     public IniToken.OpeningBracket OpeningBracket { get; init; } = new();
 
@@ -230,10 +226,6 @@ public sealed record SectionIniNode : IniNode
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     public IniToken.ClosingBracket? ClosingBracket { get; init; } = new();
 
-    /// <summary>Trailing whitespace and garbage after the closing bracket.</summary>
-    [EditorBrowsable(EditorBrowsableState.Advanced)]
-    public IImmutableList<IniToken> TrailingTrivia { get; init; } = ImmutableArray<IniToken>.Empty;
-
     internal IniToken.NewLine? NewLineHint { get; init; }
 
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
@@ -246,7 +238,7 @@ public sealed record SectionIniNode : IniNode
         => other is not null
            && Name == other.Name
            && Children.SequenceEqual(other.Children)
-           && LeadingTrivia == other.LeadingTrivia
+           && LeadingTrivia.SequenceEqual(other.LeadingTrivia)
            && OpeningBracket == other.OpeningBracket
            && TriviaAfterOpeningBracket == other.TriviaAfterOpeningBracket
            && TriviaBeforeClosingBracket == other.TriviaBeforeClosingBracket

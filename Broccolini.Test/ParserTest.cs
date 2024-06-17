@@ -37,7 +37,7 @@ public sealed class ParserTest
 
     public static TheoryData<string, string> GetCommentsData()
         => CommentNodes.Select(c => (c, string.Empty))
-            .Concat(CommentNodes.SelectMany(_ => LeadingNodes, ValueTuple.Create))
+            .Concat(CommentNodes.SelectMany(_ => NotEmptyLeadingNodes, ValueTuple.Create))
             .ToTheoryData();
 
     [Theory]
@@ -51,7 +51,7 @@ public sealed class ParserTest
 
     public static TheoryData<string, string> GetGarbageData()
         => GarbageNodes.Select(c => (c, string.Empty))
-            .Concat(GarbageNodes.SelectMany(_ => LeadingNodes, ValueTuple.Create))
+            .Concat(GarbageNodes.SelectMany(_ => NotEmptyLeadingNodes, ValueTuple.Create))
             .ToTheoryData();
 
     [Theory]

@@ -8,14 +8,10 @@ Broccolini.IniParser
 Broccolini.SemanticModelExtensions
 Broccolini.Syntax.CommentIniNode
 Broccolini.Syntax.CommentIniNode.CommentIniNode(string! text) -> void
-Broccolini.Syntax.CommentIniNode.LeadingTrivia.get -> Broccolini.Syntax.IniToken.WhiteSpace?
-Broccolini.Syntax.CommentIniNode.LeadingTrivia.init -> void
 Broccolini.Syntax.CommentIniNode.Semicolon.get -> Broccolini.Syntax.IniToken.Semicolon!
 Broccolini.Syntax.CommentIniNode.Semicolon.init -> void
 Broccolini.Syntax.CommentIniNode.Text.get -> string!
 Broccolini.Syntax.CommentIniNode.Text.init -> void
-Broccolini.Syntax.CommentIniNode.TrailingTrivia.get -> Broccolini.Syntax.IniToken.WhiteSpace?
-Broccolini.Syntax.CommentIniNode.TrailingTrivia.init -> void
 Broccolini.Syntax.CommentIniNode.TriviaAfterSemicolon.get -> Broccolini.Syntax.IniToken.WhiteSpace?
 Broccolini.Syntax.CommentIniNode.TriviaAfterSemicolon.init -> void
 Broccolini.Syntax.IIniNodeVisitor
@@ -31,6 +27,10 @@ Broccolini.Syntax.IniDocument.Sections.get -> System.Collections.Immutable.IImmu
 Broccolini.Syntax.IniDocument.Sections.init -> void
 Broccolini.Syntax.IniNode
 Broccolini.Syntax.IniNode.IniNode(Broccolini.Syntax.IniNode! original) -> void
+Broccolini.Syntax.IniNode.LeadingTrivia.get -> System.Collections.Immutable.IImmutableList<Broccolini.Syntax.IniToken!>!
+Broccolini.Syntax.IniNode.LeadingTrivia.init -> void
+Broccolini.Syntax.IniNode.TrailingTrivia.get -> System.Collections.Immutable.IImmutableList<Broccolini.Syntax.IniToken!>!
+Broccolini.Syntax.IniNode.TrailingTrivia.init -> void
 Broccolini.Syntax.IniNode.NewLine.get -> Broccolini.Syntax.IniToken.NewLine?
 Broccolini.Syntax.IniNode.NewLine.init -> void
 Broccolini.Syntax.IniSyntaxFactory
@@ -59,12 +59,8 @@ Broccolini.Syntax.KeyValueIniNode.EqualsSign.init -> void
 Broccolini.Syntax.KeyValueIniNode.Key.get -> string!
 Broccolini.Syntax.KeyValueIniNode.Key.init -> void
 Broccolini.Syntax.KeyValueIniNode.KeyValueIniNode(string! key, string! value) -> void
-Broccolini.Syntax.KeyValueIniNode.LeadingTrivia.get -> Broccolini.Syntax.IniToken.WhiteSpace?
-Broccolini.Syntax.KeyValueIniNode.LeadingTrivia.init -> void
 Broccolini.Syntax.KeyValueIniNode.Quote.get -> Broccolini.Syntax.IniToken.Quote?
 Broccolini.Syntax.KeyValueIniNode.Quote.init -> void
-Broccolini.Syntax.KeyValueIniNode.TrailingTrivia.get -> Broccolini.Syntax.IniToken.WhiteSpace?
-Broccolini.Syntax.KeyValueIniNode.TrailingTrivia.init -> void
 Broccolini.Syntax.KeyValueIniNode.TriviaAfterEqualsSign.get -> Broccolini.Syntax.IniToken.WhiteSpace?
 Broccolini.Syntax.KeyValueIniNode.TriviaAfterEqualsSign.init -> void
 Broccolini.Syntax.KeyValueIniNode.TriviaBeforeEqualsSign.get -> Broccolini.Syntax.IniToken.WhiteSpace?
@@ -79,15 +75,11 @@ Broccolini.Syntax.SectionIniNode.Children.init -> void
 Broccolini.Syntax.SectionIniNode.ClosingBracket.get -> Broccolini.Syntax.IniToken.ClosingBracket?
 Broccolini.Syntax.SectionIniNode.ClosingBracket.init -> void
 Broccolini.Syntax.SectionIniNode.Equals(Broccolini.Syntax.SectionIniNode? other) -> bool
-Broccolini.Syntax.SectionIniNode.LeadingTrivia.get -> Broccolini.Syntax.IniToken.WhiteSpace?
-Broccolini.Syntax.SectionIniNode.LeadingTrivia.init -> void
 Broccolini.Syntax.SectionIniNode.Name.get -> string!
 Broccolini.Syntax.SectionIniNode.Name.init -> void
 Broccolini.Syntax.SectionIniNode.OpeningBracket.get -> Broccolini.Syntax.IniToken.OpeningBracket!
 Broccolini.Syntax.SectionIniNode.OpeningBracket.init -> void
 Broccolini.Syntax.SectionIniNode.SectionIniNode(string! name, System.Collections.Immutable.IImmutableList<Broccolini.Syntax.SectionChildIniNode!>! children) -> void
-Broccolini.Syntax.SectionIniNode.TrailingTrivia.get -> System.Collections.Immutable.IImmutableList<Broccolini.Syntax.IniToken!>!
-Broccolini.Syntax.SectionIniNode.TrailingTrivia.init -> void
 Broccolini.Syntax.SectionIniNode.TriviaAfterOpeningBracket.get -> Broccolini.Syntax.IniToken.WhiteSpace?
 Broccolini.Syntax.SectionIniNode.TriviaAfterOpeningBracket.init -> void
 Broccolini.Syntax.SectionIniNode.TriviaBeforeClosingBracket.get -> Broccolini.Syntax.IniToken.WhiteSpace?

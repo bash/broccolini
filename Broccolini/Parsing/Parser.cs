@@ -41,14 +41,17 @@ internal static class Parser
         };
 
     private static bool IsSection(IParserInput input)
-        => input.PeekIgnoreWhitespace() is IniToken.OpeningBracket;
+        => input.PeekIgnoreWhitespacesNewLines() is IniToken.OpeningBracket;
 
     private static bool IsComment(IParserInput input)
-        => input.PeekIgnoreWhitespace() is IniToken.Semicolon;
+        => input.PeekIgnoreWhitespacesNewLines() is IniToken.Semicolon;
 
     private static bool IsKeyValue(IParserInput input)
     {
-        for (var lookAhead = 0; input.Peek(lookAhead) is not IniToken.NewLine and not IniToken.Epsilon; lookAhead++)
+        var lookAhead = 0;
+        for (; input.Peek(lookAhead) is IniToken.WhiteSpace or IniToken.NewLine; lookAhead++) { }
+
+        for (; input.Peek(lookAhead) is not IniToken.NewLine and not IniToken.Epsilon; lookAhead++)
         {
             if (input.Peek(lookAhead) is IniToken.EqualsSign)
             {
@@ -61,7 +64,7 @@ internal static class Parser
 
     private static IniNode ParseSection(IParserInput input)
     {
-        var leadingTrivia = input.ReadOrNull<IniToken.WhiteSpace>();
+        var leadingTrivia = input.ReadWhile(static t => t is IniToken.WhiteSpace or IniToken.NewLine);
         var openingBracketToken = input.Read();
         var triviaAfterOpeningBracket = input.ReadOrNull<IniToken.WhiteSpace>();
         var name = string.Concat(input.ReadWhileExcludeTrailingWhitespace(static t => t is not IniToken.ClosingBracket and not IniToken.NewLine));
@@ -84,13 +87,13 @@ internal static class Parser
 
     private static KeyValueIniNode ParseKeyValue(IParserInput input)
     {
-        var leadingTrivia = input.ReadOrNull<IniToken.WhiteSpace>();
+        var leadingTrivia = input.ReadWhile(static t => t is IniToken.WhiteSpace or IniToken.NewLine);
         var key = string.Concat(input.ReadWhileExcludeTrailingWhitespace(static t => t is not IniToken.EqualsSign));
         var triviaBeforeEqualsSign = input.ReadOrNull<IniToken.WhiteSpace>();
         var equalsSign = input.Read();
         var triviaAfterEqualsSign = input.ReadOrNull<IniToken.WhiteSpace>();
         var (quote, value) = ParseQuotedValue(input);
-        var trailingTrivia = input.ReadOrNull<IniToken.WhiteSpace>();
+        var trailingTrivia = input.ReadWhile(IsWhiteSpaceOrNewLineBeforEmptyLine);
         var newLine = input.ReadOrNull<IniToken.NewLine>();
         return new KeyValueIniNode(key, value)
         {
@@ -106,11 +109,11 @@ internal static class Parser
 
     private static CommentIniNode ParseComment(IParserInput input)
     {
-        var leadingTrivia = input.ReadOrNull<IniToken.WhiteSpace>();
+        var leadingTrivia = input.ReadWhile(static t => t is IniToken.WhiteSpace or IniToken.NewLine);
         var semicolon = (IniToken.Semicolon)input.Read();
         var triviaAfterSemicolon = input.ReadOrNull<IniToken.WhiteSpace>();
         var text = string.Concat(input.ReadWhileExcludeTrailingWhitespace(static t => t is not IniToken.NewLine));
-        var trailingTrivia = input.ReadOrNull<IniToken.WhiteSpace>();
+        var trailingTrivia = input.ReadWhile(IsWhiteSpaceOrNewLineBeforEmptyLine);
         var newLine = input.ReadOrNull<IniToken.NewLine>();
         return new CommentIniNode(text)
         {
@@ -123,10 +126,18 @@ internal static class Parser
     }
 
     private static UnrecognizedIniNode ParseTrivia(IParserInput input)
-        => new(input.ReadWhile(t => t is not IniToken.NewLine))
-        {
-            NewLine = input.ReadOrNull<IniToken.NewLine>(),
-        };
+    {
+        var leadingTrivia = input.ReadWhile(IsWhiteSpaceOrNewLineInEmptyLine);
+        var tokens = input.ReadWhile(t => t is not IniToken.NewLine);
+        var trailingTrivia = input.ReadWhile(IsWhiteSpaceOrNewLineBeforEmptyLine);
+        var newLine = input.ReadOrNull<IniToken.NewLine>();
+        return new UnrecognizedIniNode(tokens)
+           {
+               LeadingTrivia = leadingTrivia,
+               TrailingTrivia = trailingTrivia,
+               NewLine = newLine,
+           };
+    }
 
     private static (IniToken.Quote?, string) ParseQuotedValue(IParserInput input)
     {
@@ -171,4 +182,44 @@ internal static class Parser
 
         return nodes.ToImmutable();
     }
+
+    private static bool IsWhiteSpaceOrNewLineBeforEmptyLine(IniToken token, IParserInput input)
+        => token switch
+        {
+            IniToken.WhiteSpace => true,
+            IniToken.NewLine => IsNextLineEmpty(input),
+            _ => false,
+        };
+
+    private static bool IsWhiteSpaceOrNewLineInEmptyLine(IniToken token, IParserInput input)
+        => token switch
+        {
+            IniToken.WhiteSpace => IsLineEmpty(input),
+            IniToken.NewLine => true,
+            _ => false,
+        };
+
+    private static bool IsNextLineEmpty(IParserInput input)
+    {
+        var lookAhead = 0;
+        for (;  input.Peek(lookAhead) is not IniToken.NewLine; lookAhead++) { }
+
+        if (lookAhead > 0)
+        {
+            for (;  input.Peek(lookAhead) is IniToken.WhiteSpace or IniToken.NewLine; lookAhead++) { }
+
+            return lookAhead > 0 && input.Peek(lookAhead) is IniToken.Epsilon;
+        }
+
+        return false;
+    }
+
+    private static bool IsLineEmpty(IParserInput input)
+    {
+        var lookAhead = 0;
+        for (; input.Peek(lookAhead) is IniToken.WhiteSpace; lookAhead++) { }
+
+        return input.Peek(lookAhead) is IniToken.NewLine;
+    }
 }
+
