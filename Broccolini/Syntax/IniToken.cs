@@ -14,7 +14,7 @@ public abstract record IniToken
 
     private protected abstract void InternalImplementorsOnly();
 
-    /// <summary>Use <see cref="IniSyntaxFactory.NewLine"/> to create this token.</summary>
+    /// <summary>A new line (= ␊, ␍ or ␍␊). Use <see cref="IniSyntaxFactory.NewLine"/> to create this token.</summary>
     public sealed record NewLine : IniToken
     {
         internal NewLine(string value)
@@ -29,7 +29,8 @@ public abstract record IniToken
         private protected override void InternalImplementorsOnly() { }
     }
 
-    /// <summary>Use <see cref="IniSyntaxFactory.WhiteSpace"/> to create this token.</summary>
+    /// <summary>One or more whitespace characters (= all ASCII characters ≤ <c>0x20</c> except ␍ and ␊).
+    /// Use <see cref="IniSyntaxFactory.WhiteSpace"/> to create this token.</summary>
     public sealed record WhiteSpace : IniToken
     {
         internal WhiteSpace(string value)
