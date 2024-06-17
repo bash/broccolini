@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using System.Diagnostics.Contracts;
-using static Broccolini.Tokenization.Rules.CharPredicates;
 using static Broccolini.Tokenization.Tokenizer;
 
 namespace Broccolini.Syntax;
@@ -48,24 +47,27 @@ public static class IniSyntaxFactory
     /// <exception cref="ArgumentException">Thrown when the value is not valid whitespace.</exception>
     [Pure]
     public static IniToken.WhiteSpace WhiteSpace(string value)
-        => value.All(IsWhitespace)
-            ? new IniToken.WhiteSpace(value)
-            : throw new ArgumentException($"'{value}' is not valid whitespace", nameof(value));
+        => Tokenize(value) switch {
+            [] => throw new ArgumentException("An empty string is not whitespace", nameof(value)),
+            [IniToken.WhiteSpace whitespace] => whitespace,
+            [IniToken.NewLine] => throw new ArgumentException($"'{value}' is a newline, not whitespace", nameof(value)),
+            _ => throw new ArgumentException($"'{value}' is not valid whitespace", nameof(value)),
+        };
 
     /// <summary>Creates a newline token.</summary>
     /// <exception cref="ArgumentException">Thrown when the value is not a newline.</exception>
     [Pure]
     public static IniToken.NewLine NewLine(string value)
-        => value is "\r" or "\n" or "\r\n"
-            ? new IniToken.NewLine(value)
+        => Tokenize(value) is [IniToken.NewLine token]
+            ? token
             : throw new ArgumentException($"'{value}' is not a valid newline");
 
     /// <summary>Creates a identifier token.</summary>
     /// <exception cref="ArgumentException">Thrown when the value is not a valid identifier.</exception>
     [Pure]
     public static IniToken.Identifier Identifier(string value)
-        => value.All(IsIdentifier)
-            ? new IniToken.Identifier(value)
+        => Tokenize(value) is [IniToken.Identifier token]
+            ? token
             : throw new ArgumentException($"'{value}' is not a valid identifier");
 
     private static void ValidateSectionName(string name)

@@ -1,4 +1,5 @@
 using Broccolini.Syntax;
+using Broccolini.Tokenization;
 using FsCheck;
 using FsCheck.Xunit;
 using Xunit;
@@ -9,6 +10,11 @@ namespace Broccolini.Test;
 
 public sealed class SyntaxFactoryTests
 {
+    public SyntaxFactoryTests()
+    {
+        BroccoliniGenerators.Register();
+    }
+
     [Property]
     public Property ParsesCreatedSectionNodeOrThrows(NonNull<string> value)
     {
@@ -113,5 +119,30 @@ public sealed class SyntaxFactoryTests
         Assert.Throws<ArgumentException>(() => KeyValue("key", value));
     }
 
+    [Theory]
+    [MemberData(nameof(NewLinesData))]
+    public void ThrowsWhenNewLineIsUsedAsWhiteSpace(string newLine)
+    {
+        Assert.Throws<ArgumentException>(() => WhiteSpace(newLine));
+    }
+
+    [Property]
+    public Property TokenizerAndFactoryAcceptSameWhiteSpace(WhitespaceNoNulls whitespace)
+    {
+        var tokenFromFactory = Option<IniToken>.None;
+        try
+        {
+            tokenFromFactory = WhiteSpace(whitespace.Value);
+        }
+        catch (ArgumentException)
+        {
+        }
+
+        var tokenized = Tokenizer.Tokenize(whitespace.Value);
+        return (tokenized.SingleOrNone() == tokenFromFactory).ToProperty();
+    }
+
     private static TheoryData<string> NewLinesData() => NewLines.ToTheoryData();
+
+    private static TheoryData<string> WhiteSpaceData() => TestData.WhiteSpace.Select(static c => c.ToString()).ToTheoryData();
 }
