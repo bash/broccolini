@@ -1,1 +1,23 @@
 #nullable enable
+Broccolini.Syntax.IniSectionHeader
+Broccolini.Syntax.IniSectionHeader.ClosingBracket.get -> Broccolini.Syntax.IniToken.ClosingBracket?
+Broccolini.Syntax.IniSectionHeader.ClosingBracket.init -> void
+Broccolini.Syntax.IniSectionHeader.Equals(Broccolini.Syntax.IniSectionHeader? other) -> bool
+Broccolini.Syntax.IniSectionHeader.IniSectionHeader(string! name) -> void
+Broccolini.Syntax.IniSectionHeader.LeadingTrivia.get -> Broccolini.Syntax.IniToken.WhiteSpace?
+Broccolini.Syntax.IniSectionHeader.LeadingTrivia.init -> void
+Broccolini.Syntax.IniSectionHeader.Name.get -> string!
+Broccolini.Syntax.IniSectionHeader.Name.init -> void
+Broccolini.Syntax.IniSectionHeader.OpeningBracket.get -> Broccolini.Syntax.IniToken.OpeningBracket!
+Broccolini.Syntax.IniSectionHeader.OpeningBracket.init -> void
+Broccolini.Syntax.IniSectionHeader.TrailingTrivia.get -> System.Collections.Immutable.IImmutableList<Broccolini.Syntax.IniToken!>!
+Broccolini.Syntax.IniSectionHeader.TrailingTrivia.init -> void
+Broccolini.Syntax.IniSectionHeader.TriviaAfterOpeningBracket.get -> Broccolini.Syntax.IniToken.WhiteSpace?
+Broccolini.Syntax.IniSectionHeader.TriviaAfterOpeningBracket.init -> void
+Broccolini.Syntax.IniSectionHeader.TriviaBeforeClosingBracket.get -> Broccolini.Syntax.IniToken.WhiteSpace?
+Broccolini.Syntax.IniSectionHeader.TriviaBeforeClosingBracket.init -> void
+Broccolini.Syntax.SectionIniNode.Header.get -> Broccolini.Syntax.IniSectionHeader!
+Broccolini.Syntax.SectionIniNode.Header.init -> void
+Broccolini.Syntax.SectionIniNode.SectionIniNode(Broccolini.Syntax.IniSectionHeader! header, System.Collections.Immutable.IImmutableList<Broccolini.Syntax.SectionChildIniNode!>! children) -> void
+override Broccolini.Syntax.IniSectionHeader.GetHashCode() -> int
+override Broccolini.Syntax.IniSectionHeader.ToString() -> string!

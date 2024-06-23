@@ -61,6 +61,17 @@ internal static class Parser
 
     private static IniNode ParseSection(IParserInput input)
     {
+        var header = ParseSectionHeader(input);
+        var newLine = input.ReadOrNull<IniToken.NewLine>();
+        var children = ParseSectionChildren(input);
+        return new SectionIniNode(header, children)
+        {
+            NewLine = newLine,
+        };
+    }
+
+    private static IniSectionHeader ParseSectionHeader(IParserInput input)
+    {
         var leadingTrivia = input.ReadOrNull<IniToken.WhiteSpace>();
         var openingBracketToken = input.Read();
         var triviaAfterOpeningBracket = input.ReadOrNull<IniToken.WhiteSpace>();
@@ -68,9 +79,7 @@ internal static class Parser
         var triviaBeforeClosingBracket = input.ReadOrNull<IniToken.WhiteSpace>();
         var closingBracket = input.ReadOrNull<IniToken.ClosingBracket>();
         var trailingTrivia = input.ReadWhile(static t => t is not IniToken.NewLine);
-        var newLine = input.ReadOrNull<IniToken.NewLine>();
-        var children = ParseSectionChildren(input);
-        return new SectionIniNode(name, children)
+        return new IniSectionHeader(name)
         {
             LeadingTrivia = leadingTrivia,
             OpeningBracket = (IniToken.OpeningBracket)openingBracketToken,
@@ -78,7 +87,6 @@ internal static class Parser
             TriviaBeforeClosingBracket = triviaBeforeClosingBracket,
             ClosingBracket = closingBracket,
             TrailingTrivia = trailingTrivia,
-            NewLine = newLine,
         };
     }
 

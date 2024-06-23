@@ -76,22 +76,8 @@ Broccolini.Syntax.SectionChildIniNode.SectionChildIniNode(Broccolini.Syntax.Sect
 Broccolini.Syntax.SectionIniNode
 Broccolini.Syntax.SectionIniNode.Children.get -> System.Collections.Immutable.IImmutableList<Broccolini.Syntax.SectionChildIniNode!>!
 Broccolini.Syntax.SectionIniNode.Children.init -> void
-Broccolini.Syntax.SectionIniNode.ClosingBracket.get -> Broccolini.Syntax.IniToken.ClosingBracket?
-Broccolini.Syntax.SectionIniNode.ClosingBracket.init -> void
-Broccolini.Syntax.SectionIniNode.Equals(Broccolini.Syntax.SectionIniNode? other) -> bool
-Broccolini.Syntax.SectionIniNode.LeadingTrivia.get -> Broccolini.Syntax.IniToken.WhiteSpace?
-Broccolini.Syntax.SectionIniNode.LeadingTrivia.init -> void
 Broccolini.Syntax.SectionIniNode.Name.get -> string!
-Broccolini.Syntax.SectionIniNode.Name.init -> void
-Broccolini.Syntax.SectionIniNode.OpeningBracket.get -> Broccolini.Syntax.IniToken.OpeningBracket!
-Broccolini.Syntax.SectionIniNode.OpeningBracket.init -> void
-Broccolini.Syntax.SectionIniNode.SectionIniNode(string! name, System.Collections.Immutable.IImmutableList<Broccolini.Syntax.SectionChildIniNode!>! children) -> void
-Broccolini.Syntax.SectionIniNode.TrailingTrivia.get -> System.Collections.Immutable.IImmutableList<Broccolini.Syntax.IniToken!>!
-Broccolini.Syntax.SectionIniNode.TrailingTrivia.init -> void
-Broccolini.Syntax.SectionIniNode.TriviaAfterOpeningBracket.get -> Broccolini.Syntax.IniToken.WhiteSpace?
-Broccolini.Syntax.SectionIniNode.TriviaAfterOpeningBracket.init -> void
-Broccolini.Syntax.SectionIniNode.TriviaBeforeClosingBracket.get -> Broccolini.Syntax.IniToken.WhiteSpace?
-Broccolini.Syntax.SectionIniNode.TriviaBeforeClosingBracket.init -> void
+Broccolini.Syntax.SectionIniNode.Equals(Broccolini.Syntax.SectionIniNode? other) -> bool
 Broccolini.Syntax.UnrecognizedIniNode
 Broccolini.Syntax.UnrecognizedIniNode.Equals(Broccolini.Syntax.UnrecognizedIniNode? other) -> bool
 Broccolini.Syntax.UnrecognizedIniNode.Tokens.get -> System.Collections.Immutable.IImmutableList<Broccolini.Syntax.IniToken!>!

@@ -195,22 +195,62 @@ public sealed record CommentIniNode : SectionChildIniNode
 /// <code>[section]
 /// key = value</code>
 /// Use <see cref="IniSyntaxFactory.Section"/> to create this node.</summary>
-[DebuggerDisplay("{OpeningBracket,nq}{Name,nq}{ClosingBracketDebugView,nq}")]
+[DebuggerDisplay("{Header,nq}")]
 public sealed record SectionIniNode : IniNode
 {
     /// <summary>Creates a section node without validating the parts.
     /// Prefer <see cref="IniSyntaxFactory.Section"/> over this constructor.</summary>
     [EditorBrowsable(EditorBrowsableState.Advanced)]
-    public SectionIniNode(string name, IImmutableList<SectionChildIniNode> children)
+    public SectionIniNode(IniSectionHeader header, IImmutableList<SectionChildIniNode> children)
+    {
+        Header = header;
+        Children = children;
+    }
+
+    public string Name => Header.Name;
+
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public IniSectionHeader Header { get; init; }
+
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public IImmutableList<SectionChildIniNode> Children { get; init; }
+
+    internal IniToken.NewLine? NewLineHint { get; init; }
+
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public override void Accept(IIniNodeVisitor visitor) => visitor.Visit(this);
+
+    public bool Equals(SectionIniNode? other)
+        => other is not null
+           && Header == other.Header
+           && NewLine == other.NewLine;
+
+    public override int GetHashCode()
+        => HashCode.Combine(
+            Name,
+            Children.Count,
+            Header);
+
+    public override string ToString() => base.ToString();
+
+    private protected override void InternalImplementorsOnly() { }
+}
+
+/// <summary>A section header:
+/// <code>[section]</code></summary>
+[DebuggerDisplay("{OpeningBracket,nq}{Name,nq}{ClosingBracketDebugView,nq}")]
+public sealed record IniSectionHeader
+{
+    /// <summary>Creates a section node without validating the parts.
+    /// Prefer <see cref="IniSyntaxFactory.Section"/> over this constructor.</summary>
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public IniSectionHeader(string name)
     {
         Name = name;
-        Children = children;
     }
 
     public string Name { get; init; }
 
-    [EditorBrowsable(EditorBrowsableState.Advanced)]
-    public IImmutableList<SectionChildIniNode> Children { get; init; }
 
     /// <summary>Leading whitespace.</summary>
     [EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -234,40 +274,33 @@ public sealed record SectionIniNode : IniNode
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     public IImmutableList<IniToken> TrailingTrivia { get; init; } = ImmutableArray<IniToken>.Empty;
 
-    internal IniToken.NewLine? NewLineHint { get; init; }
-
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private string ClosingBracketDebugView => ClosingBracket?.ToString() ?? string.Empty;
 
-    [EditorBrowsable(EditorBrowsableState.Advanced)]
-    public override void Accept(IIniNodeVisitor visitor) => visitor.Visit(this);
+    public override string ToString()
+    {
+        var visitor = new ToStringVisitor();
+        visitor.Visit(this);
+        return visitor.ToString();
+    }
 
-    public bool Equals(SectionIniNode? other)
+    public bool Equals(IniSectionHeader? other)
         => other is not null
            && Name == other.Name
-           && Children.SequenceEqual(other.Children)
            && LeadingTrivia == other.LeadingTrivia
            && OpeningBracket == other.OpeningBracket
            && TriviaAfterOpeningBracket == other.TriviaAfterOpeningBracket
            && TriviaBeforeClosingBracket == other.TriviaBeforeClosingBracket
            && ClosingBracket == other.ClosingBracket
-           && TrailingTrivia.SequenceEqual(other.TrailingTrivia)
-           && NewLine == other.NewLine;
+           && TrailingTrivia.SequenceEqual(other.TrailingTrivia);
 
     public override int GetHashCode()
         => HashCode.Combine(
             Name,
-            Children.Count,
             LeadingTrivia,
             OpeningBracket,
             TriviaAfterOpeningBracket,
             TriviaBeforeClosingBracket,
             ClosingBracket,
-            HashCode.Combine(
-                TrailingTrivia,
-                NewLine));
-
-    public override string ToString() => base.ToString();
-
-    private protected override void InternalImplementorsOnly() { }
+            TrailingTrivia);
 }
