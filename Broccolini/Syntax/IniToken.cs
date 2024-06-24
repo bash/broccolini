@@ -111,6 +111,8 @@ public abstract record IniToken
 
     internal sealed record Epsilon : IniToken
     {
+        public static readonly Epsilon Instance = new();
+
         public override string ToString() => string.Empty;
 
         private protected override void InternalImplementorsOnly() { }

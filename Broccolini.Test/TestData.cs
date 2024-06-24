@@ -1,3 +1,6 @@
+using Broccolini.Syntax;
+using Broccolini.Tokenization;
+
 namespace Broccolini.Test;
 
 internal static class TestData
@@ -26,8 +29,13 @@ internal static class TestData
             "; comment\r\n" +
             "garbage\r\n",
             "[section]\r\n",
-            "\r\n",
             "key = value\r\n");
+
+    public static IEnumerable<(string, string)> LeadingTrivia
+        => [("\r\n", ""), ("", "\t"), ("\t\r\n\t\r\n", ""), ("\t\r\n\t\r\n", "\t")];
+
+    public static IEnumerable<string> LeadingNodesOrTrivia
+        => LeadingNodes.Concat(LeadingTrivia.Select(t => t.Item1 + t.Item2));
 
     public static IEnumerable<SectionWithName> SectionsWithNames
         => Sequence.Return(
@@ -88,6 +96,12 @@ internal static class TestData
             .Skip(1) // U+0000 is not whitespace
             .Select(n => (char)n)
             .Except(Sequence.Return('\r', '\n'));
+
+    public static IEnumerable<ExampleNode> ExampleNodes
+        => [new UnrecognizedIniNode(Tokenizer.Tokenize("garbage")),
+            new CommentIniNode("comment"),
+            new KeyValueIniNode("key", "value"),
+            new SectionIniNode(new IniSectionHeader("section"), [new KeyValueIniNode("child-key", "value")]) { NewLine = new IniToken.NewLine("\n") }];
 
     private static IEnumerable<KeyValuePairWithKeyAndValue> KeyValuePairsWithQuotes
         => Sequence.Return(
@@ -151,3 +165,8 @@ public sealed record SectionWithName(string Input, string Name);
 public sealed record KeyValuePairWithKeyAndValue(string Input, string Key, string Value);
 
 public sealed record CaseSensitivityInput(string Variant1, string Variant2, bool ShouldBeEqual);
+
+public sealed record ExampleNode(IniNode Value)
+{
+    public static implicit operator ExampleNode(IniNode node) => new(node);
+}

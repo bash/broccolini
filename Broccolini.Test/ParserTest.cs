@@ -1,9 +1,12 @@
+using System.Diagnostics;
 using Broccolini.Syntax;
+using Broccolini.Tokenization;
 using FsCheck;
 using FsCheck.Xunit;
 using Xunit;
 using static Broccolini.IniParser;
 using static Broccolini.Test.TestData;
+using static Broccolini.Tokenization.Tokenizer;
 
 namespace Broccolini.Test;
 
@@ -67,8 +70,8 @@ public sealed class ParserTest
     public bool ParsesArbitrarySectionName(SectionName name, Whitespace ws1, Whitespace ws2, Whitespace ws3, InlineText trailing)
     {
         var document = Parse($"{ws1.Value}[{ws2.Value}{name.Value}{ws3.Value}]{trailing.Value}");
-        return (document.Sections.Count == 1
-            && document.Sections[0].Name == name.Value);
+        return document.Sections.Count == 1
+            && document.Sections[0].Name == name.Value;
     }
 
     [Property]
@@ -102,6 +105,35 @@ public sealed class ParserTest
         Assert.Equal("2", secondNode.Value);
     }
 
+    [Theory]
+    [MemberData(nameof(LeadingTriviaData))]
+    public void RecognizedLeadingWhitespaceAndNewLinesAsTrivia(ExampleNode node, string trivia, string inlineTrivia)
+    {
+        var expectedDocument = ToIniDocument(ApplyLeadingTrivia(node.Value, trivia, inlineTrivia));
+        var parsedDocument = Parse($"{trivia}{inlineTrivia}{node.Value}");
+        Assert.Equal(expectedDocument, parsedDocument);
+    }
+
+    private static IniNode ApplyLeadingTrivia(IniNode node, string trivia, string inlineTrivia)
+        => node switch
+        {
+            SectionIniNode section => section with { LeadingTrivia = Tokenize(trivia), Header = section.Header with { LeadingTrivia = TokenizeWhiteSpace(inlineTrivia) } },
+            _ => node with { LeadingTrivia = Tokenize(trivia + inlineTrivia) },
+        };
+
+    private static IniToken.WhiteSpace? TokenizeWhiteSpace(string input)
+        => Tokenize(input) switch
+        {
+            [] => null,
+            [IniToken.WhiteSpace ws] => ws,
+            _ => throw new ArgumentException($"'{input}' is not valid whitespace", nameof(input)),
+        };
+
+    private static TheoryData<ExampleNode, string, string> LeadingTriviaData()
+       => (from n in ExampleNodes
+           from t in LeadingTrivia
+           select (n, t.Item1, t.Item2)).ToTheoryData();
+
     public static TheoryData<string, string, string> GetKeyValuePairData()
         => KeyValuePairsWithKeyAndValue.Select(s => (s.Key, s.Value, s.Input)).ToTheoryData();
 
@@ -119,4 +151,12 @@ public sealed class ParserTest
         => sectionNode.Children.Count > 0
             ? GetLastNode(sectionNode.Children)
             : sectionNode;
+
+     private static IniDocument ToIniDocument(IniNode node)
+        => node switch
+        {
+            SectionChildIniNode sectionChildNode => IniDocument.Empty with { NodesOutsideSection = [sectionChildNode] },
+            SectionIniNode sectionNode => IniDocument.Empty with { Sections = [sectionNode] },
+            _ => throw new UnreachableException(),
+        };
 }

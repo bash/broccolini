@@ -28,44 +28,36 @@ internal static class Parser
     }
 
     private static IniNode ParseNode(IParserInput input)
-        => IsSection(input)
-            ? ParseSection(input)
-            : ParseSectionChildNode(input);
-
-    private static SectionChildIniNode ParseSectionChildNode(IParserInput input)
-        => input switch
+        => input.PeekIgnoreWhitespaceAndNewLines() switch
         {
-            _ when IsComment(input) => ParseComment(input),
-            _ when IsKeyValue(input) => ParseKeyValue(input),
+            (var token, _) when IsSection(token) => ParseSection(input),
+            (var token, _) when IsComment(token) => ParseComment(input),
+            (var token, var pos) when IsKeyValue(input, token, pos) => ParseKeyValue(input),
             _ => ParseUnrecognized(input),
         };
 
-    private static bool IsSection(IParserInput input)
-        => input.PeekIgnoreWhitespace() is IniToken.OpeningBracket;
+    private static bool IsSection(IniToken token)
+        => token is IniToken.OpeningBracket;
 
-    private static bool IsComment(IParserInput input)
-        => input.PeekIgnoreWhitespace() is IniToken.Semicolon;
+    private static bool IsComment(IniToken token)
+        => token is IniToken.Semicolon;
 
-    private static bool IsKeyValue(IParserInput input)
-    {
-        for (var lookAhead = 0; input.Peek(lookAhead) is not IniToken.NewLine and not IniToken.Epsilon; lookAhead++)
-        {
-            if (input.Peek(lookAhead) is IniToken.EqualsSign)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
+    private static bool IsKeyValue(IParserInput input, IniToken token, int pos)
+        => input.PeekRange()
+            .Skip(pos)
+            .Prepend(token)
+            .TakeWhile(t => t is not IniToken.NewLine)
+            .Any(t => t is IniToken.EqualsSign);
 
     private static IniNode ParseSection(IParserInput input)
     {
+        var leadingTrivia = input.Read(PeekLeadingTrivia(input).DropLast(t => t is IniToken.WhiteSpace));
         var header = ParseSectionHeader(input);
         var newLine = input.ReadOrNull<IniToken.NewLine>();
         var children = ParseSectionChildren(input);
         return new SectionIniNode(header, children)
         {
+            LeadingTrivia = leadingTrivia,
             NewLine = newLine,
         };
     }
@@ -92,7 +84,7 @@ internal static class Parser
 
     private static KeyValueIniNode ParseKeyValue(IParserInput input)
     {
-        var leadingTrivia = input.ReadWhile(t => t is IniToken.WhiteSpace);
+        var leadingTrivia = ReadLeadingTrivia(input);
         var key = string.Concat(input.ReadWhileExcludeTrailingWhitespace(static t => t is not IniToken.EqualsSign));
         var triviaBeforeEqualsSign = input.ReadOrNull<IniToken.WhiteSpace>();
         var equalsSign = input.Read();
@@ -114,7 +106,7 @@ internal static class Parser
 
     private static CommentIniNode ParseComment(IParserInput input)
     {
-        var leadingTrivia = input.ReadWhile(t => t is IniToken.WhiteSpace);
+        var leadingTrivia = ReadLeadingTrivia(input);
         var semicolon = (IniToken.Semicolon)input.Read();
         var triviaAfterSemicolon = input.ReadOrNull<IniToken.WhiteSpace>();
         var text = string.Concat(input.ReadWhileExcludeTrailingWhitespace(static t => t is not IniToken.NewLine));
@@ -132,7 +124,7 @@ internal static class Parser
 
     private static UnrecognizedIniNode ParseUnrecognized(IParserInput input)
     {
-        var leadingTrivia = input.ReadWhile(t => t is IniToken.WhiteSpace);
+        var leadingTrivia = ReadLeadingTrivia(input);
         var content = input.ReadWhile(t => t is not IniToken.NewLine);
         var trailingTrivia = input.ReadWhile(t => t is IniToken.WhiteSpace);
         var newLine = input.ReadOrNull<IniToken.NewLine>();
@@ -157,6 +149,12 @@ internal static class Parser
             : (null, ToString(openingQuote) + value + ToString(closingQuote));
     }
 
+    private static IImmutableList<IniToken> ReadLeadingTrivia(IParserInput input)
+        => input.Read(PeekLeadingTrivia(input));
+
+    private static IEnumerable<IniToken> PeekLeadingTrivia(IParserInput input)
+        => input.PeekRange().TakeWhile(t => t is IniToken.WhiteSpace or IniToken.NewLine);
+
     private static IImmutableList<IniToken> ParseValue(IParserInput input)
     {
         var tokens = ImmutableArray.CreateBuilder<IniToken>();
@@ -180,7 +178,7 @@ internal static class Parser
     {
         var nodes = ImmutableArray.CreateBuilder<SectionChildIniNode>();
 
-        while (input.Peek() is not IniToken.Epsilon && !IsSection(input))
+        while (input.PeekIgnoreWhitespaceAndNewLines() is (var token, _) && token is not IniToken.Epsilon && !IsSection(token))
         {
             nodes.Add((SectionChildIniNode)ParseNode(input));
         }

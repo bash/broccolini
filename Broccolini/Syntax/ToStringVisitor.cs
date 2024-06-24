@@ -51,6 +51,7 @@ internal sealed class ToStringVisitor : IIniNodeVisitor
 
     public void Visit(SectionIniNode sectionNode)
     {
+        VisitTokens(sectionNode.LeadingTrivia);
         Visit(sectionNode.Header);
         VisitToken(sectionNode.NewLine);
         Visit(sectionNode.Children);

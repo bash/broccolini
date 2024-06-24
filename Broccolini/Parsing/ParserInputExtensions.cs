@@ -12,6 +12,13 @@ internal static class ParserInputExtensions
             : current;
     }
 
+    public static (IniToken, int) PeekIgnoreWhitespaceAndNewLines(this IParserInput input, int lookAhead = 0)
+        => input.PeekRange()
+            .Select((t, i) => (t, i))
+            .Skip(lookAhead)
+            .SkipWhile(p => p.t is IniToken.WhiteSpace or IniToken.NewLine)
+            .FirstOrDefault((IniToken.Epsilon.Instance, 0));
+
     public static TToken? ReadOrNull<TToken>(this IParserInput input) where TToken : IniToken => ReadOrNull<TToken>(input, static _ => true);
 
     public static TToken? ReadOrNull<TToken>(this IParserInput input, Func<TToken, bool> predicate)
