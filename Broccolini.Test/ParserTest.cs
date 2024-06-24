@@ -148,16 +148,16 @@ public sealed class ParserTest
            select ApplyTrailingTrivia(n.Value, inline, breaking + inlineAfterBreaking)).ToTheoryData();
 
     [Theory]
-    [MemberData(nameof(TrailingTriviaWithConsecutiveNodesData))]
-    public void RecognizedTrailingWhitespaceAndNewLinesAsTriviaWithConsecutiveNodes(IniNode node, IniNode following)
+    [MemberData(nameof(TriviaForConsecutiveNodes))]
+    public void RecognizedWhitespaceAndNewLinesAsTriviaForConsecutiveNodes(IniNode a, IniNode b)
     {
-        var expectedDocument = Append(ToIniDocument(node), following);
+        var expectedDocument = Append(ToIniDocument(a), b);
         var parsedDocument = Parse(expectedDocument.ToString());
         Assert.Equal(expectedDocument.ToString(), parsedDocument.ToString()); // Sanity check
         Assert.Equal(expectedDocument, parsedDocument);
     }
 
-    private static TheoryData<IniNode, IniNode> TrailingTriviaWithConsecutiveNodesData()
+    private static TheoryData<IniNode, IniNode> TriviaForConsecutiveNodes()
        => (from n1 in ExampleNodes
            from n2 in ExampleNodes
            from inline in InlineTrivia
