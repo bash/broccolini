@@ -54,7 +54,17 @@ public abstract record IniNode
     protected IniNode(IniNode original)
     {
         NewLine = original.NewLine;
+        LeadingTrivia = original.LeadingTrivia;
+        TrailingTrivia = original.TrailingTrivia;
     }
+
+    /// <summary>Leading whitespace and empty lines.</summary>
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public IImmutableList<IniToken> LeadingTrivia { get; init; } = ImmutableArray<IniToken>.Empty;
+
+    /// <summary>Trailing whitespace and empty lines.</summary>
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public IImmutableList<IniToken> TrailingTrivia { get; init; } = ImmutableArray<IniToken>.Empty;
 
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     public IniToken.NewLine? NewLine { get; init; }
@@ -73,11 +83,15 @@ public abstract record IniNode
     public virtual bool Equals(IniNode? other)
         => other is not null
             && EqualityContract == other.EqualityContract
+            && LeadingTrivia.SequenceEqual(other.LeadingTrivia)
+            && TrailingTrivia.SequenceEqual(other.TrailingTrivia)
             && NewLine == other.NewLine;
 
     public override int GetHashCode()
         => HashCode.Combine(
             EqualityContract,
+            LeadingTrivia.Count,
+            TrailingTrivia.Count,
             NewLine);
 
     private protected abstract void InternalImplementorsOnly();
@@ -112,9 +126,6 @@ public sealed record KeyValueIniNode : SectionChildIniNode
 
     public string Value { get; init; }
 
-    /// <summary>Leading whitespace.</summary>
-    public IniToken.WhiteSpace? LeadingTrivia { get; init; }
-
     /// <summary>Whitespace between key and equals sign.</summary>
     public IniToken.WhiteSpace? TriviaBeforeEqualsSign { get; init; }
 
@@ -125,9 +136,6 @@ public sealed record KeyValueIniNode : SectionChildIniNode
 
     /// <summary>Opening and closing quote when value is quoted.</summary>
     public IniToken.Quote? Quote { get; init; }
-
-    /// <summary>Whitespace after value.</summary>
-    public IniToken.WhiteSpace? TrailingTrivia { get; init; }
 
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     public override void Accept(IIniNodeVisitor visitor) => visitor.Visit(this);
@@ -182,16 +190,10 @@ public sealed record CommentIniNode : SectionChildIniNode
 
     public string Text { get; init; }
 
-    /// <summary>Leading whitespace.</summary>
-    public IniToken.WhiteSpace? LeadingTrivia { get; init; }
-
     public IniToken.Semicolon Semicolon { get; init; } = new();
 
     /// <summary>Whitespace between semicolon and text.</summary>
     public IniToken.WhiteSpace? TriviaAfterSemicolon { get; init; }
-
-    /// <summary>Trailing whitespace.</summary>
-    public IniToken.WhiteSpace? TrailingTrivia { get; init; }
 
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     public override void Accept(IIniNodeVisitor visitor) => visitor.Visit(this);

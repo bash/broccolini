@@ -92,13 +92,13 @@ internal static class Parser
 
     private static KeyValueIniNode ParseKeyValue(IParserInput input)
     {
-        var leadingTrivia = input.ReadOrNull<IniToken.WhiteSpace>();
+        var leadingTrivia = input.ReadWhile(t => t is IniToken.WhiteSpace);
         var key = string.Concat(input.ReadWhileExcludeTrailingWhitespace(static t => t is not IniToken.EqualsSign));
         var triviaBeforeEqualsSign = input.ReadOrNull<IniToken.WhiteSpace>();
         var equalsSign = input.Read();
         var triviaAfterEqualsSign = input.ReadOrNull<IniToken.WhiteSpace>();
         var (quote, value) = ParseQuotedValue(input);
-        var trailingTrivia = input.ReadOrNull<IniToken.WhiteSpace>();
+        var trailingTrivia = input.ReadWhile(t => t is IniToken.WhiteSpace);
         var newLine = input.ReadOrNull<IniToken.NewLine>();
         return new KeyValueIniNode(key, value)
         {
@@ -114,11 +114,11 @@ internal static class Parser
 
     private static CommentIniNode ParseComment(IParserInput input)
     {
-        var leadingTrivia = input.ReadOrNull<IniToken.WhiteSpace>();
+        var leadingTrivia = input.ReadWhile(t => t is IniToken.WhiteSpace);
         var semicolon = (IniToken.Semicolon)input.Read();
         var triviaAfterSemicolon = input.ReadOrNull<IniToken.WhiteSpace>();
         var text = string.Concat(input.ReadWhileExcludeTrailingWhitespace(static t => t is not IniToken.NewLine));
-        var trailingTrivia = input.ReadOrNull<IniToken.WhiteSpace>();
+        var trailingTrivia = input.ReadWhile(t => t is IniToken.WhiteSpace);
         var newLine = input.ReadOrNull<IniToken.NewLine>();
         return new CommentIniNode(text)
         {
@@ -131,10 +131,18 @@ internal static class Parser
     }
 
     private static UnrecognizedIniNode ParseTrivia(IParserInput input)
-        => new(input.ReadWhile(t => t is not IniToken.NewLine))
+    {
+        var leadingTrivia = input.ReadWhile(t => t is IniToken.WhiteSpace);
+        var content = input.ReadWhile(t => t is not IniToken.NewLine);
+        var trailingTrivia = input.ReadWhile(t => t is IniToken.WhiteSpace);
+        var newLine = input.ReadOrNull<IniToken.NewLine>();
+        return new UnrecognizedIniNode(content)
         {
-            NewLine = input.ReadOrNull<IniToken.NewLine>(),
+            LeadingTrivia = leadingTrivia,
+            NewLine = newLine,
+            TrailingTrivia = trailingTrivia,
         };
+    }
 
     private static (IniToken.Quote?, string) ParseQuotedValue(IParserInput input)
     {

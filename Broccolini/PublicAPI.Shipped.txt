@@ -8,14 +8,10 @@ Broccolini.IniParser
 Broccolini.SemanticModelExtensions
 Broccolini.Syntax.CommentIniNode
 Broccolini.Syntax.CommentIniNode.CommentIniNode(string! text) -> void
-Broccolini.Syntax.CommentIniNode.LeadingTrivia.get -> Broccolini.Syntax.IniToken.WhiteSpace?
-Broccolini.Syntax.CommentIniNode.LeadingTrivia.init -> void
 Broccolini.Syntax.CommentIniNode.Semicolon.get -> Broccolini.Syntax.IniToken.Semicolon!
 Broccolini.Syntax.CommentIniNode.Semicolon.init -> void
 Broccolini.Syntax.CommentIniNode.Text.get -> string!
 Broccolini.Syntax.CommentIniNode.Text.init -> void
-Broccolini.Syntax.CommentIniNode.TrailingTrivia.get -> Broccolini.Syntax.IniToken.WhiteSpace?
-Broccolini.Syntax.CommentIniNode.TrailingTrivia.init -> void
 Broccolini.Syntax.CommentIniNode.TriviaAfterSemicolon.get -> Broccolini.Syntax.IniToken.WhiteSpace?
 Broccolini.Syntax.CommentIniNode.TriviaAfterSemicolon.init -> void
 Broccolini.Syntax.IIniNodeVisitor
@@ -59,12 +55,8 @@ Broccolini.Syntax.KeyValueIniNode.EqualsSign.init -> void
 Broccolini.Syntax.KeyValueIniNode.Key.get -> string!
 Broccolini.Syntax.KeyValueIniNode.Key.init -> void
 Broccolini.Syntax.KeyValueIniNode.KeyValueIniNode(string! key, string! value) -> void
-Broccolini.Syntax.KeyValueIniNode.LeadingTrivia.get -> Broccolini.Syntax.IniToken.WhiteSpace?
-Broccolini.Syntax.KeyValueIniNode.LeadingTrivia.init -> void
 Broccolini.Syntax.KeyValueIniNode.Quote.get -> Broccolini.Syntax.IniToken.Quote?
 Broccolini.Syntax.KeyValueIniNode.Quote.init -> void
-Broccolini.Syntax.KeyValueIniNode.TrailingTrivia.get -> Broccolini.Syntax.IniToken.WhiteSpace?
-Broccolini.Syntax.KeyValueIniNode.TrailingTrivia.init -> void
 Broccolini.Syntax.KeyValueIniNode.TriviaAfterEqualsSign.get -> Broccolini.Syntax.IniToken.WhiteSpace?
 Broccolini.Syntax.KeyValueIniNode.TriviaAfterEqualsSign.init -> void
 Broccolini.Syntax.KeyValueIniNode.TriviaBeforeEqualsSign.get -> Broccolini.Syntax.IniToken.WhiteSpace?

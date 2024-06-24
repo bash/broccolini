@@ -1,4 +1,8 @@
 #nullable enable
+Broccolini.Syntax.IniNode.LeadingTrivia.get -> System.Collections.Immutable.IImmutableList<Broccolini.Syntax.IniToken!>!
+Broccolini.Syntax.IniNode.LeadingTrivia.init -> void
+Broccolini.Syntax.IniNode.TrailingTrivia.get -> System.Collections.Immutable.IImmutableList<Broccolini.Syntax.IniToken!>!
+Broccolini.Syntax.IniNode.TrailingTrivia.init -> void
 Broccolini.Syntax.IniSectionHeader
 Broccolini.Syntax.IniSectionHeader.ClosingBracket.get -> Broccolini.Syntax.IniToken.ClosingBracket?
 Broccolini.Syntax.IniSectionHeader.ClosingBracket.init -> void

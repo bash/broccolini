@@ -29,7 +29,7 @@ internal sealed class ToStringVisitor : IIniNodeVisitor
 
     public void Visit(KeyValueIniNode keyValueNode)
     {
-        VisitToken(keyValueNode.LeadingTrivia);
+        VisitTokens(keyValueNode.LeadingTrivia);
         _stringBuilder.Append(keyValueNode.Key);
         VisitToken(keyValueNode.TriviaBeforeEqualsSign);
         _stringBuilder.Append(keyValueNode.EqualsSign);
@@ -37,14 +37,16 @@ internal sealed class ToStringVisitor : IIniNodeVisitor
         VisitToken(keyValueNode.Quote);
         _stringBuilder.Append(keyValueNode.Value);
         VisitToken(keyValueNode.Quote);
-        VisitToken(keyValueNode.TrailingTrivia);
+        VisitTokens(keyValueNode.TrailingTrivia);
         VisitToken(keyValueNode.NewLine);
     }
 
     public void Visit(UnrecognizedIniNode triviaNode)
     {
+        VisitTokens(triviaNode.LeadingTrivia);
         VisitTokens(triviaNode.Tokens);
         VisitToken(triviaNode.NewLine);
+        VisitTokens(triviaNode.TrailingTrivia);
     }
 
     public void Visit(SectionIniNode sectionNode)
@@ -56,11 +58,11 @@ internal sealed class ToStringVisitor : IIniNodeVisitor
 
     public void Visit(CommentIniNode commentNode)
     {
-        VisitToken(commentNode.LeadingTrivia);
+        VisitTokens(commentNode.LeadingTrivia);
         VisitToken(commentNode.Semicolon);
         VisitToken(commentNode.TriviaAfterSemicolon);
         _stringBuilder.Append(commentNode.Text);
-        VisitToken(commentNode.TrailingTrivia);
+        VisitTokens(commentNode.TrailingTrivia);
         VisitToken(commentNode.NewLine);
     }
 
