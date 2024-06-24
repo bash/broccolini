@@ -14,7 +14,7 @@ internal static class ParserInputExtensions
         => input.PeekRange()
             .Select((t, i) => (t, i))
             .SkipWhile(p => p.t is IniToken.WhiteSpace or IniToken.NewLine)
-            .FirstOrDefault((IniToken.Epsilon.Instance, 0));
+            .FirstOrDefault((IniToken.Epsilon.Instance, input.AvailableLength));
 
     public static TToken? ReadOrNull<TToken>(this IParserInput input) where TToken : IniToken => ReadOrNull<TToken>(input, static _ => true);
 

@@ -6,9 +6,11 @@ internal sealed class ParserInput(IImmutableList<IniToken> tokens) : IParserInpu
 {
     private int _position;
 
-    public IniToken Peek()
-        => _position < tokens.Count
-            ? tokens[_position]
+    public int AvailableLength => tokens.Count - _position;
+
+    public IniToken Peek(int lookAhead = 0)
+        => _position + lookAhead < tokens.Count
+            ? tokens[_position + lookAhead]
             : IniToken.Epsilon.Instance;
 
     public IEnumerable<IniToken> PeekRange()
