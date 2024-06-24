@@ -215,6 +215,7 @@ public sealed record SectionIniNode : IniNode
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     public IImmutableList<SectionChildIniNode> Children { get; init; }
 
+    // intentionally omitted from equality as it is only set for a short time during editing.
     internal IniToken.NewLine? NewLineHint { get; init; }
 
     [EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -222,14 +223,15 @@ public sealed record SectionIniNode : IniNode
 
     public bool Equals(SectionIniNode? other)
         => other is not null
-           && Header == other.Header
-           && NewLine == other.NewLine;
+            && base.Equals(other)
+            && Header == other.Header
+            && Children.SequenceEqual(other.Children);
 
     public override int GetHashCode()
         => HashCode.Combine(
-            Name,
-            Children.Count,
-            Header);
+            base.GetHashCode(),
+            Header,
+            Children.Count);
 
     public override string ToString() => base.ToString();
 
