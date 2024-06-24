@@ -37,7 +37,7 @@ internal static class Parser
         {
             _ when IsComment(input) => ParseComment(input),
             _ when IsKeyValue(input) => ParseKeyValue(input),
-            _ => ParseTrivia(input),
+            _ => ParseUnrecognized(input),
         };
 
     private static bool IsSection(IParserInput input)
@@ -130,7 +130,7 @@ internal static class Parser
         };
     }
 
-    private static UnrecognizedIniNode ParseTrivia(IParserInput input)
+    private static UnrecognizedIniNode ParseUnrecognized(IParserInput input)
     {
         var leadingTrivia = input.ReadWhile(t => t is IniToken.WhiteSpace);
         var content = input.ReadWhile(t => t is not IniToken.NewLine);
