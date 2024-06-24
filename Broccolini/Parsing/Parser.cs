@@ -28,12 +28,22 @@ internal static class Parser
     }
 
     private static IniNode ParseNode(IParserInput input)
+        => PeekNextNodeType(input) switch
+        {
+            NodeType.Section => ParseSection(input),
+            NodeType.Comment => ParseComment(input),
+            NodeType.KeyValue => ParseKeyValue(input),
+            NodeType.Unrecognized => ParseUnrecognized(input),
+            _ => throw new InvalidOperationException("Unreachable: unrecognized node type"),
+        };
+
+    private static NodeType PeekNextNodeType(IParserInput input)
         => input.PeekIgnoreWhitespaceAndNewLines() switch
         {
-            (var token, _) when IsSection(token) => ParseSection(input),
-            (var token, _) when IsComment(token) => ParseComment(input),
-            (var token, var pos) when IsKeyValue(input, token, pos) => ParseKeyValue(input),
-            _ => ParseUnrecognized(input),
+            (var token, _) when IsSection(token) => NodeType.Section,
+            (var token, _) when IsComment(token) => NodeType.Comment,
+            (var token, var pos) when IsKeyValue(input, token, pos) => NodeType.KeyValue,
+            _ => NodeType.Unrecognized,
         };
 
     private static bool IsSection(IniToken token)
