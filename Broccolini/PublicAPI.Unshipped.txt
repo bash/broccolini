@@ -19,5 +19,7 @@ Broccolini.Syntax.IniSectionHeader.TriviaBeforeClosingBracket.init -> void
 Broccolini.Syntax.SectionIniNode.Header.get -> Broccolini.Syntax.IniSectionHeader!
 Broccolini.Syntax.SectionIniNode.Header.init -> void
 Broccolini.Syntax.SectionIniNode.SectionIniNode(Broccolini.Syntax.IniSectionHeader! header, System.Collections.Immutable.IImmutableList<Broccolini.Syntax.SectionChildIniNode!>! children) -> void
+override Broccolini.Syntax.IniNode.GetHashCode() -> int
 override Broccolini.Syntax.IniSectionHeader.GetHashCode() -> int
 override Broccolini.Syntax.IniSectionHeader.ToString() -> string!
+virtual Broccolini.Syntax.IniNode.Equals(Broccolini.Syntax.IniNode? other) -> bool

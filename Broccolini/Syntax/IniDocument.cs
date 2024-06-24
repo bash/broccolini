@@ -70,6 +70,16 @@ public abstract record IniNode
         return visitor.ToString();
     }
 
+    public virtual bool Equals(IniNode? other)
+        => other is not null
+            && EqualityContract == other.EqualityContract
+            && NewLine == other.NewLine;
+
+    public override int GetHashCode()
+        => HashCode.Combine(
+            EqualityContract,
+            NewLine);
+
     private protected abstract void InternalImplementorsOnly();
 }
 
