@@ -40,7 +40,7 @@ public static class IniSyntaxFactory
     public static SectionIniNode Section(string name)
     {
         ValidateSectionName(name);
-        return new SectionIniNode(name, ImmutableArray<SectionChildIniNode>.Empty);
+        return new SectionIniNode(new IniSectionHeader(name), ImmutableArray<SectionChildIniNode>.Empty);
     }
 
     /// <summary>Creates a whitespace token.</summary>

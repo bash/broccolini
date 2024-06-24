@@ -16,9 +16,20 @@ internal sealed class ToStringVisitor : IIniNodeVisitor
         }
     }
 
+    public void Visit(IniSectionHeader sectionHeader)
+    {
+        VisitToken(sectionHeader.LeadingTrivia);
+        _stringBuilder.Append(sectionHeader.OpeningBracket);
+        VisitToken(sectionHeader.TriviaAfterOpeningBracket);
+        _stringBuilder.Append(sectionHeader.Name);
+        VisitToken(sectionHeader.TriviaBeforeClosingBracket);
+        VisitToken(sectionHeader.ClosingBracket);
+        VisitTokens(sectionHeader.TrailingTrivia);
+    }
+
     public void Visit(KeyValueIniNode keyValueNode)
     {
-        VisitToken(keyValueNode.LeadingTrivia);
+        VisitTokens(keyValueNode.LeadingTrivia);
         _stringBuilder.Append(keyValueNode.Key);
         VisitToken(keyValueNode.TriviaBeforeEqualsSign);
         _stringBuilder.Append(keyValueNode.EqualsSign);
@@ -26,36 +37,32 @@ internal sealed class ToStringVisitor : IIniNodeVisitor
         VisitToken(keyValueNode.Quote);
         _stringBuilder.Append(keyValueNode.Value);
         VisitToken(keyValueNode.Quote);
-        VisitToken(keyValueNode.TrailingTrivia);
+        VisitTokens(keyValueNode.TrailingTrivia);
         VisitToken(keyValueNode.NewLine);
     }
 
     public void Visit(UnrecognizedIniNode triviaNode)
     {
+        VisitTokens(triviaNode.LeadingTrivia);
         VisitTokens(triviaNode.Tokens);
         VisitToken(triviaNode.NewLine);
+        VisitTokens(triviaNode.TrailingTrivia);
     }
 
     public void Visit(SectionIniNode sectionNode)
     {
-        VisitToken(sectionNode.LeadingTrivia);
-        _stringBuilder.Append(sectionNode.OpeningBracket);
-        VisitToken(sectionNode.TriviaAfterOpeningBracket);
-        _stringBuilder.Append(sectionNode.Name);
-        VisitToken(sectionNode.TriviaBeforeClosingBracket);
-        VisitToken(sectionNode.ClosingBracket);
-        VisitTokens(sectionNode.TrailingTrivia);
+        Visit(sectionNode.Header);
         VisitToken(sectionNode.NewLine);
         Visit(sectionNode.Children);
     }
 
     public void Visit(CommentIniNode commentNode)
     {
-        VisitToken(commentNode.LeadingTrivia);
+        VisitTokens(commentNode.LeadingTrivia);
         VisitToken(commentNode.Semicolon);
         VisitToken(commentNode.TriviaAfterSemicolon);
         _stringBuilder.Append(commentNode.Text);
-        VisitToken(commentNode.TrailingTrivia);
+        VisitTokens(commentNode.TrailingTrivia);
         VisitToken(commentNode.NewLine);
     }
 
