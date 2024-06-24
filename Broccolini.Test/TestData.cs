@@ -31,19 +31,14 @@ internal static class TestData
             "[section]\r\n",
             "key = value\r\n");
 
-    public static IEnumerable<(string, string)> LeadingTrivia
-        => [("\r\n", ""), ("", "\t"), ("\t\r\n\t\r\n", ""), ("\t\r\n\t\r\n", "\t")];
+    public static IEnumerable<string> InlineTrivia
+        => ["\t", "    ", ""];
 
-    public static IEnumerable<(string, string)> TrailingTrivia
-        => [
-            ("", "\r\n"),
-            ("\t", ""),
-            ("\t", "\r\n\t\r\n\t"),
-            ("", "\r\n\t\r\n\t"),
-           ];
+    public static IEnumerable<string> LineBreakingTrivia
+        => ContextFreeNewLines.Concat(ContextFreeNewLines.SelectMany(_ => InlineTrivia, (nl, inline) => $"{nl}{inline}{nl}"));
 
     public static IEnumerable<string> LeadingNodesOrTrivia
-        => LeadingNodes.Concat(LeadingTrivia.Select(t => t.Item1 + t.Item2));
+        => LeadingNodes.Concat(InlineTrivia.SelectMany(_ => LineBreakingTrivia, (inline, breaking) => inline + breaking));
 
     public static IEnumerable<SectionWithName> SectionsWithNames
         => Sequence.Return(
@@ -86,7 +81,9 @@ internal static class TestData
             .SelectMany(VaryLeadingNewLines);
             // TODO: vary leading and trailing whitespace and line break
 
-    public static IEnumerable<string> NewLines => Sequence.Return("\r\n", "\r", "\n");
+    public static IEnumerable<string> NewLines => ["\r\n", "\r", "\n"];
+
+    public static IEnumerable<string> ContextFreeNewLines => ["\r\n", "\n"];
 
     public static IEnumerable<CaseSensitivityInput> CaseSensitivityInputs
         => Sequence.Return(

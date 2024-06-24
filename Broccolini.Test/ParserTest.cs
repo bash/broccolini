@@ -115,8 +115,9 @@ public sealed class ParserTest
 
     public static TheoryData<ExampleNode, string, string> LeadingTriviaData()
        => (from n in ExampleNodes
-           from t in LeadingTrivia
-           select (n, t.Item1, t.Item2)).ToTheoryData();
+           from breaking in LineBreakingTrivia
+           from inline in InlineTrivia
+           select (n, breaking, inline)).ToTheoryData();
 
     private static IniNode ApplyLeadingTrivia(IniNode node, string trivia, string inlineTrivia)
         => node switch
@@ -137,8 +138,9 @@ public sealed class ParserTest
 
     private static TheoryData<ExampleNode, string, string> TrailingTriviaData()
        => (from n in ExampleNodes
-           from t in TrailingTrivia
-           select (n, t.Item1, t.Item2)).ToTheoryData();
+           from inline in InlineTrivia
+           from breaking in LineBreakingTrivia
+           select (n, inline, breaking)).ToTheoryData();
 
     private static IniNode ApplyTrailingTrivia(IniNode node, string inlineTrivia, string trivia)
         => node switch
