@@ -6,4 +6,5 @@ internal enum NodeType
     Comment,
     KeyValue,
     Unrecognized,
+    Epsilon,
 }

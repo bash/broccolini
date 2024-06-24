@@ -28,22 +28,30 @@ internal static class Parser
     }
 
     private static IniNode ParseNode(IParserInput input)
-        => PeekNextNodeType(input) switch
+    {
+        var (nodeType, _) = PeekNextNodeType(input);
+        return ParseNode(input, nodeType);
+    }
+
+    private static IniNode ParseNode(IParserInput input, NodeType nodeType)
+        => nodeType switch
         {
             NodeType.Section => ParseSection(input),
             NodeType.Comment => ParseComment(input),
             NodeType.KeyValue => ParseKeyValue(input),
-            NodeType.Unrecognized => ParseUnrecognized(input),
-            _ => throw new InvalidOperationException("Unreachable: unrecognized node type"),
+            // In a document consisting just of whitespace we get one epsilon node
+            NodeType.Unrecognized or NodeType.Epsilon => ParseUnrecognized(input),
+            _ => throw new InvalidOperationException("Unreachable: unrecognized node type (this is a bug)"),
         };
 
-    private static NodeType PeekNextNodeType(IParserInput input)
+    private static (NodeType, int) PeekNextNodeType(IParserInput input)
         => input.PeekIgnoreWhitespaceAndNewLines() switch
         {
-            (var token, _) when IsSection(token) => NodeType.Section,
-            (var token, _) when IsComment(token) => NodeType.Comment,
-            (var token, var pos) when IsKeyValue(input, token, pos) => NodeType.KeyValue,
-            _ => NodeType.Unrecognized,
+            (IniToken.Epsilon, var pos) => (NodeType.Epsilon, pos),
+            (var token, var pos) when IsSection(token) => (NodeType.Section, pos),
+            (var token, var pos) when IsComment(token) => (NodeType.Comment, pos),
+            (var token, var pos) when IsKeyValue(input, token, pos) => (NodeType.KeyValue, pos),
+            (_, var pos) => (NodeType.Unrecognized, pos),
         };
 
     private static bool IsSection(IniToken token)
@@ -190,9 +198,9 @@ internal static class Parser
     {
         var nodes = ImmutableArray.CreateBuilder<SectionChildIniNode>();
 
-        while (input.PeekIgnoreWhitespaceAndNewLines() is (var token, _) && token is not IniToken.Epsilon && !IsSection(token))
+        while (PeekNextNodeType(input) is (var type, _) && type is not (NodeType.Epsilon or NodeType.Section))
         {
-            nodes.Add((SectionChildIniNode)ParseNode(input));
+            nodes.Add((SectionChildIniNode)ParseNode(input, type));
         }
 
         return nodes.ToImmutable();
