@@ -35,7 +35,9 @@ internal static class TestData
         => ["\t", "    ", ""];
 
     public static IEnumerable<string> LineBreakingTrivia
-        => ContextFreeNewLines.Concat(ContextFreeNewLines.SelectMany(_ => InlineTrivia, (nl, inline) => $"{nl}{inline}{nl}"));
+        => ContextFreeNewLines
+            .Concat(ContextFreeNewLines.SelectMany(_ => InlineTrivia, (nl, inline) => $"{nl}{inline}{nl}"))
+            .Append("");
 
     public static IEnumerable<string> LeadingNodesOrTrivia
         => LeadingNodes.Concat(InlineTrivia.SelectMany(_ => LineBreakingTrivia, (inline, breaking) => inline + breaking));

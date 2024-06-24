@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Broccolini.Editing;
 using Broccolini.Syntax;
 using FsCheck;
 using FsCheck.Xunit;
@@ -106,18 +107,20 @@ public sealed class ParserTest
 
     [Theory]
     [MemberData(nameof(LeadingTriviaData))]
-    public void RecognizedLeadingWhitespaceAndNewLinesAsTrivia(ExampleNode node, string trivia, string inlineTrivia)
+    public void RecognizedLeadingWhitespaceAndNewLinesAsTrivia(IniNode node)
     {
-        var expectedDocument = ToIniDocument(ApplyLeadingTrivia(node.Value, trivia, inlineTrivia));
-        var parsedDocument = Parse($"{trivia}{inlineTrivia}{node.Value}");
+        var expectedDocument = ToIniDocument(node);
+        var parsedDocument = Parse(node.ToString());
         Assert.Equal(expectedDocument, parsedDocument);
     }
 
-    public static TheoryData<ExampleNode, string, string> LeadingTriviaData()
+    public static TheoryData<IniNode> LeadingTriviaData()
        => (from n in ExampleNodes
            from breaking in LineBreakingTrivia
            from inline in InlineTrivia
-           select (n, breaking, inline)).ToTheoryData();
+           from inlineBeforeBreaking in InlineTrivia
+           where (inlineBeforeBreaking.Length == 0) == (breaking.Length == 0)
+           select ApplyLeadingTrivia(n.Value, inlineBeforeBreaking + breaking, inline)).ToTheoryData();
 
     private static IniNode ApplyLeadingTrivia(IniNode node, string trivia, string inlineTrivia)
         => node switch
@@ -128,19 +131,39 @@ public sealed class ParserTest
 
     [Theory]
     [MemberData(nameof(TrailingTriviaData))]
-    public void RecognizedTrailingWhitespaceAndNewLinesAsTrivia(ExampleNode node, string inlineTrivia, string trivia)
+    public void RecognizedTrailingWhitespaceAndNewLinesAsTrivia(IniNode node)
     {
-        var expectedDocument = ToIniDocument(ApplyTrailingTrivia(node.Value, inlineTrivia, trivia));
+        var expectedDocument = ToIniDocument(node);
         var parsedDocument = Parse(expectedDocument.ToString());
         Assert.Equal(expectedDocument.ToString(), parsedDocument.ToString()); // Sanity check
         Assert.Equal(expectedDocument, parsedDocument);
     }
 
-    private static TheoryData<ExampleNode, string, string> TrailingTriviaData()
+    private static TheoryData<IniNode> TrailingTriviaData()
        => (from n in ExampleNodes
            from inline in InlineTrivia
            from breaking in LineBreakingTrivia
-           select (n, inline, breaking)).ToTheoryData();
+           from inlineAfterBreaking in InlineTrivia
+           where (inlineAfterBreaking.Length == 0) == (breaking.Length == 0)
+           select ApplyTrailingTrivia(n.Value, inline, breaking + inlineAfterBreaking)).ToTheoryData();
+
+    [Theory]
+    [MemberData(nameof(TrailingTriviaWithConsecutiveNodesData))]
+    public void RecognizedTrailingWhitespaceAndNewLinesAsTriviaWithConsecutiveNodes(IniNode node, IniNode following)
+    {
+        var expectedDocument = Append(ToIniDocument(node), following);
+        var parsedDocument = Parse(expectedDocument.ToString());
+        Assert.Equal(expectedDocument.ToString(), parsedDocument.ToString()); // Sanity check
+        Assert.Equal(expectedDocument, parsedDocument);
+    }
+
+    private static TheoryData<IniNode, IniNode> TrailingTriviaWithConsecutiveNodesData()
+       => (from n1 in ExampleNodes
+           from n2 in ExampleNodes
+           from inline in InlineTrivia
+           from breaking in LineBreakingTrivia
+           from inlineLeading in InlineTrivia
+           select (ApplyTrailingTrivia(n1.Value, inline, breaking), ApplyLeadingTrivia(n2.Value, "", inlineLeading))).ToTheoryData();
 
     private static IniNode ApplyTrailingTrivia(IniNode node, string inlineTrivia, string trivia)
         => node switch
@@ -168,10 +191,24 @@ public sealed class ParserTest
             : sectionNode;
 
      private static IniDocument ToIniDocument(IniNode node)
-        => node switch
+        => Append(IniDocument.Empty, node);
+
+    private static IniDocument Append(IniDocument document, IniNode node)
+    {
+        document = document.EnsureTrailingNewLine(new IniToken.NewLine("\n"));
+        return node switch
         {
-            SectionChildIniNode sectionChildNode => IniDocument.Empty with { NodesOutsideSection = [sectionChildNode] },
-            SectionIniNode sectionNode => IniDocument.Empty with { Sections = [sectionNode] },
+            SectionIniNode section => document with { Sections = document.Sections.Add(section) },
+            SectionChildIniNode child when document.Sections.Any() => AppendToLastSection(document, child),
+            SectionChildIniNode child => document with { NodesOutsideSection = document.NodesOutsideSection.Add(child) },
             _ => throw new UnreachableException(),
         };
+    }
+
+    private static IniDocument AppendToLastSection(IniDocument document, SectionChildIniNode node)
+    {
+        var lastSection = document.Sections.Last();
+        var updatedSection = lastSection with { Children = lastSection.Children.Add(node) };
+        return document with { Sections = document.Sections.SetItem(document.Sections.Count - 1, updatedSection) };
+    }
 }

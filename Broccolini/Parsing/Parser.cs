@@ -202,6 +202,9 @@ internal static class Parser
 
         var trivia = (triviaLength, next) switch
         {
+            // a single whitespace means that the child node (header or key-value) has already consumed a newline
+            // => this whitespace belongs to the next node
+            (1, not NodeType.Epsilon) when input.Peek() is IniToken.WhiteSpace => [],
             // whitespace following a newline is leading trivia for the next node
             (>=2, not NodeType.Epsilon) when input.Peek(triviaLength - 2) is IniToken.NewLine && input.Peek(triviaLength - 1) is IniToken.WhiteSpace
                 => triviaInput.Take(triviaLength - 1),
