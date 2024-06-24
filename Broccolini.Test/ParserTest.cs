@@ -113,6 +113,11 @@ public sealed class ParserTest
         Assert.Equal(expectedDocument, parsedDocument);
     }
 
+    public static TheoryData<ExampleNode, string, string> LeadingTriviaData()
+       => (from n in ExampleNodes
+           from t in LeadingTrivia
+           select (n, t.Item1, t.Item2)).ToTheoryData();
+
     private static IniNode ApplyLeadingTrivia(IniNode node, string trivia, string inlineTrivia)
         => node switch
         {
@@ -120,10 +125,26 @@ public sealed class ParserTest
             _ => node with { LeadingTrivia = Tokenize(trivia + inlineTrivia) },
         };
 
-    private static TheoryData<ExampleNode, string, string> LeadingTriviaData()
+    [Theory]
+    [MemberData(nameof(TrailingTriviaData))]
+    public void RecognizedTrailingWhitespaceAndNewLinesAsTrivia(ExampleNode node, string inlineTrivia, string trivia)
+    {
+        var expectedDocument = ToIniDocument(ApplyTrailingTrivia(node.Value, inlineTrivia, trivia));
+        var parsedDocument = Parse(expectedDocument.ToString());
+        Assert.Equal(expectedDocument, parsedDocument);
+    }
+
+    private static TheoryData<ExampleNode, string, string> TrailingTriviaData()
        => (from n in ExampleNodes
-           from t in LeadingTrivia
+           from t in TrailingTrivia
            select (n, t.Item1, t.Item2)).ToTheoryData();
+
+    private static IniNode ApplyTrailingTrivia(IniNode node, string inlineTrivia, string trivia)
+        => node switch
+        {
+            SectionIniNode section => section with { TrailingTrivia = Tokenize(trivia), Header = section.Header with { TrailingTrivia = Tokenize(inlineTrivia) } },
+            _ => node with { TrailingTrivia = Tokenize(inlineTrivia + trivia) },
+        };
 
     public static TheoryData<string, string, string> GetKeyValuePairData()
         => KeyValuePairsWithKeyAndValue.Select(s => (s.Key, s.Value, s.Input)).ToTheoryData();

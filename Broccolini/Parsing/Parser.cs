@@ -137,7 +137,7 @@ internal static class Parser
     private static UnrecognizedIniNode ParseUnrecognized(IParserInput input)
     {
         var leadingTrivia = ReadLeadingTrivia(input);
-        var content = input.ReadWhile(t => t is not IniToken.NewLine);
+        var content = input.ReadWhileExcludeTrailingWhitespace(t => t is not IniToken.NewLine);
         var trailingTrivia = input.ReadWhile(t => t is IniToken.WhiteSpace);
         var newLine = input.ReadOrNull<IniToken.NewLine>();
         return new UnrecognizedIniNode(content)

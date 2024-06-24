@@ -34,6 +34,14 @@ internal static class TestData
     public static IEnumerable<(string, string)> LeadingTrivia
         => [("\r\n", ""), ("", "\t"), ("\t\r\n\t\r\n", ""), ("\t\r\n\t\r\n", "\t")];
 
+    public static IEnumerable<(string, string)> TrailingTrivia
+        => [
+            // ("", "\r\n"),
+            ("\t", ""),
+            // ("\t", "\r\n\t\r\n\t"),
+            // ("", "\r\n\t\r\n\t"),
+           ];
+
     public static IEnumerable<string> LeadingNodesOrTrivia
         => LeadingNodes.Concat(LeadingTrivia.Select(t => t.Item1 + t.Item2));
 

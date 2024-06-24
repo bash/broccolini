@@ -34,8 +34,8 @@ internal sealed class ToStringVisitor : IIniNodeVisitor
     {
         VisitTokens(triviaNode.LeadingTrivia);
         VisitTokens(triviaNode.Tokens);
-        VisitToken(triviaNode.NewLine);
         VisitTokens(triviaNode.TrailingTrivia);
+        VisitToken(triviaNode.NewLine);
     }
 
     public void Visit(SectionIniNode sectionNode)
