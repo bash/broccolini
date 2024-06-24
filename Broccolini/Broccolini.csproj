@@ -9,7 +9,7 @@
         <Version>1.0.1</Version>
         <Description>Broccolini is a non-destructive parser for INI files compatible with GetPrivateProfileString.</Description>
         <Authors>Tau Gärtli</Authors>
-        <PackageLicenseExpression>MIT OR Apache-2.0</PackageLicenseExpression>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <Copyright>© Tau Gärtli. All rights reserved.</Copyright>
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
