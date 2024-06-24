@@ -187,8 +187,6 @@ public sealed record UnrecognizedIniNode : SectionChildIniNode
 
     public override int GetHashCode() => Tokens.Count.GetHashCode();
 
-    internal bool IsBlank() => Tokens.All(static token => token is IniToken.WhiteSpace or IniToken.NewLine);
-
     private protected override void InternalImplementorsOnly() { }
 }
 

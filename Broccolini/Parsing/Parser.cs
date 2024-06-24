@@ -187,6 +187,7 @@ internal static class Parser
             (>=1, _) when input.Peek(triviaLength - 1) is IniToken.NewLine
                 => triviaInput.Take(triviaLength - 1),
             // whitespace following a newline is leading trivia for the next node
+            // the final newline is not part of trivia
             (>=2, not NodeType.Epsilon) when input.Peek(triviaLength - 2) is IniToken.NewLine && input.Peek(triviaLength - 1) is IniToken.WhiteSpace
                 => triviaInput.Take(triviaLength - 2),
             _ => triviaInput,
