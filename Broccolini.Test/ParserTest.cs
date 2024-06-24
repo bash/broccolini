@@ -131,6 +131,7 @@ public sealed class ParserTest
     {
         var expectedDocument = ToIniDocument(ApplyTrailingTrivia(node.Value, inlineTrivia, trivia));
         var parsedDocument = Parse(expectedDocument.ToString());
+        Assert.Equal(expectedDocument.ToString(), parsedDocument.ToString()); // Sanity check
         Assert.Equal(expectedDocument, parsedDocument);
     }
 

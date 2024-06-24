@@ -106,7 +106,10 @@ public abstract record SectionChildIniNode : IniNode, IIniNodeWithNewLine
     public IniToken.NewLine? NewLine { get; init; }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
-    protected SectionChildIniNode(SectionChildIniNode original) : base(original) { }
+    protected SectionChildIniNode(SectionChildIniNode original) : base(original)
+    {
+        NewLine = original.NewLine;
+    }
 
     public override string ToString() => base.ToString();
 

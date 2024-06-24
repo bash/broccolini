@@ -1,7 +1,7 @@
 namespace Broccolini.Parsing;
 
-internal enum ParseContext
+internal enum TriviaParseContext
 {
-    Section,
+    TopLevelSectionChild,
     SectionChild,
 }

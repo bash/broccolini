@@ -36,10 +36,10 @@ internal static class TestData
 
     public static IEnumerable<(string, string)> TrailingTrivia
         => [
-            // ("", "\r\n"),
+            ("", "\r\n"),
             ("\t", ""),
-            // ("\t", "\r\n\t\r\n\t"),
-            // ("", "\r\n\t\r\n\t"),
+            ("\t", "\r\n\t\r\n\t"),
+            ("", "\r\n\t\r\n\t"),
            ];
 
     public static IEnumerable<string> LeadingNodesOrTrivia
@@ -106,10 +106,13 @@ internal static class TestData
             .Except(Sequence.Return('\r', '\n'));
 
     public static IEnumerable<ExampleNode> ExampleNodes
-        => [new UnrecognizedIniNode(Tokenizer.Tokenize("garbage")),
-            new CommentIniNode("comment"),
-            new KeyValueIniNode("key", "value"),
-            new SectionIniNode(new SectionHeaderIniNode("section") { NewLine = new IniToken.NewLine("\n") }, [new KeyValueIniNode("child-key", "value")])];
+        => [
+            new UnrecognizedIniNode(Tokenizer.Tokenize("garbage")) { NewLine = new IniToken.NewLine("\n") },
+            new CommentIniNode("comment") { NewLine = new IniToken.NewLine("\n") },
+            new KeyValueIniNode("key", "value") { NewLine = new IniToken.NewLine("\n") },
+            new SectionIniNode(new SectionHeaderIniNode("section") { NewLine = new IniToken.NewLine("\n") }, []),
+            new SectionIniNode(new SectionHeaderIniNode("section") { NewLine = new IniToken.NewLine("\n") }, [new KeyValueIniNode("child-key", "value") { NewLine = new IniToken.NewLine("\n") }]),
+           ];
 
     private static IEnumerable<KeyValuePairWithKeyAndValue> KeyValuePairsWithQuotes
         => Sequence.Return(
