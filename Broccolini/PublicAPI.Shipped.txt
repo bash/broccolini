@@ -18,7 +18,6 @@ Broccolini.Syntax.IIniNodeVisitor
 Broccolini.Syntax.IIniNodeVisitor.Visit(Broccolini.Syntax.CommentIniNode! commentNode) -> void
 Broccolini.Syntax.IIniNodeVisitor.Visit(Broccolini.Syntax.KeyValueIniNode! keyValueNode) -> void
 Broccolini.Syntax.IIniNodeVisitor.Visit(Broccolini.Syntax.SectionIniNode! sectionNode) -> void
-Broccolini.Syntax.IIniNodeVisitor.Visit(Broccolini.Syntax.UnrecognizedIniNode! triviaNode) -> void
 Broccolini.Syntax.IniDocument
 Broccolini.Syntax.IniDocument.Equals(Broccolini.Syntax.IniDocument? other) -> bool
 Broccolini.Syntax.IniDocument.NodesOutsideSection.get -> System.Collections.Immutable.IImmutableList<Broccolini.Syntax.SectionChildIniNode!>!
