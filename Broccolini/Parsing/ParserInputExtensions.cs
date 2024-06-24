@@ -5,17 +5,14 @@ namespace Broccolini.Parsing;
 internal static class ParserInputExtensions
 {
     public static IniToken PeekIgnoreWhitespace(this IParserInput input, int lookAhead = 0)
-    {
-        var current = input.Peek(lookAhead);
-        return current is IniToken.WhiteSpace
-            ? input.Peek(lookAhead + 1)
-            : current;
-    }
+        => input.PeekRange()
+            .Skip(lookAhead)
+            .SkipWhile(static t => t is IniToken.WhiteSpace)
+            .FirstOrEpsilon();
 
-    public static (IniToken, int) PeekIgnoreWhitespaceAndNewLines(this IParserInput input, int lookAhead = 0)
+    public static (IniToken, int) PeekIgnoreWhitespaceAndNewLines(this IParserInput input)
         => input.PeekRange()
             .Select((t, i) => (t, i))
-            .Skip(lookAhead)
             .SkipWhile(p => p.t is IniToken.WhiteSpace or IniToken.NewLine)
             .FirstOrDefault((IniToken.Epsilon.Instance, 0));
 
@@ -36,22 +33,8 @@ internal static class ParserInputExtensions
     }
 
     public static IImmutableList<IniToken> ReadWhile(this IParserInput input, Func<IniToken, bool> predicate)
-        => input.ReadWhile(static input => input.Peek(), predicate);
+        => input.Read(input.PeekRange().TakeWhile(predicate));
 
-    public static IImmutableList<IniToken> ReadWhileExcludeTrailingWhitespace(this IParserInput input, Func<IniToken, bool> predicate)
-        => input.ReadWhile(static input => input.PeekIgnoreWhitespace(), predicate);
-
-    private static IImmutableList<IniToken> ReadWhile(this IParserInput input, Func<IParserInput, IniToken> peek, Func<IniToken, bool> predicate)
-    {
-        var tokens = ImmutableArray.CreateBuilder<IniToken>();
-
-        while (true)
-        {
-            var token = peek(input);
-            if (token is IniToken.Epsilon || !predicate(token)) break;
-            tokens.Add(input.Read());
-        }
-
-        return tokens.ToImmutable();
-    }
+    public static ImmutableArray<IniToken> ReadWhileExcludeTrailingWhitespace(this IParserInput input, Func<IniToken, bool> predicate)
+        => input.Read(input.PeekRange().TakeWhile(predicate).DropLast(static t => t is IniToken.WhiteSpace));
 }

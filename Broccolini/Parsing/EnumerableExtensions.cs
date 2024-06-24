@@ -1,7 +1,12 @@
+using Broccolini.Syntax;
+
 namespace Broccolini.Parsing;
 
 internal static class EnumerableExtensions
 {
+    public static IniToken FirstOrEpsilon(this IEnumerable<IniToken> tokens)
+        => tokens.FirstOrDefault() ?? IniToken.Epsilon.Instance;
+
     public static TSource FirstOrDefault<TSource>(this IEnumerable<TSource> source, TSource @default)
         => source.Append(@default).First();
 

@@ -4,7 +4,7 @@ namespace Broccolini.Parsing;
 
 internal interface IParserInput
 {
-    IniToken Peek(int lookAhead = 0);
+    IniToken Peek();
 
     IEnumerable<IniToken> PeekRange();
 
