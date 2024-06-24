@@ -27,8 +27,6 @@ Broccolini.Syntax.IniDocument.Sections.get -> System.Collections.Immutable.IImmu
 Broccolini.Syntax.IniDocument.Sections.init -> void
 Broccolini.Syntax.IniNode
 Broccolini.Syntax.IniNode.IniNode(Broccolini.Syntax.IniNode! original) -> void
-Broccolini.Syntax.IniNode.NewLine.get -> Broccolini.Syntax.IniToken.NewLine?
-Broccolini.Syntax.IniNode.NewLine.init -> void
 Broccolini.Syntax.IniSyntaxFactory
 Broccolini.Syntax.IniToken
 Broccolini.Syntax.IniToken.ClosingBracket

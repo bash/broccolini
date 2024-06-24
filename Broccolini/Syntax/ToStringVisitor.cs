@@ -16,17 +16,6 @@ internal sealed class ToStringVisitor : IIniNodeVisitor
         }
     }
 
-    public void Visit(IniSectionHeader sectionHeader)
-    {
-        VisitToken(sectionHeader.LeadingTrivia);
-        _stringBuilder.Append(sectionHeader.OpeningBracket);
-        VisitToken(sectionHeader.TriviaAfterOpeningBracket);
-        _stringBuilder.Append(sectionHeader.Name);
-        VisitToken(sectionHeader.TriviaBeforeClosingBracket);
-        VisitToken(sectionHeader.ClosingBracket);
-        VisitTokens(sectionHeader.TrailingTrivia);
-    }
-
     public void Visit(KeyValueIniNode keyValueNode)
     {
         VisitTokens(keyValueNode.LeadingTrivia);
@@ -53,8 +42,21 @@ internal sealed class ToStringVisitor : IIniNodeVisitor
     {
         VisitTokens(sectionNode.LeadingTrivia);
         Visit(sectionNode.Header);
-        VisitToken(sectionNode.NewLine);
         Visit(sectionNode.Children);
+        VisitTokens(sectionNode.TrailingTrivia);
+    }
+
+    public void Visit(SectionHeaderIniNode sectionHeaderNode)
+    {
+        VisitTokens(sectionHeaderNode.LeadingTrivia);
+        VisitToken(sectionHeaderNode.OpeningBracket);
+        VisitToken(sectionHeaderNode.TriviaAfterOpeningBracket);
+        _stringBuilder.Append(sectionHeaderNode.Name);
+        VisitToken(sectionHeaderNode.TriviaBeforeClosingBracket);
+        VisitToken(sectionHeaderNode.ClosingBracket);
+        VisitTokens(sectionHeaderNode.UnrecognizedTokensAfterClosingBracket);
+        VisitTokens(sectionHeaderNode.TrailingTrivia);
+        VisitToken(sectionHeaderNode.NewLine);
     }
 
     public void Visit(CommentIniNode commentNode)

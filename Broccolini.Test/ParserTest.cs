@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using Broccolini.Syntax;
-using Broccolini.Tokenization;
 using FsCheck;
 using FsCheck.Xunit;
 using Xunit;
@@ -117,16 +116,8 @@ public sealed class ParserTest
     private static IniNode ApplyLeadingTrivia(IniNode node, string trivia, string inlineTrivia)
         => node switch
         {
-            SectionIniNode section => section with { LeadingTrivia = Tokenize(trivia), Header = section.Header with { LeadingTrivia = TokenizeWhiteSpace(inlineTrivia) } },
+            SectionIniNode section => section with { LeadingTrivia = Tokenize(trivia), Header = section.Header with { LeadingTrivia = Tokenize(inlineTrivia) } },
             _ => node with { LeadingTrivia = Tokenize(trivia + inlineTrivia) },
-        };
-
-    private static IniToken.WhiteSpace? TokenizeWhiteSpace(string input)
-        => Tokenize(input) switch
-        {
-            [] => null,
-            [IniToken.WhiteSpace ws] => ws,
-            _ => throw new ArgumentException($"'{input}' is not valid whitespace", nameof(input)),
         };
 
     private static TheoryData<ExampleNode, string, string> LeadingTriviaData()

@@ -53,32 +53,34 @@ internal static class Parser
     {
         var leadingTrivia = input.Read(PeekLeadingTrivia(input).DropLast(t => t is IniToken.WhiteSpace));
         var header = ParseSectionHeader(input);
-        var newLine = input.ReadOrNull<IniToken.NewLine>();
         var children = ParseSectionChildren(input);
         return new SectionIniNode(header, children)
         {
             LeadingTrivia = leadingTrivia,
-            NewLine = newLine,
         };
     }
 
-    private static IniSectionHeader ParseSectionHeader(IParserInput input)
+    private static SectionHeaderIniNode ParseSectionHeader(IParserInput input)
     {
-        var leadingTrivia = input.ReadOrNull<IniToken.WhiteSpace>();
+        var leadingTrivia = input.ReadWhile(static t => t is IniToken.WhiteSpace);
         var openingBracketToken = input.Read();
         var triviaAfterOpeningBracket = input.ReadOrNull<IniToken.WhiteSpace>();
         var name = string.Concat(input.ReadWhileExcludeTrailingWhitespace(static t => t is not IniToken.ClosingBracket and not IniToken.NewLine));
         var triviaBeforeClosingBracket = input.ReadOrNull<IniToken.WhiteSpace>();
         var closingBracket = input.ReadOrNull<IniToken.ClosingBracket>();
-        var trailingTrivia = input.ReadWhile(static t => t is not IniToken.NewLine);
-        return new IniSectionHeader(name)
+        var unrecognizedTokensAfterClosingBracket = input.Read(input.PeekRange().TakeWhile(t => t is not IniToken.NewLine).DropLast(t => t is IniToken.WhiteSpace));
+        var trailingTrivia = input.ReadWhile(static t => t is IniToken.WhiteSpace);
+        var newLine = input.ReadOrNull<IniToken.NewLine>();
+        return new SectionHeaderIniNode(name)
         {
             LeadingTrivia = leadingTrivia,
             OpeningBracket = (IniToken.OpeningBracket)openingBracketToken,
             TriviaAfterOpeningBracket = triviaAfterOpeningBracket,
             TriviaBeforeClosingBracket = triviaBeforeClosingBracket,
             ClosingBracket = closingBracket,
+            UnrecognizedTokensAfterClosingBracket = unrecognizedTokensAfterClosingBracket,
             TrailingTrivia = trailingTrivia,
+            NewLine = newLine,
         };
     }
 

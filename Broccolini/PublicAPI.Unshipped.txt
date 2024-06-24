@@ -1,29 +1,37 @@
 #nullable enable
+Broccolini.Syntax.IIniNodeVisitor.Visit(Broccolini.Syntax.SectionHeaderIniNode! sectionHeaderNode) -> void
+Broccolini.Syntax.IIniNodeWithNewLine
+Broccolini.Syntax.IIniNodeWithNewLine.NewLine.get -> Broccolini.Syntax.IniToken.NewLine?
 Broccolini.Syntax.IniNode.LeadingTrivia.get -> System.Collections.Immutable.IImmutableList<Broccolini.Syntax.IniToken!>!
 Broccolini.Syntax.IniNode.LeadingTrivia.init -> void
 Broccolini.Syntax.IniNode.TrailingTrivia.get -> System.Collections.Immutable.IImmutableList<Broccolini.Syntax.IniToken!>!
 Broccolini.Syntax.IniNode.TrailingTrivia.init -> void
-Broccolini.Syntax.IniSectionHeader
-Broccolini.Syntax.IniSectionHeader.ClosingBracket.get -> Broccolini.Syntax.IniToken.ClosingBracket?
-Broccolini.Syntax.IniSectionHeader.ClosingBracket.init -> void
-Broccolini.Syntax.IniSectionHeader.Equals(Broccolini.Syntax.IniSectionHeader? other) -> bool
-Broccolini.Syntax.IniSectionHeader.IniSectionHeader(string! name) -> void
-Broccolini.Syntax.IniSectionHeader.LeadingTrivia.get -> Broccolini.Syntax.IniToken.WhiteSpace?
-Broccolini.Syntax.IniSectionHeader.LeadingTrivia.init -> void
-Broccolini.Syntax.IniSectionHeader.Name.get -> string!
-Broccolini.Syntax.IniSectionHeader.Name.init -> void
-Broccolini.Syntax.IniSectionHeader.OpeningBracket.get -> Broccolini.Syntax.IniToken.OpeningBracket!
-Broccolini.Syntax.IniSectionHeader.OpeningBracket.init -> void
-Broccolini.Syntax.IniSectionHeader.TrailingTrivia.get -> System.Collections.Immutable.IImmutableList<Broccolini.Syntax.IniToken!>!
-Broccolini.Syntax.IniSectionHeader.TrailingTrivia.init -> void
-Broccolini.Syntax.IniSectionHeader.TriviaAfterOpeningBracket.get -> Broccolini.Syntax.IniToken.WhiteSpace?
-Broccolini.Syntax.IniSectionHeader.TriviaAfterOpeningBracket.init -> void
-Broccolini.Syntax.IniSectionHeader.TriviaBeforeClosingBracket.get -> Broccolini.Syntax.IniToken.WhiteSpace?
-Broccolini.Syntax.IniSectionHeader.TriviaBeforeClosingBracket.init -> void
-Broccolini.Syntax.SectionIniNode.Header.get -> Broccolini.Syntax.IniSectionHeader!
+Broccolini.Syntax.SectionChildIniNode.NewLine.get -> Broccolini.Syntax.IniToken.NewLine?
+Broccolini.Syntax.SectionChildIniNode.NewLine.init -> void
+Broccolini.Syntax.SectionHeaderIniNode
+Broccolini.Syntax.SectionHeaderIniNode.ClosingBracket.get -> Broccolini.Syntax.IniToken.ClosingBracket?
+Broccolini.Syntax.SectionHeaderIniNode.ClosingBracket.init -> void
+Broccolini.Syntax.SectionHeaderIniNode.Equals(Broccolini.Syntax.SectionHeaderIniNode? other) -> bool
+Broccolini.Syntax.SectionHeaderIniNode.Name.get -> string!
+Broccolini.Syntax.SectionHeaderIniNode.Name.init -> void
+Broccolini.Syntax.SectionHeaderIniNode.NewLine.get -> Broccolini.Syntax.IniToken.NewLine?
+Broccolini.Syntax.SectionHeaderIniNode.NewLine.init -> void
+Broccolini.Syntax.SectionHeaderIniNode.OpeningBracket.get -> Broccolini.Syntax.IniToken.OpeningBracket!
+Broccolini.Syntax.SectionHeaderIniNode.OpeningBracket.init -> void
+Broccolini.Syntax.SectionHeaderIniNode.SectionHeaderIniNode(string! name) -> void
+Broccolini.Syntax.SectionHeaderIniNode.TriviaAfterOpeningBracket.get -> Broccolini.Syntax.IniToken.WhiteSpace?
+Broccolini.Syntax.SectionHeaderIniNode.TriviaAfterOpeningBracket.init -> void
+Broccolini.Syntax.SectionHeaderIniNode.TriviaBeforeClosingBracket.get -> Broccolini.Syntax.IniToken.WhiteSpace?
+Broccolini.Syntax.SectionHeaderIniNode.TriviaBeforeClosingBracket.init -> void
+Broccolini.Syntax.SectionHeaderIniNode.UnrecognizedTokensAfterClosingBracket.get -> System.Collections.Immutable.IImmutableList<Broccolini.Syntax.IniToken!>!
+Broccolini.Syntax.SectionHeaderIniNode.UnrecognizedTokensAfterClosingBracket.init -> void
+Broccolini.Syntax.SectionIniNode.Header.get -> Broccolini.Syntax.SectionHeaderIniNode!
 Broccolini.Syntax.SectionIniNode.Header.init -> void
-Broccolini.Syntax.SectionIniNode.SectionIniNode(Broccolini.Syntax.IniSectionHeader! header, System.Collections.Immutable.IImmutableList<Broccolini.Syntax.SectionChildIniNode!>! children) -> void
+Broccolini.Syntax.SectionIniNode.SectionIniNode(Broccolini.Syntax.SectionHeaderIniNode! header, System.Collections.Immutable.IImmutableList<Broccolini.Syntax.SectionChildIniNode!>! children) -> void
 override Broccolini.Syntax.IniNode.GetHashCode() -> int
-override Broccolini.Syntax.IniSectionHeader.GetHashCode() -> int
-override Broccolini.Syntax.IniSectionHeader.ToString() -> string!
+override Broccolini.Syntax.SectionChildIniNode.GetHashCode() -> int
+override Broccolini.Syntax.SectionHeaderIniNode.Accept(Broccolini.Syntax.IIniNodeVisitor! visitor) -> void
+override Broccolini.Syntax.SectionHeaderIniNode.GetHashCode() -> int
+override Broccolini.Syntax.SectionHeaderIniNode.ToString() -> string!
 virtual Broccolini.Syntax.IniNode.Equals(Broccolini.Syntax.IniNode? other) -> bool
+virtual Broccolini.Syntax.SectionChildIniNode.Equals(Broccolini.Syntax.SectionChildIniNode? other) -> bool

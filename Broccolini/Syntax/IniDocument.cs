@@ -53,7 +53,6 @@ public abstract record IniNode
     [EditorBrowsable(EditorBrowsableState.Never)]
     protected IniNode(IniNode original)
     {
-        NewLine = original.NewLine;
         LeadingTrivia = original.LeadingTrivia;
         TrailingTrivia = original.TrailingTrivia;
     }
@@ -65,9 +64,6 @@ public abstract record IniNode
     /// <summary>Trailing whitespace and empty lines.</summary>
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     public IImmutableList<IniToken> TrailingTrivia { get; init; } = ImmutableArray<IniToken>.Empty;
-
-    [EditorBrowsable(EditorBrowsableState.Advanced)]
-    public IniToken.NewLine? NewLine { get; init; }
 
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     public abstract void Accept(IIniNodeVisitor visitor);
@@ -84,28 +80,45 @@ public abstract record IniNode
         => other is not null
             && EqualityContract == other.EqualityContract
             && LeadingTrivia.SequenceEqual(other.LeadingTrivia)
-            && TrailingTrivia.SequenceEqual(other.TrailingTrivia)
-            && NewLine == other.NewLine;
+            && TrailingTrivia.SequenceEqual(other.TrailingTrivia);
 
     public override int GetHashCode()
         => HashCode.Combine(
             EqualityContract,
             LeadingTrivia.Count,
-            TrailingTrivia.Count,
-            NewLine);
+            TrailingTrivia.Count);
 
     private protected abstract void InternalImplementorsOnly();
 }
 
 [EditorBrowsable(EditorBrowsableState.Advanced)]
-public abstract record SectionChildIniNode : IniNode
+public interface IIniNodeWithNewLine
+{
+    public IniToken.NewLine? NewLine { get; }
+}
+
+[EditorBrowsable(EditorBrowsableState.Advanced)]
+public abstract record SectionChildIniNode : IniNode, IIniNodeWithNewLine
 {
     private protected SectionChildIniNode() { }
+
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public IniToken.NewLine? NewLine { get; init; }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
     protected SectionChildIniNode(SectionChildIniNode original) : base(original) { }
 
     public override string ToString() => base.ToString();
+
+    public virtual bool Equals(SectionChildIniNode? other)
+        => other is not null
+            && base.Equals(other)
+            && NewLine == other.NewLine;
+
+    public override int GetHashCode()
+        => HashCode.Combine(
+            base.GetHashCode(),
+            NewLine);
 }
 
 /// <summary>A key-value pair: <c>key = value</c>. Use <see cref="IniSyntaxFactory.KeyValue"/> to create this node.</summary>
@@ -208,12 +221,12 @@ public sealed record CommentIniNode : SectionChildIniNode
 /// key = value</code>
 /// Use <see cref="IniSyntaxFactory.Section"/> to create this node.</summary>
 [DebuggerDisplay("{Header,nq}")]
-public sealed record SectionIniNode : IniNode
+public sealed record SectionIniNode : IniNode, IIniNodeWithNewLine
 {
     /// <summary>Creates a section node without validating the parts.
     /// Prefer <see cref="IniSyntaxFactory.Section"/> over this constructor.</summary>
     [EditorBrowsable(EditorBrowsableState.Advanced)]
-    public SectionIniNode(IniSectionHeader header, IImmutableList<SectionChildIniNode> children)
+    public SectionIniNode(SectionHeaderIniNode header, IImmutableList<SectionChildIniNode> children)
     {
         Header = header;
         Children = children;
@@ -222,13 +235,15 @@ public sealed record SectionIniNode : IniNode
     public string Name => Header.Name;
 
     [EditorBrowsable(EditorBrowsableState.Advanced)]
-    public IniSectionHeader Header { get; init; }
+    public SectionHeaderIniNode Header { get; init; }
 
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     public IImmutableList<SectionChildIniNode> Children { get; init; }
 
     // intentionally omitted from equality as it is only set for a short time during editing.
     internal IniToken.NewLine? NewLineHint { get; init; }
+
+    IniToken.NewLine? IIniNodeWithNewLine.NewLine => Header.NewLine;
 
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     public override void Accept(IIniNodeVisitor visitor) => visitor.Visit(this);
@@ -253,22 +268,17 @@ public sealed record SectionIniNode : IniNode
 /// <summary>A section header:
 /// <code>[section]</code></summary>
 [DebuggerDisplay("{OpeningBracket,nq}{Name,nq}{ClosingBracketDebugView,nq}")]
-public sealed record IniSectionHeader
+public sealed record SectionHeaderIniNode : IniNode, IIniNodeWithNewLine
 {
     /// <summary>Creates a section node without validating the parts.
     /// Prefer <see cref="IniSyntaxFactory.Section"/> over this constructor.</summary>
     [EditorBrowsable(EditorBrowsableState.Advanced)]
-    public IniSectionHeader(string name)
+    public SectionHeaderIniNode(string name)
     {
         Name = name;
     }
 
     public string Name { get; init; }
-
-
-    /// <summary>Leading whitespace.</summary>
-    [EditorBrowsable(EditorBrowsableState.Advanced)]
-    public IniToken.WhiteSpace? LeadingTrivia { get; init; }
 
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     public IniToken.OpeningBracket OpeningBracket { get; init; } = new();
@@ -284,37 +294,43 @@ public sealed record IniSectionHeader
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     public IniToken.ClosingBracket? ClosingBracket { get; init; } = new();
 
-    /// <summary>Trailing whitespace and garbage after the closing bracket.</summary>
+    /// <summary>Garbage after the closing bracket. This may include some leading whitespace.</summary>
     [EditorBrowsable(EditorBrowsableState.Advanced)]
-    public IImmutableList<IniToken> TrailingTrivia { get; init; } = ImmutableArray<IniToken>.Empty;
+    public IImmutableList<IniToken> UnrecognizedTokensAfterClosingBracket { get; init; } = ImmutableArray<IniToken>.Empty;
+
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public IniToken.NewLine? NewLine { get; init; }
 
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private string ClosingBracketDebugView => ClosingBracket?.ToString() ?? string.Empty;
 
-    public override string ToString()
-    {
-        var visitor = new ToStringVisitor();
-        visitor.Visit(this);
-        return visitor.ToString();
-    }
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    public override void Accept(IIniNodeVisitor visitor)
+        => visitor.Visit(this);
 
-    public bool Equals(IniSectionHeader? other)
+    public override string ToString() => base.ToString();
+
+    public bool Equals(SectionHeaderIniNode? other)
         => other is not null
+           && base.Equals(other)
            && Name == other.Name
-           && LeadingTrivia == other.LeadingTrivia
            && OpeningBracket == other.OpeningBracket
            && TriviaAfterOpeningBracket == other.TriviaAfterOpeningBracket
            && TriviaBeforeClosingBracket == other.TriviaBeforeClosingBracket
            && ClosingBracket == other.ClosingBracket
-           && TrailingTrivia.SequenceEqual(other.TrailingTrivia);
+           && UnrecognizedTokensAfterClosingBracket.SequenceEqual(other.UnrecognizedTokensAfterClosingBracket)
+           && NewLine == other.NewLine;
 
     public override int GetHashCode()
         => HashCode.Combine(
+            base.GetHashCode(),
             Name,
-            LeadingTrivia,
             OpeningBracket,
             TriviaAfterOpeningBracket,
             TriviaBeforeClosingBracket,
             ClosingBracket,
-            TrailingTrivia);
+            UnrecognizedTokensAfterClosingBracket.Count,
+            NewLine);
+
+    private protected override void InternalImplementorsOnly() { }
 }

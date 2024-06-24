@@ -12,4 +12,6 @@ public interface IIniNodeVisitor
     void Visit(SectionIniNode sectionNode);
 
     void Visit(CommentIniNode commentNode);
+
+    void Visit(SectionHeaderIniNode sectionHeaderNode);
 }

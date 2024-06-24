@@ -101,7 +101,7 @@ internal static class TestData
         => [new UnrecognizedIniNode(Tokenizer.Tokenize("garbage")),
             new CommentIniNode("comment"),
             new KeyValueIniNode("key", "value"),
-            new SectionIniNode(new IniSectionHeader("section"), [new KeyValueIniNode("child-key", "value")]) { NewLine = new IniToken.NewLine("\n") }];
+            new SectionIniNode(new SectionHeaderIniNode("section") { NewLine = new IniToken.NewLine("\n") }, [new KeyValueIniNode("child-key", "value")])];
 
     private static IEnumerable<KeyValuePairWithKeyAndValue> KeyValuePairsWithQuotes
         => Sequence.Return(
