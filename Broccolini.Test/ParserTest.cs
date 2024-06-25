@@ -31,9 +31,7 @@ public sealed class ParserTest
     {
         var input = $"; {commentValue}";
         var document = Parse(input);
-        return (document.NodesOutsideSection.Count == 1
-                && document.NodesOutsideSection.First() is CommentIniNode triviaNode
-                && triviaNode.ToString() == input)
+        return (document.NodesOutsideSection is [CommentIniNode commentNode] && commentNode.ToString() == input)
             .ToProperty()
             .When(!input.Contains('\r') && !input.Contains('\n'));
     }
@@ -70,16 +68,14 @@ public sealed class ParserTest
     public bool ParsesArbitrarySectionName(SectionName name, Whitespace ws1, Whitespace ws2, Whitespace ws3, InlineText trailing)
     {
         var document = Parse($"{ws1.Value}[{ws2.Value}{name.Value}{ws3.Value}]{trailing.Value}");
-        return document.Sections.Count == 1
-            && document.Sections[0].Name == name.Value;
+        return document.Sections is [{ Name: var actualName }] && actualName == name.Value;
     }
 
     [Property]
     public bool ParsesArbitrarySectionNameWithoutClosingBracket(SectionName name, Whitespace ws1, Whitespace ws2, Whitespace ws3)
     {
         var document = Parse($"{ws1.Value}[{ws2.Value}{name.Value}{ws3.Value}");
-        return (document.Sections.Count == 1
-            && document.Sections[0].Name == name.Value);
+        return document.Sections is [{ Name: var actualName }] && actualName == name.Value;
     }
 
     public static TheoryData<string, string> GetSectionNameData()
@@ -115,12 +111,12 @@ public sealed class ParserTest
     }
 
     public static TheoryData<IniNode> LeadingTriviaData()
-       => (from n in ExampleNodes
+       => (from node in ExampleNodes
            from breaking in LineBreakingTrivia
            from inline in InlineTrivia
            from inlineBeforeBreaking in InlineTrivia
            where (inlineBeforeBreaking.Length == 0) == (breaking.Length == 0)
-           select ApplyLeadingTrivia(n.Value, inlineBeforeBreaking + breaking, inline)).ToTheoryData();
+           select ApplyLeadingTrivia(node.Value, inlineBeforeBreaking + breaking, inline)).ToTheoryData();
 
     private static IniNode ApplyLeadingTrivia(IniNode node, string trivia, string inlineTrivia)
         => node switch
@@ -140,12 +136,12 @@ public sealed class ParserTest
     }
 
     private static TheoryData<IniNode> TrailingTriviaData()
-       => (from n in ExampleNodes
+       => (from node in ExampleNodes
            from inline in InlineTrivia
            from breaking in LineBreakingTrivia
            from inlineAfterBreaking in InlineTrivia
            where (inlineAfterBreaking.Length == 0) == (breaking.Length == 0)
-           select ApplyTrailingTrivia(n.Value, inline, breaking + inlineAfterBreaking)).ToTheoryData();
+           select ApplyTrailingTrivia(node.Value, inline, breaking + inlineAfterBreaking)).ToTheoryData();
 
     [Theory]
     [MemberData(nameof(TriviaForConsecutiveNodes))]
@@ -158,12 +154,12 @@ public sealed class ParserTest
     }
 
     private static TheoryData<IniNode, IniNode> TriviaForConsecutiveNodes()
-       => (from n1 in ExampleNodes
-           from n2 in ExampleNodes
+       => (from node1 in ExampleNodes
+           from node2 in ExampleNodes
            from inline in InlineTrivia
            from breaking in LineBreakingTrivia
            from inlineLeading in InlineTrivia
-           select (ApplyTrailingTrivia(n1.Value, inline, breaking), ApplyLeadingTrivia(n2.Value, "", inlineLeading))).ToTheoryData();
+           select (ApplyTrailingTrivia(node1.Value, inline, breaking), ApplyLeadingTrivia(node2.Value, "", inlineLeading))).ToTheoryData();
 
     private static IniNode ApplyTrailingTrivia(IniNode node, string inlineTrivia, string trivia)
         => node switch
