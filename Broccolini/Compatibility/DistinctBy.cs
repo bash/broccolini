@@ -6,7 +6,7 @@
 
 namespace System.Linq;
 
-internal static class EnumerableCompatibility
+internal static partial class EnumerableCompatibility
 {
     public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, IEqualityComparer<TKey>? comparer = null)
     {
