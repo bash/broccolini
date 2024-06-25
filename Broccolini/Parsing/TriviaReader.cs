@@ -1,5 +1,6 @@
 using Broccolini.Syntax;
 using static Broccolini.Parsing.NodeCategorizer;
+using static Broccolini.Syntax.IniToken;
 
 namespace Broccolini.Parsing;
 
@@ -16,13 +17,13 @@ internal static class TriviaReader
         {
             // trailing blank lines belong to the section's trailing trivia
             (_, NodeType.Section or NodeType.Epsilon) when context is TriviaParseContext.SectionChild
-                => triviaInput.TakeWhile(static t => t is not IniToken.NewLine),
+                => triviaInput.TakeWhile(static t => t is not NewLine),
             // the final newline is not part of trivia
-            (>=1, _) when input.Peek(triviaLength - 1) is IniToken.NewLine
+            (>=1, _) when input.Peek(triviaLength - 1) is NewLine
                 => triviaInput.SkipLast(1),
             // whitespace following a newline is leading trivia for the next node
             // the final newline is not part of trivia
-            (>=2, not NodeType.Epsilon) when input.Peek(triviaLength - 2) is IniToken.NewLine && input.Peek(triviaLength - 1) is IniToken.WhiteSpace
+            (>=2, not NodeType.Epsilon) when input.Peek(triviaLength - 2) is NewLine && input.Peek(triviaLength - 1) is WhiteSpace
                 => triviaInput.SkipLast(2),
             _ => triviaInput,
         };
@@ -39,9 +40,9 @@ internal static class TriviaReader
         {
             // a single whitespace means that the child node (header or key-value) has already consumed a newline
             // => this whitespace belongs to the next node
-            (1, not NodeType.Epsilon) when input.Peek() is IniToken.WhiteSpace => [],
+            (1, not NodeType.Epsilon) when input.Peek() is WhiteSpace => [],
             // whitespace following a newline is leading trivia for the next node
-            (>=2, not NodeType.Epsilon) when input.Peek(triviaLength - 2) is IniToken.NewLine && input.Peek(triviaLength - 1) is IniToken.WhiteSpace
+            (>=2, not NodeType.Epsilon) when input.Peek(triviaLength - 2) is NewLine && input.Peek(triviaLength - 1) is WhiteSpace
                 => triviaInput.SkipLast(1),
             _ => triviaInput,
         };
@@ -53,7 +54,7 @@ internal static class TriviaReader
         => input.Read(PeekLeadingTrivia(input));
 
     public static IEnumerable<IniToken> PeekLeadingTrivia(IParserInput input)
-        => input.PeekRange().TakeWhile(t => t is IniToken.WhiteSpace or IniToken.NewLine);
+        => input.PeekRange().TakeWhile(t => t is WhiteSpace or NewLine);
 }
 
 internal enum TriviaParseContext
