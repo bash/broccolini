@@ -1,6 +1,6 @@
 using Broccolini.Syntax;
 using static Broccolini.Parsing.NodeCategorizer;
-using static Broccolini.Parsing.TriviaParser;
+using static Broccolini.Parsing.TriviaReader;
 
 namespace Broccolini.Parsing;
 
@@ -51,7 +51,7 @@ internal static class Parser
         var leadingTrivia = input.Read(PeekLeadingTrivia(input).DropLast(t => t is IniToken.WhiteSpace));
         var header = ParseSectionHeader(input);
         var children = ParseSectionChildren(input);
-        var trailingTrivia = ParseTrailingSectionTrivia(input);
+        var trailingTrivia = ReadTrailingSectionTrivia(input);
         return new SectionIniNode(header, children)
         {
             LeadingTrivia = leadingTrivia,
@@ -68,7 +68,7 @@ internal static class Parser
         var triviaBeforeClosingBracket = input.ReadOrNull<IniToken.WhiteSpace>();
         var closingBracket = input.ReadOrNull<IniToken.ClosingBracket>();
         var unrecognizedTokensAfterClosingBracket = input.Read(input.PeekRange().TakeWhile(t => t is not IniToken.NewLine).DropLast(t => t is IniToken.WhiteSpace));
-        var trailingTrivia = ParseTrailingTrivia(input, TriviaParseContext.SectionChild);
+        var trailingTrivia = ReadTrailingTrivia(input, TriviaParseContext.SectionChild);
         var newLine = input.ReadOrNull<IniToken.NewLine>();
         return new SectionHeaderIniNode(name)
         {
@@ -91,7 +91,7 @@ internal static class Parser
         var equalsSign = input.Read();
         var triviaAfterEqualsSign = input.ReadOrNull<IniToken.WhiteSpace>();
         var (quote, value) = ParseQuotedValue(input);
-        var trailingTrivia = ParseTrailingTrivia(input, context);
+        var trailingTrivia = ReadTrailingTrivia(input, context);
         var newLine = input.ReadOrNull<IniToken.NewLine>();
         return new KeyValueIniNode(key, value)
         {
@@ -111,7 +111,7 @@ internal static class Parser
         var semicolon = (IniToken.Semicolon)input.Read();
         var triviaAfterSemicolon = input.ReadOrNull<IniToken.WhiteSpace>();
         var text = string.Concat(input.ReadWhileExcludeTrailingWhitespace(static t => t is not IniToken.NewLine));
-        var trailingTrivia = ParseTrailingTrivia(input, context);
+        var trailingTrivia = ReadTrailingTrivia(input, context);
         var newLine = input.ReadOrNull<IniToken.NewLine>();
         return new CommentIniNode(text)
         {
@@ -127,7 +127,7 @@ internal static class Parser
     {
         var leadingTrivia = ReadLeadingTrivia(input);
         var content = input.ReadWhileExcludeTrailingWhitespace(t => t is not IniToken.NewLine);
-        var trailingTrivia = ParseTrailingTrivia(input, context);
+        var trailingTrivia = ReadTrailingTrivia(input, context);
         var newLine = input.ReadOrNull<IniToken.NewLine>();
         return new UnrecognizedIniNode(content)
         {

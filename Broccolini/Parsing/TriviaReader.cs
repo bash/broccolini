@@ -5,9 +5,9 @@ namespace Broccolini.Parsing;
 
 // See doc/trivia-explainer.svg for a visual explanation
 // of how trivia is attributed to nodes.
-internal static class TriviaParser
+internal static class TriviaReader
 {
-    public static ImmutableArray<IniToken> ParseTrailingTrivia(IParserInput input, TriviaParseContext context)
+    public static ImmutableArray<IniToken> ReadTrailingTrivia(IParserInput input, TriviaParseContext context)
     {
         var (next, triviaLength) = PeekNextNodeType(input);
         var triviaInput = input.PeekRange().Take(triviaLength);
@@ -30,7 +30,7 @@ internal static class TriviaParser
         return input.Read(trivia);
     }
 
-    public static ImmutableArray<IniToken> ParseTrailingSectionTrivia(IParserInput input)
+    public static ImmutableArray<IniToken> ReadTrailingSectionTrivia(IParserInput input)
     {
         var (next, triviaLength) = PeekNextNodeType(input);
         var triviaInput = input.PeekRange().Take(triviaLength);
