@@ -1,4 +1,6 @@
 using Broccolini.Syntax;
+using static Broccolini.Parsing.NodeCategorizer;
+using static Broccolini.Parsing.TriviaParser;
 
 namespace Broccolini.Parsing;
 
@@ -43,29 +45,6 @@ internal static class Parser
             NodeType.Unrecognized or NodeType.Epsilon => ParseUnrecognized(input, context),
             _ => throw new InvalidOperationException("Unreachable: unrecognized node type (this is a bug)"),
         };
-
-    private static (NodeType, int) PeekNextNodeType(IParserInput input)
-        => input.PeekIgnoreWhitespaceAndNewLines() switch
-        {
-            (IniToken.Epsilon, var pos) => (NodeType.Epsilon, pos),
-            (var token, var pos) when IsSection(token) => (NodeType.Section, pos),
-            (var token, var pos) when IsComment(token) => (NodeType.Comment, pos),
-            (var token, var pos) when IsKeyValue(input, token, pos) => (NodeType.KeyValue, pos),
-            (_, var pos) => (NodeType.Unrecognized, pos),
-        };
-
-    private static bool IsSection(IniToken token)
-        => token is IniToken.OpeningBracket;
-
-    private static bool IsComment(IniToken token)
-        => token is IniToken.Semicolon;
-
-    private static bool IsKeyValue(IParserInput input, IniToken token, int pos)
-        => input.PeekRange()
-            .Skip(pos)
-            .Prepend(token)
-            .TakeWhile(t => t is not IniToken.NewLine)
-            .Any(t => t is IniToken.EqualsSign);
 
     private static IniNode ParseSection(IParserInput input)
     {
@@ -170,56 +149,6 @@ internal static class Parser
             ? (openingQuote, value)
             : (null, ToString(openingQuote) + value + ToString(closingQuote));
     }
-
-    private static ImmutableArray<IniToken> ParseTrailingTrivia(IParserInput input, TriviaParseContext context)
-    {
-        var (next, triviaLength) = PeekNextNodeType(input);
-        var triviaInput = input.PeekRange().Take(triviaLength);
-
-        // See doc/trivia-explainer.svg for a visual explanation
-        // of how trivia is attributed to nodes.
-        var trivia = (triviaLength, next) switch
-        {
-            // trailing blank lines belong to the section's trailing trivia
-            (_, NodeType.Section or NodeType.Epsilon) when context is TriviaParseContext.SectionChild
-                => triviaInput.TakeWhile(static t => t is not IniToken.NewLine),
-            // the final newline is not part of trivia
-            (>=1, _) when input.Peek(triviaLength - 1) is IniToken.NewLine
-                => triviaInput.Take(triviaLength - 1),
-            // whitespace following a newline is leading trivia for the next node
-            // the final newline is not part of trivia
-            (>=2, not NodeType.Epsilon) when input.Peek(triviaLength - 2) is IniToken.NewLine && input.Peek(triviaLength - 1) is IniToken.WhiteSpace
-                => triviaInput.Take(triviaLength - 2),
-            _ => triviaInput,
-        };
-
-        return input.Read(trivia);
-    }
-
-    private static ImmutableArray<IniToken> ParseTrailingSectionTrivia(IParserInput input)
-    {
-        var (next, triviaLength) = PeekNextNodeType(input);
-        var triviaInput = input.PeekRange().Take(triviaLength);
-
-        var trivia = (triviaLength, next) switch
-        {
-            // a single whitespace means that the child node (header or key-value) has already consumed a newline
-            // => this whitespace belongs to the next node
-            (1, not NodeType.Epsilon) when input.Peek() is IniToken.WhiteSpace => [],
-            // whitespace following a newline is leading trivia for the next node
-            (>=2, not NodeType.Epsilon) when input.Peek(triviaLength - 2) is IniToken.NewLine && input.Peek(triviaLength - 1) is IniToken.WhiteSpace
-                => triviaInput.Take(triviaLength - 1),
-            _ => triviaInput,
-        };
-
-        return input.Read(trivia);
-    }
-
-    private static IImmutableList<IniToken> ReadLeadingTrivia(IParserInput input)
-        => input.Read(PeekLeadingTrivia(input));
-
-    private static IEnumerable<IniToken> PeekLeadingTrivia(IParserInput input)
-        => input.PeekRange().TakeWhile(t => t is IniToken.WhiteSpace or IniToken.NewLine);
 
     private static IImmutableList<IniToken> ParseValue(IParserInput input)
     {
