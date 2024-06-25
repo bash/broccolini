@@ -16,7 +16,7 @@ internal static class NewLineExtensions
         => node switch
         {
             { Children: { Count: >=1 } children } => node with { Children = children.ReplaceLast(n => EnsureTrailingNewLine(n, newLine)) },
-            { Children.Count: 0, NewLine: null } => node with { NewLine = newLine },
+            { Children.Count: 0, Header: { NewLine: null } header } => node with { Header = header with { NewLine = newLine } },
             _ => node,
         };
 

@@ -28,7 +28,7 @@ public sealed class RoundtripTest
         => Sequence.Concat(
             CommentNodes,
             GarbageNodes,
-            LeadingNodes,
+            LeadingNodesOrTrivia,
             NewLines,
             SectionsWithNames.Select(s => s.Input),
             KeyValuePairsWithKeyAndValue.Select(s => s.Input)).ToTheoryData();

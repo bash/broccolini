@@ -1,4 +1,6 @@
 using Broccolini.Syntax;
+using static Broccolini.Parsing.NodeCategorizer;
+using static Broccolini.Parsing.TriviaReader;
 
 namespace Broccolini.Parsing;
 
@@ -11,7 +13,7 @@ internal static class Parser
 
         while (input.Peek() is not IniToken.Epsilon)
         {
-            var node = ParseNode(input);
+            var node = ParseNode(input, TriviaParseContext.TopLevelSectionChild);
 
             // ParseNode already guarantees that after the first section only other sections are returned
             if (node is SectionIniNode sectionNode)
@@ -27,78 +29,69 @@ internal static class Parser
         return new IniDocument(nodes.ToImmutable(), sections.ToImmutable());
     }
 
-    private static IniNode ParseNode(IParserInput input)
-        => IsSection(input)
-            ? ParseSection(input)
-            : ParseSectionChildNode(input);
-
-    private static SectionChildIniNode ParseSectionChildNode(IParserInput input)
-        => input switch
-        {
-            _ when IsComment(input) => ParseComment(input),
-            _ when IsKeyValue(input) => ParseKeyValue(input),
-            _ => ParseUnrecognized(input),
-        };
-
-    private static bool IsSection(IParserInput input)
-        => input.PeekIgnoreWhitespace() is IniToken.OpeningBracket;
-
-    private static bool IsComment(IParserInput input)
-        => input.PeekIgnoreWhitespace() is IniToken.Semicolon;
-
-    private static bool IsKeyValue(IParserInput input)
+    private static IniNode ParseNode(IParserInput input, TriviaParseContext context)
     {
-        for (var lookAhead = 0; input.Peek(lookAhead) is not IniToken.NewLine and not IniToken.Epsilon; lookAhead++)
-        {
-            if (input.Peek(lookAhead) is IniToken.EqualsSign)
-            {
-                return true;
-            }
-        }
-
-        return false;
+        var (nodeType, _) = PeekNextNodeType(input);
+        return ParseNode(input, nodeType, context);
     }
+
+    private static IniNode ParseNode(IParserInput input, NodeType nodeType, TriviaParseContext context)
+        => nodeType switch
+        {
+            NodeType.Section => ParseSection(input),
+            NodeType.Comment => ParseComment(input, context),
+            NodeType.KeyValue => ParseKeyValue(input, context),
+            // In a document consisting just of whitespace we get one epsilon node
+            NodeType.Unrecognized or NodeType.Epsilon => ParseUnrecognized(input, context),
+            _ => throw new InvalidOperationException("Unreachable: unrecognized node type (this is a bug)"),
+        };
 
     private static IniNode ParseSection(IParserInput input)
     {
+        var leadingTrivia = input.Read(PeekLeadingTrivia(input).DropLast(t => t is IniToken.WhiteSpace));
         var header = ParseSectionHeader(input);
-        var newLine = input.ReadOrNull<IniToken.NewLine>();
         var children = ParseSectionChildren(input);
+        var trailingTrivia = ReadTrailingSectionTrivia(input);
         return new SectionIniNode(header, children)
         {
-            NewLine = newLine,
+            LeadingTrivia = leadingTrivia,
+            TrailingTrivia = trailingTrivia,
         };
     }
 
-    private static IniSectionHeader ParseSectionHeader(IParserInput input)
+    private static SectionHeaderIniNode ParseSectionHeader(IParserInput input)
     {
-        var leadingTrivia = input.ReadOrNull<IniToken.WhiteSpace>();
+        var leadingTrivia = input.ReadWhile(static t => t is IniToken.WhiteSpace);
         var openingBracketToken = input.Read();
         var triviaAfterOpeningBracket = input.ReadOrNull<IniToken.WhiteSpace>();
         var name = string.Concat(input.ReadWhileExcludeTrailingWhitespace(static t => t is not IniToken.ClosingBracket and not IniToken.NewLine));
         var triviaBeforeClosingBracket = input.ReadOrNull<IniToken.WhiteSpace>();
         var closingBracket = input.ReadOrNull<IniToken.ClosingBracket>();
-        var trailingTrivia = input.ReadWhile(static t => t is not IniToken.NewLine);
-        return new IniSectionHeader(name)
+        var unrecognizedTokensAfterClosingBracket = input.Read(input.PeekRange().TakeWhile(t => t is not IniToken.NewLine).DropLast(t => t is IniToken.WhiteSpace));
+        var trailingTrivia = ReadTrailingTrivia(input, TriviaParseContext.SectionChild);
+        var newLine = input.ReadOrNull<IniToken.NewLine>();
+        return new SectionHeaderIniNode(name)
         {
             LeadingTrivia = leadingTrivia,
             OpeningBracket = (IniToken.OpeningBracket)openingBracketToken,
             TriviaAfterOpeningBracket = triviaAfterOpeningBracket,
             TriviaBeforeClosingBracket = triviaBeforeClosingBracket,
             ClosingBracket = closingBracket,
+            UnrecognizedTokensAfterClosingBracket = unrecognizedTokensAfterClosingBracket,
             TrailingTrivia = trailingTrivia,
+            NewLine = newLine,
         };
     }
 
-    private static KeyValueIniNode ParseKeyValue(IParserInput input)
+    private static KeyValueIniNode ParseKeyValue(IParserInput input, TriviaParseContext context)
     {
-        var leadingTrivia = input.ReadWhile(t => t is IniToken.WhiteSpace);
+        var leadingTrivia = ReadLeadingTrivia(input);
         var key = string.Concat(input.ReadWhileExcludeTrailingWhitespace(static t => t is not IniToken.EqualsSign));
         var triviaBeforeEqualsSign = input.ReadOrNull<IniToken.WhiteSpace>();
         var equalsSign = input.Read();
         var triviaAfterEqualsSign = input.ReadOrNull<IniToken.WhiteSpace>();
         var (quote, value) = ParseQuotedValue(input);
-        var trailingTrivia = input.ReadWhile(t => t is IniToken.WhiteSpace);
+        var trailingTrivia = ReadTrailingTrivia(input, context);
         var newLine = input.ReadOrNull<IniToken.NewLine>();
         return new KeyValueIniNode(key, value)
         {
@@ -112,13 +105,13 @@ internal static class Parser
         };
     }
 
-    private static CommentIniNode ParseComment(IParserInput input)
+    private static CommentIniNode ParseComment(IParserInput input, TriviaParseContext context)
     {
-        var leadingTrivia = input.ReadWhile(t => t is IniToken.WhiteSpace);
+        var leadingTrivia = ReadLeadingTrivia(input);
         var semicolon = (IniToken.Semicolon)input.Read();
         var triviaAfterSemicolon = input.ReadOrNull<IniToken.WhiteSpace>();
         var text = string.Concat(input.ReadWhileExcludeTrailingWhitespace(static t => t is not IniToken.NewLine));
-        var trailingTrivia = input.ReadWhile(t => t is IniToken.WhiteSpace);
+        var trailingTrivia = ReadTrailingTrivia(input, context);
         var newLine = input.ReadOrNull<IniToken.NewLine>();
         return new CommentIniNode(text)
         {
@@ -130,11 +123,11 @@ internal static class Parser
         };
     }
 
-    private static UnrecognizedIniNode ParseUnrecognized(IParserInput input)
+    private static UnrecognizedIniNode ParseUnrecognized(IParserInput input, TriviaParseContext context)
     {
-        var leadingTrivia = input.ReadWhile(t => t is IniToken.WhiteSpace);
-        var content = input.ReadWhile(t => t is not IniToken.NewLine);
-        var trailingTrivia = input.ReadWhile(t => t is IniToken.WhiteSpace);
+        var leadingTrivia = ReadLeadingTrivia(input);
+        var content = input.ReadWhileExcludeTrailingWhitespace(t => t is not IniToken.NewLine);
+        var trailingTrivia = ReadTrailingTrivia(input, context);
         var newLine = input.ReadOrNull<IniToken.NewLine>();
         return new UnrecognizedIniNode(content)
         {
@@ -180,9 +173,9 @@ internal static class Parser
     {
         var nodes = ImmutableArray.CreateBuilder<SectionChildIniNode>();
 
-        while (input.Peek() is not IniToken.Epsilon && !IsSection(input))
+        while (PeekNextNodeType(input) is (var type, _) && type is not (NodeType.Epsilon or NodeType.Section))
         {
-            nodes.Add((SectionChildIniNode)ParseNode(input));
+            nodes.Add((SectionChildIniNode)ParseNode(input, type, TriviaParseContext.SectionChild));
         }
 
         return nodes.ToImmutable();

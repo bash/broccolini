@@ -1,3 +1,6 @@
+using Broccolini.Syntax;
+using Broccolini.Tokenization;
+
 namespace Broccolini.Test;
 
 internal static class TestData
@@ -26,8 +29,18 @@ internal static class TestData
             "; comment\r\n" +
             "garbage\r\n",
             "[section]\r\n",
-            "\r\n",
             "key = value\r\n");
+
+    public static IEnumerable<string> InlineTrivia
+        => ["\t", "    ", ""];
+
+    public static IEnumerable<string> LineBreakingTrivia
+        => ContextFreeNewLines
+            .Concat(ContextFreeNewLines.SelectMany(_ => InlineTrivia, (nl, inline) => $"{nl}{inline}{nl}"))
+            .Append("");
+
+    public static IEnumerable<string> LeadingNodesOrTrivia
+        => LeadingNodes.Concat(InlineTrivia.SelectMany(_ => LineBreakingTrivia, (inline, breaking) => inline + breaking));
 
     public static IEnumerable<SectionWithName> SectionsWithNames
         => Sequence.Return(
@@ -70,7 +83,9 @@ internal static class TestData
             .SelectMany(VaryLeadingNewLines);
             // TODO: vary leading and trailing whitespace and line break
 
-    public static IEnumerable<string> NewLines => Sequence.Return("\r\n", "\r", "\n");
+    public static IEnumerable<string> NewLines => ["\r\n", "\r", "\n"];
+
+    public static IEnumerable<string> ContextFreeNewLines => ["\r\n", "\n"];
 
     public static IEnumerable<CaseSensitivityInput> CaseSensitivityInputs
         => Sequence.Return(
@@ -88,6 +103,15 @@ internal static class TestData
             .Skip(1) // U+0000 is not whitespace
             .Select(n => (char)n)
             .Except(Sequence.Return('\r', '\n'));
+
+    public static IEnumerable<ExampleNode> ExampleNodes
+        => [
+            new UnrecognizedIniNode(Tokenizer.Tokenize("garbage")) { NewLine = new IniToken.NewLine("\n") },
+            new CommentIniNode("comment") { NewLine = new IniToken.NewLine("\n") },
+            new KeyValueIniNode("key", "value") { NewLine = new IniToken.NewLine("\n") },
+            new SectionIniNode(new SectionHeaderIniNode("section") { NewLine = new IniToken.NewLine("\n") }, []),
+            new SectionIniNode(new SectionHeaderIniNode("section") { NewLine = new IniToken.NewLine("\n") }, [new KeyValueIniNode("child-key", "value") { NewLine = new IniToken.NewLine("\n") }]),
+           ];
 
     private static IEnumerable<KeyValuePairWithKeyAndValue> KeyValuePairsWithQuotes
         => Sequence.Return(
@@ -151,3 +175,8 @@ public sealed record SectionWithName(string Input, string Name);
 public sealed record KeyValuePairWithKeyAndValue(string Input, string Key, string Value);
 
 public sealed record CaseSensitivityInput(string Variant1, string Variant2, bool ShouldBeEqual);
+
+public sealed record ExampleNode(IniNode Value)
+{
+    public static implicit operator ExampleNode(IniNode node) => new(node);
+}

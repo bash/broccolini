@@ -1,4 +1,12 @@
 # Changelog
+## 2.0.0 (rc)
+* ✨ Empty lines are now attributed as leading / trailing trivia
+  instead of generating `UnrecognizedIniNode`s. See <https://github.com/bash/broccolini/issues/13>.
+* ⚡ Breaking: A lot of restructuring has gone into the AST.
+  These changes only affect advanced users that don't use the high-level APIs.
+* 🐛 New lines preceded by whitespace are now correctly categorized as new lines instead
+     of whitespace. See <https://github.com/bash/broccolini/issues/15>.
+
 ## 1.0.1
 * Update package metadata
 

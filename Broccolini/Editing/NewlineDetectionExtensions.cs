@@ -8,10 +8,11 @@ internal static class NewlineDetectionExtensions
 
     public static IniToken.NewLine DetectNewLine(this IniDocument document)
         => document.GetNodes()
+            .OfType<IIniNodeWithNewLine>()
             .Select(n => n.NewLine)
             .FirstOrDefault()
                 ?? NativeNewLine;
 
     public static IniToken.NewLine DetectNewLine(this SectionIniNode node)
-        => node.NewLine ?? node.NewLineHint ?? NativeNewLine;
+        => node.Header.NewLine ?? node.NewLineHint ?? NativeNewLine;
 }

@@ -28,9 +28,7 @@ public sealed class ParserTest
     {
         var input = $"; {commentValue}";
         var document = Parse(input);
-        return (document.NodesOutsideSection.Count == 1
-                && document.NodesOutsideSection.First() is CommentIniNode triviaNode
-                && triviaNode.ToString() == input)
+        return (document.NodesOutsideSection is [CommentIniNode commentNode] && commentNode.ToString() == input)
             .ToProperty()
             .When(!input.Contains('\r') && !input.Contains('\n'));
     }
@@ -67,16 +65,14 @@ public sealed class ParserTest
     public bool ParsesArbitrarySectionName(SectionName name, Whitespace ws1, Whitespace ws2, Whitespace ws3, InlineText trailing)
     {
         var document = Parse($"{ws1.Value}[{ws2.Value}{name.Value}{ws3.Value}]{trailing.Value}");
-        return (document.Sections.Count == 1
-            && document.Sections[0].Name == name.Value);
+        return document.Sections is [{ Name: var actualName }] && actualName == name.Value;
     }
 
     [Property]
     public bool ParsesArbitrarySectionNameWithoutClosingBracket(SectionName name, Whitespace ws1, Whitespace ws2, Whitespace ws3)
     {
         var document = Parse($"{ws1.Value}[{ws2.Value}{name.Value}{ws3.Value}");
-        return (document.Sections.Count == 1
-            && document.Sections[0].Name == name.Value);
+        return document.Sections is [{ Name: var actualName }] && actualName == name.Value;
     }
 
     public static TheoryData<string, string> GetSectionNameData()
