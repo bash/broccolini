@@ -1,8 +1,6 @@
 #nullable enable
 Broccolini.Syntax.IIniNodeVisitor.Visit(Broccolini.Syntax.SectionHeaderIniNode! sectionHeaderNode) -> void
 Broccolini.Syntax.IIniNodeVisitor.Visit(Broccolini.Syntax.UnrecognizedIniNode! unrecognizedNode) -> void
-Broccolini.Syntax.IIniNodeWithNewLine
-Broccolini.Syntax.IIniNodeWithNewLine.NewLine.get -> Broccolini.Syntax.IniToken.NewLine?
 Broccolini.Syntax.IniNode.LeadingTrivia.get -> System.Collections.Immutable.IImmutableList<Broccolini.Syntax.IniToken!>!
 Broccolini.Syntax.IniNode.LeadingTrivia.init -> void
 Broccolini.Syntax.IniNode.TrailingTrivia.get -> System.Collections.Immutable.IImmutableList<Broccolini.Syntax.IniToken!>!

@@ -91,10 +91,9 @@ public abstract record IniNode
     private protected abstract void InternalImplementorsOnly();
 }
 
-[EditorBrowsable(EditorBrowsableState.Advanced)]
-public interface IIniNodeWithNewLine
+internal interface IIniNodeWithNewLine
 {
-    public IniToken.NewLine? NewLine { get; }
+    IniToken.NewLine? NewLine { get; }
 }
 
 [EditorBrowsable(EditorBrowsableState.Advanced)]
