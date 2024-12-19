@@ -29,7 +29,7 @@
 :root {
     color-scheme: light dark;
     font-size: 112.5%;
-    font-family: 'Jetbrains Mono', monospace;
+    font-family: 'Departure Mono', monospace;
     line-height: 1.5;
     background-color: var(--base);
     color: var(--text);
@@ -45,7 +45,6 @@ main {
     padding: 60px 20px 40px 20px;
 }
 
-._bracket,
 ._key {
     color: var(--red);
 }
@@ -56,7 +55,6 @@ main {
 
 ._comment {
     color: var(--subtext-0);
-    font-style: italic;
 }
 
 ._value {
@@ -64,8 +62,9 @@ main {
 }
 
 h1 {
-    font-weight: bold;
     font-size: 1.5rem;
+    background-color: var(--base);
+    color: var(--text);
 }
 
 h1, p {
@@ -78,33 +77,7 @@ footer {
 }
 
 @font-face {
-    font-family: 'Jetbrains Mono';
-    font-weight: 400;
-    font-style: normal;
-    font-stretch: normal;
-    src: url('./fonts/jetbrains-mono/JetBrainsMono-Regular.woff2') format('woff2');
-}
-
-@font-face {
-    font-family: 'Jetbrains Mono';
-    font-weight: 400;
-    font-style: italic;
-    font-stretch: normal;
-    src: url('./fonts/jetbrains-mono/JetBrainsMono-Italic.woff2') format('woff2');
-}
-
-@font-face {
-    font-family: 'Jetbrains Mono';
-    font-weight: 700;
-    font-style: normal;
-    font-stretch: normal;
-    src: url('./fonts/jetbrains-mono/JetBrainsMono-Bold.woff2') format('woff2');
-}
-
-@font-face {
-    font-family: 'Jetbrains Mono';
-    font-weight: 700;
-    font-style: italic;
-    font-stretch: normal;
-    src: url('./fonts/jetbrains-mono/JetBrainsMono-BoldItalic.woff2') format('woff2');
+    font-family: 'Departure Mono';
+    font-synthesis: none;
+    src: url('./fonts/departure-mono/DepartureMono-Regular.woff2') format('woff2');
 }
