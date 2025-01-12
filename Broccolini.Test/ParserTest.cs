@@ -1,6 +1,6 @@
 using Broccolini.Syntax;
 using FsCheck;
-using FsCheck.Xunit;
+using FsCheck.Fluent;
 using Xunit;
 using static Broccolini.IniParser;
 using static Broccolini.Test.TestData;
@@ -9,11 +9,6 @@ namespace Broccolini.Test;
 
 public sealed class ParserTest
 {
-    public ParserTest()
-    {
-        BroccoliniGenerators.Register();
-    }
-
     [Theory]
     [MemberData(nameof(GetCommentsData))]
     public void ParsesCommentNode(string input, string leadingNode)
@@ -23,7 +18,7 @@ public sealed class ParserTest
         Assert.Equal(input, node.ToString());
     }
 
-    [Property]
+    [BroccoliniProperty]
     public Property ParsesArbitraryComment(string commentValue)
     {
         var input = $"; {commentValue}";
@@ -61,14 +56,14 @@ public sealed class ParserTest
         Assert.Equal(name, node.Name);
     }
 
-    [Property]
+    [BroccoliniProperty]
     public bool ParsesArbitrarySectionName(SectionName name, Whitespace ws1, Whitespace ws2, Whitespace ws3, InlineText trailing)
     {
         var document = Parse($"{ws1.Value}[{ws2.Value}{name.Value}{ws3.Value}]{trailing.Value}");
         return document.Sections is [{ Name: var actualName }] && actualName == name.Value;
     }
 
-    [Property]
+    [BroccoliniProperty]
     public bool ParsesArbitrarySectionNameWithoutClosingBracket(SectionName name, Whitespace ws1, Whitespace ws2, Whitespace ws3)
     {
         var document = Parse($"{ws1.Value}[{ws2.Value}{name.Value}{ws3.Value}");

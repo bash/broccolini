@@ -1,9 +1,10 @@
 using Broccolini.SemanticModel;
-using FsCheck;
+using FsCheck.Fluent;
 using FsCheck.Xunit;
 using System.ComponentModel;
 using System.Runtime.Versioning;
 using System.Text;
+using FsCheck;
 using Xunit;
 using Xunit.Abstractions;
 using static Broccolini.Test.Kernel32;
@@ -11,15 +12,12 @@ using static Broccolini.Test.TestData;
 
 namespace Broccolini.Test;
 
-public sealed class ReferenceTest
+public sealed class ReferenceTest(ITestOutputHelper testOutputHelper)
 {
-    private readonly ITestOutputHelper _testOutputHelper;
-
-    public ReferenceTest(ITestOutputHelper testOutputHelper)
-    {
-        _testOutputHelper = testOutputHelper;
-        BroccoliniGenerators.Register();
-    }
+    private Config QuickThrowOnFailureConfig
+        => Config.QuickThrowOnFailure
+            .WithRunner(new TestOutputRunner(testOutputHelper))
+            .WithArbitrary([typeof(BroccoliniArbMap)]);
 
     [SkippableTheory]
     [MemberData(nameof(GetSectionNameData))]
@@ -49,7 +47,7 @@ public sealed class ReferenceTest
             return (sectionNames.Length == 1 && sectionNames[0] == sectionName.Value).ToProperty();
         });
 
-        property.QuickCheckThrowOnFailure(_testOutputHelper);
+        Check.One(QuickThrowOnFailureConfig, property);
     }
 
     [SkippableFact]
@@ -65,7 +63,7 @@ public sealed class ReferenceTest
             return (sectionNames.Length == 1 && sectionNames[0] == sectionName.Value).ToProperty();
         });
 
-        property.QuickCheckThrowOnFailure(_testOutputHelper);
+        Check.One(QuickThrowOnFailureConfig, property);
     }
 
     public static TheoryData<string, string> GetSectionNameData()
@@ -151,7 +149,7 @@ public sealed class ReferenceTest
         Assert.Equal(arbitraryValue, GetPrivateProfileString(temporaryFile.Path, arbitrarySection, arbitraryKey, "DEFAULT VALUE"));
     }
 
-    private static TheoryData<char> GetWhiteSpaceData() => WhiteSpace.ToTheoryData();
+    public static TheoryData<char> GetWhiteSpaceData() => WhiteSpace.ToTheoryData();
 
     public static TheoryData<string, string, bool> KeysData()
         => CaseSensitivityInputs.Select(input => (input.Variant1, input.Variant2, input.ShouldBeEqual)).ToTheoryData();

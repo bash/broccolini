@@ -1,5 +1,5 @@
 using FsCheck;
-using FsCheck.Xunit;
+using FsCheck.Fluent;
 using Xunit;
 using static Broccolini.IniParser;
 using static Broccolini.Test.TestData;
@@ -33,7 +33,7 @@ public sealed class RoundtripTest
             SectionsWithNames.Select(s => s.Input),
             KeyValuePairsWithKeyAndValue.Select(s => s.Input)).ToTheoryData();
 
-    [Property]
+    [BroccoliniProperty]
     public Property PreservesFormattingOfArbitraryInput(NonNull<string> input)
     {
         var document = Parse(input.Get);
