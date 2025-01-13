@@ -1,4 +1,7 @@
 # Changelog
+## 2.0.1
+* ✨ Mark library as compatible with [native AOT](https://learn.microsoft.com/en-us/dotnet/core/deploying/native-aot).
+
 ## 2.0.0
 * ✨ Empty lines are now attributed as leading / trailing trivia
   instead of generating `UnrecognizedIniNode`s. See [#13](https://github.com/bash/broccolini/issues/13).
