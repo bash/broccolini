@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using Broccolini.Editing;
 using Broccolini.Syntax;
-using FsCheck;
 using Xunit;
 using static Broccolini.IniParser;
 using static Broccolini.Test.TestData;
@@ -89,7 +88,7 @@ public sealed class TriviaTest
         Assert.Equal(expectedDocument, parsedDocument);
     }
 
-    private static TheoryData<IniNode> TrailingTriviaData()
+    public static TheoryData<IniNode> TrailingTriviaData()
        => (from node in ExampleNodes
            from inline in InlineTrivia
            from breaking in LineBreakingTrivia
@@ -107,7 +106,7 @@ public sealed class TriviaTest
         Assert.Equal(expectedDocument, parsedDocument);
     }
 
-    private static TheoryData<IniNode, IniNode> TriviaForConsecutiveNodes()
+    public static TheoryData<IniNode, IniNode> TriviaForConsecutiveNodes()
        => (from node1 in ExampleNodes
            from node2 in ExampleNodes
            from inline in InlineTrivia

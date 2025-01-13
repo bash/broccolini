@@ -14,7 +14,7 @@ public sealed class TokenizerTest
         Assert.Single(Tokenize(input), new IniToken.NewLine(input));
     }
 
-    private static TheoryData<string> GetNewLinesData() => NewLines.ToTheoryData();
+    public static TheoryData<string> GetNewLinesData() => NewLines.ToTheoryData();
 
     [Theory]
     [MemberData(nameof(GetConsecutiveNewLinesData))]
@@ -36,9 +36,9 @@ public sealed class TokenizerTest
         Assert.Equal([new IniToken.WhiteSpace("\t"), new IniToken.NewLine("\n")], Tokenize("\t\n"));
     }
 
-    private static TheoryData<char> GetWhiteSpaceData() => WhiteSpace.ToTheoryData();
+    public static TheoryData<char> GetWhiteSpaceData() => WhiteSpace.ToTheoryData();
 
-    private static TheoryData<string, string> GetConsecutiveNewLinesData()
+    public static TheoryData<string, string> GetConsecutiveNewLinesData()
         => NewLines.SelectMany(_ => NewLines, ValueTuple.Create)
             .Except(Sequence.Return(("\r", "\n")))
             .ToTheoryData();

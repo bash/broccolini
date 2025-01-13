@@ -1,7 +1,7 @@
 using Broccolini.Syntax;
 using Broccolini.Tokenization;
 using FsCheck;
-using FsCheck.Xunit;
+using FsCheck.Fluent;
 using Xunit;
 using static Broccolini.Syntax.IniSyntaxFactory;
 using static Broccolini.Test.TestData;
@@ -10,12 +10,7 @@ namespace Broccolini.Test;
 
 public sealed class SyntaxFactoryTests
 {
-    public SyntaxFactoryTests()
-    {
-        BroccoliniGenerators.Register();
-    }
-
-    [Property]
+    [BroccoliniProperty]
     public Property ParsesCreatedSectionNodeOrThrows(NonNull<string> value)
     {
         try
@@ -23,7 +18,7 @@ public sealed class SyntaxFactoryTests
             var node = Section(value.Get);
             var parsedNode = IniParser.Parse(node.ToString());
             return (parsedNode.Sections.Count == 1
-                    && parsedNode.Sections.Single() is SectionIniNode sectionNode
+                    && parsedNode.Sections.Single() is { } sectionNode
                     && sectionNode.Name == value.Get).ToProperty();
         }
         catch (ArgumentException)
@@ -44,7 +39,7 @@ public sealed class SyntaxFactoryTests
         Assert.Throws<ArgumentException>(() => Section(value));
     }
 
-    [Property]
+    [BroccoliniProperty]
     public Property ParsesCreatedKeyValueNodeOrThrows(NonNull<string> key, NonNull<string> value)
     {
         try
@@ -83,7 +78,7 @@ public sealed class SyntaxFactoryTests
         Assert.Equal(value, parsedNode.Value);
     }
 
-    [Property]
+    [BroccoliniProperty]
     public Property ParsesCreatedKeyValueNodeWithEmptyKeyOrThrows(NonNull<string> value)
     {
         try
@@ -126,7 +121,7 @@ public sealed class SyntaxFactoryTests
         Assert.Throws<ArgumentException>(() => WhiteSpace(newLine));
     }
 
-    [Property]
+    [BroccoliniProperty]
     public Property TokenizerAndFactoryAcceptSameWhiteSpace(WhitespaceNoNulls whitespace)
     {
         var tokenFromFactory = Option<IniToken>.None;
@@ -142,7 +137,7 @@ public sealed class SyntaxFactoryTests
         return (tokenized.SingleOrNone() == tokenFromFactory).ToProperty();
     }
 
-    private static TheoryData<string> NewLinesData() => NewLines.ToTheoryData();
+    public static TheoryData<string> NewLinesData() => NewLines.ToTheoryData();
 
-    private static TheoryData<string> WhiteSpaceData() => TestData.WhiteSpace.Select(static c => c.ToString()).ToTheoryData();
+    public static TheoryData<string> WhiteSpaceData() => TestData.WhiteSpace.Select(static c => c.ToString()).ToTheoryData();
 }

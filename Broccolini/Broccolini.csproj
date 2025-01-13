@@ -1,9 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
+        <TargetFrameworks>netstandard2.0;net6.0;net8.0</TargetFrameworks>
     </PropertyGroup>
     <PropertyGroup>
         <IsTrimmable>true</IsTrimmable>
+    </PropertyGroup>
+    <PropertyGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
+        <IsAotCompatible>true</IsAotCompatible>
     </PropertyGroup>
     <PropertyGroup Label="NuGet Packing">
         <Version>2.0.0</Version>
@@ -20,9 +23,6 @@
         <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
     </PropertyGroup>
-    <ItemGroup Label="Deterministic Builds and Source Link">
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
-    </ItemGroup>
     <ItemGroup>
         <None Include="..\readme.md" Pack="true" PackagePath="\" />
     </ItemGroup>
@@ -31,12 +31,12 @@
     </ItemGroup>
     <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
         <PackageReference Include="Microsoft.Bcl.HashCode" Version="1.1.1" />
-        <PackageReference Include="Nullable" Version="1.3.0" PrivateAssets="all" />
+        <PackageReference Include="Nullable" Version="1.3.1" PrivateAssets="all" />
         <PackageReference Include="System.Collections.Immutable" Version="5.0.0" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="PolySharp" Version="1.14.0" PrivateAssets="all" />
-        <PackageReference Include="IsExternalInit" Version="1.0.2" PrivateAssets="all" />
+        <PackageReference Include="PolySharp" Version="1.15.0" PrivateAssets="all" />
+        <PackageReference Include="IsExternalInit" Version="1.0.3" PrivateAssets="all" />
     </ItemGroup>
     <PropertyGroup>
         <PolySharpExcludeGeneratedTypes>System.Runtime.CompilerServices.IsExternalInit</PolySharpExcludeGeneratedTypes>
