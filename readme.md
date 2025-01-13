@@ -1,7 +1,7 @@
 # Broccolini 🥦
 
 [![Build](https://github.com/bash/broccolini/workflows/Build/badge.svg)](https://github.com/bash/broccolini/actions?query=workflow%3ABuild)
-[![NuGet package](https://buildstats.info/nuget/Broccolini)](https://www.nuget.org/packages/Broccolini)
+[![NuGet Version](https://img.shields.io/nuget/v/Broccolini)](https://www.nuget.org/packages/Broccolini)
 
 Broccolini is a non-destructive parser for INI files.
 The main goal is compatibility with the INI format used in Windows OS ([`GetPrivateProfileString`] and friends).
